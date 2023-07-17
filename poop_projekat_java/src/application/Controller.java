@@ -60,6 +60,7 @@ public class Controller implements Initializable {
 				String val = tabela.getData().get(i).get(j).getValue();
 				val = val==""?"--empty--":val;
 				Label label = new Label(val);
+				
 				label.setPadding(new Insets(5));
 				GridPane.setConstraints(label, j, i);
 

@@ -35,7 +35,9 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Excel Program");
 		Controller cont = new Controller();
-		Table t = new Table(3);
+		String currentDirectory = System.getProperty("user.dir");
+		System.out.println("Current Directory: " + currentDirectory);
+		Table t = Parser.loadCSVTable("t.csv");
 		Controller.postaviTabelu(t);
 
 		// Create menu bar
@@ -50,7 +52,8 @@ public class Main extends Application {
 		menuBar.getMenus().add(fileMenu);
 
 		// Create grid pane
-		gridPane = new GridPane();
+		gridPane = GUI.populateGrid(t);
+		ScrollPane sp = new ScrollPane(gridPane);
 
 		// Create the main layout
 		BorderPane root = new BorderPane();
@@ -60,7 +63,10 @@ public class Main extends Application {
 		saveButton.setOnAction(e -> cont.dodajRed(gridPane));
 
 		Button printbtn = new Button("stampaj");
-		printbtn.setOnAction(e -> cont.stampaj(gridPane));
+		// printbtn.setOnAction(e -> cont.stampaj(gridPane));
+		printbtn.setOnAction(e -> {
+			sp.setContent(GUI.populateGrid(t));
+		});
 
 		TextField red = new TextField();
 		red.setPromptText("red");
@@ -81,7 +87,6 @@ public class Main extends Application {
 		buttonBox.getChildren().add(dodajpolje);
 		buttonBox.setPadding(new Insets(10));
 
-		ScrollPane sp = new ScrollPane(gridPane);
 		// Add the VBox to the right side of the main layout
 		root.setRight(buttonBox);
 		root.setCenter(sp);
