@@ -21,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -146,7 +147,43 @@ public class Main extends Application {
 //		launch(args);
 //	}
 
-	private Table table;
+	static Table table;
+	static BorderPane root;
+	static ScrollPane sp;
+	static GridPane grid;
+
+	public static Table getTable() {
+		return table;
+	}
+
+	public static void setTable(Table table) {
+		Main.table = table;
+	}
+
+	public static BorderPane getRoot() {
+		return root;
+	}
+
+	public static void setRoot(BorderPane root) {
+		Main.root = root;
+	}
+
+	public static ScrollPane getSp() {
+		return sp;
+	}
+
+	public static void setSp(ScrollPane sp) {
+		Main.sp = sp;
+	}
+
+	public static GridPane getGrid() {
+		return grid;
+	}
+
+	public static void setGrid(GridPane grid) {
+		Main.grid = grid;
+	}
+
 
 	// indeksiranje pocinje od 0
 	public Node getElementOfGrid(GridPane grid, int rowIndex, int colIndex) {
@@ -169,7 +206,11 @@ public class Main extends Application {
 
 	public Scene makeAndPopulateScene() {
 		// Create the main layout
-		BorderPane root = new BorderPane();
+		root = new BorderPane();
+
+		// grid in a scroll pane
+		sp = new ScrollPane(grid = GUI.populateGrid(table));
+		root.setCenter(sp);
 
 		// Create menu bar
 		MenuBar menuBar = new MenuBar();
@@ -181,13 +222,14 @@ public class Main extends Application {
 		MenuItem loadMenuItem = new MenuItem("Load Table");
 		fileMenu.getItems().addAll(newMenuItem, loadMenuItem);
 		menuBar.getMenus().add(fileMenu);
-		
-		BorderPane menuBarAndOptions = new BorderPane();
-		menuBarAndOptions.setTop(menuBar);
+
+		// pane for menubar and options
+		BorderPane northPane = new BorderPane();
+		northPane.setTop(menuBar);
 
 		// Create table manipulation options
 		FlowPane northMenu = new FlowPane();
-		menuBarAndOptions.setCenter(northMenu);
+		northPane.setCenter(northMenu);
 
 		// Buttons and fields
 		Button saveBtn = new Button("Save");
@@ -200,20 +242,34 @@ public class Main extends Application {
 		TextField newValueField = new TextField();
 		newValueField.setPromptText("new value");
 		Button changeValueBtn = new Button("Change value");
-		
+
 		VBox vbox1 = new VBox(saveBtn, addRowBtn);
 		VBox vbox2 = new VBox(rowIndexField, columnIndexField, newValueField, changeValueBtn);
 		vbox1.setPadding(new Insets(5));
 		vbox2.setPadding(new Insets(5));
 
-		northMenu.getChildren().addAll(vbox1,vbox2);
-		// grid in a scroll pane
-		ScrollPane sp = new ScrollPane(GUI.populateGrid(table));
+		// formatting options
+		Button formatTextBtn = new Button("Format to text");
+		VBox vbox4 = new VBox(formatTextBtn);
+		vbox4.setPadding(new Insets(5));
+		vbox4.setAlignment(Pos.CENTER);
+		TextField decimalsField = new TextField();
+		decimalsField.setPromptText("number of decimals");
+		Button formatNumberBtn = new Button("Format to number");
+		VBox vbox3 = new VBox(decimalsField, formatNumberBtn);
+		vbox3.setPadding(new Insets(5));
+		vbox3.setAlignment(Pos.CENTER);
+		Button formatDateBtn = new Button("Format to date");
+		VBox vbox5 = new VBox(formatDateBtn);
+		vbox5.setPadding(new Insets(5));
+		vbox5.setAlignment(Pos.CENTER);
+
+		northMenu.getChildren().addAll(vbox1, vbox2, vbox4, vbox3, vbox5);
 
 		// populate layout and make scene
-		root.setTop(menuBarAndOptions);
-		root.setCenter(sp);
-		Scene scene = new Scene(root,1000,800);
+		root.setTop(northPane);
+
+		Scene scene = new Scene(root, 1000, 800);
 		return scene;
 	}
 
