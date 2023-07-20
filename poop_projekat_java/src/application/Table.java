@@ -42,6 +42,10 @@ public class Table {
 		}
 		data.get(x).set(y, newCell);
 	}
+	
+	public Cell getCell(int row, int col) {
+		return data.get(row).get(col);
+	}
 
 	public int getNumOfColumns() {
 		return data.get(0).size();

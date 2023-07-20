@@ -26,7 +26,6 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
 	static Table table;
-	
 
 	public static Table getTable() {
 		return table;
@@ -35,8 +34,6 @@ public class Main extends Application {
 	public static void setTable(Table table) {
 		Main.table = table;
 	}
-
-	
 
 	// indeksiranje pocinje od 0
 	public Node getElementOfGrid(GridPane grid, int rowIndex, int colIndex) {
@@ -57,14 +54,14 @@ public class Main extends Application {
 		grid.getChildren().set(index, newElem);
 	}
 
-	
-
 	@Override
 	public void start(Stage primaryStage) {
-		primaryStage.setTitle("Excel by JANKO");
+		GUI.primaryStage = primaryStage;
+		primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+
 //		String currentDirectory = System.getProperty("user.dir");
 //		System.out.println("Current Directory: " + currentDirectory);
-		//table = Parser.loadCSVTable("test1.csv");
+		// table = Parser.loadCSVTable("test1.csv");
 		table = new Table(5);
 
 		// Create the scene and set it on the stage
@@ -72,13 +69,10 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 
-
 	public static void main(String[] args) {
 		launch(args);
 	}
 }
-
-
 
 //@Override
 //public void start(Stage primaryStage) throws IOException {
@@ -211,8 +205,6 @@ public class Main extends Application {
 //	public static void main(String[] args) {
 //		launch(args);
 //	}
-
-
 
 //// Create grid pane
 //gridPane = GUI.populateGrid(table);

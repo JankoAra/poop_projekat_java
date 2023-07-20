@@ -27,12 +27,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 
 public class GUI {
 	static BorderPane rootBorderPane;
 	static ScrollPane sp;
 	static GridPane grid;
 	static Scene scene;
+	static Stage primaryStage;
 	private static TextField activeTextField = null;
 
 	// create, populate and return the main scene; called in start method of
@@ -62,8 +64,11 @@ public class GUI {
 			GUI.sp.setContent(GUI.grid);
 		});
 		MenuItem saveAsMenuItem = new MenuItem("Save As");
+		saveAsMenuItem.setOnAction(e -> Controller.saveTable(Main.table, true));
+
 		MenuItem saveMenuItem = new MenuItem("Save");
 		saveMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+		saveMenuItem.setOnAction(e -> Controller.saveTable(Main.table, false));
 
 		fileMenu.getItems().addAll(newMenuItem, openMenuItem, new SeparatorMenuItem(), saveAsMenuItem, saveMenuItem);
 		menuBar.getMenus().add(fileMenu);
@@ -78,24 +83,8 @@ public class GUI {
 
 		// Buttons and fields
 		Button saveBtn = new Button("Save");
-		saveBtn.setOnAction(e -> {
-			FileChooser fc = new FileChooser();
-			fc.setSelectedExtensionFilter(new ExtensionFilter("tekstualni", "*.txt"));
-			File file = fc.showSaveDialog(scene.getWindow());
-			if (file != null) {
+		saveBtn.setOnAction(e -> Controller.saveTable(Main.table, false));
 
-				PrintWriter writer;
-				try {
-					writer = new PrintWriter(file);
-					writer.println("cuvam fajl");
-					writer.close();
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			}
-		});
 		Button addRowBtn = new Button("Add row");
 
 		TextField rowIndexField = new TextField();
