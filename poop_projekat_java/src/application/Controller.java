@@ -1,22 +1,7 @@
 package application;
 
 import java.io.File;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.FileChooser;
 
 public class Controller {

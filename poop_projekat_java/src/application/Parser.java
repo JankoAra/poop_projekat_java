@@ -5,12 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 public class Parser {
 	static File currentFile = new File("Untitled");
-
-	
 
 	public static String getExtensionFromFilePath(File file) {
 		String path = file.getName();
@@ -33,7 +30,7 @@ public class Parser {
 	}
 
 	private static String convertTableToJSONString(Table table) {
-		// TODO Auto-generated method stub
+		// TODO nije implementirana
 		return "Nije napravljen";
 	}
 
@@ -68,6 +65,8 @@ public class Parser {
 				String row[] = line.split(",");
 				int colNum = 0;
 				for (String value : row) {
+					if (colNum >= Table.numOfCols)
+						throw new Exception();
 					Cell cell = new Cell(value);
 					table.setCell(rowNum, colNum, cell);
 					colNum++;
@@ -76,6 +75,7 @@ public class Parser {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			table = new Table();
 		} finally {
 			try {
 				if (buffer != null) {
@@ -89,6 +89,7 @@ public class Parser {
 	}
 
 	public static Table convertJSONToTable(File file) {
+		// TODO nije implementirana
 		return new Table(10);
 	}
 

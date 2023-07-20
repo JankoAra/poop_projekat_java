@@ -1,10 +1,13 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Table {
 	ArrayList<ArrayList<Cell>> data = new ArrayList<ArrayList<Cell>>();
 	public static final int numOfCols = 26;
+	
+	LinkedList<Cell> selectedCells = new LinkedList<>();
 
 	public ArrayList<ArrayList<Cell>> getData() {
 		return data;
@@ -65,7 +68,7 @@ public class Table {
 		}
 		sb.append("\n");
 		int cnt = 0;
-		for (ArrayList l : data) {
+		for (ArrayList<Cell> l : data) {
 			sb.append(String.format("%3d ", cnt++));
 			for (Object o : l) {
 				Cell c = (Cell) o;
