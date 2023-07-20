@@ -103,16 +103,28 @@ public class GUI {
 
 		// formatting options
 		Button formatTextBtn = new Button("Format to text");
+		formatTextBtn.setOnAction(e->{
+			Controller.formatSelectedCells(Cell.TEXT_FORMAT);
+			repaintGrid();
+		});
 		VBox vbox4 = new VBox(formatTextBtn);
 		vbox4.setPadding(new Insets(5));
 		vbox4.setAlignment(Pos.CENTER);
 		TextField decimalsField = new TextField();
 		decimalsField.setPromptText("number of decimals");
 		Button formatNumberBtn = new Button("Format to number");
+		formatNumberBtn.setOnAction(e->{
+			Controller.formatSelectedCells(new NumberFormat(Integer.parseInt(decimalsField.getText())));
+			repaintGrid();
+		});
 		VBox vbox3 = new VBox(decimalsField, formatNumberBtn);
 		vbox3.setPadding(new Insets(5));
 		vbox3.setAlignment(Pos.CENTER);
 		Button formatDateBtn = new Button("Format to date");
+		formatDateBtn.setOnAction(e->{
+			Controller.formatSelectedCells(Cell.DATE_FORMAT);
+			repaintGrid();
+		});
 		VBox vbox5 = new VBox(formatDateBtn);
 		vbox5.setPadding(new Insets(5));
 		vbox5.setAlignment(Pos.CENTER);
@@ -151,19 +163,31 @@ public class GUI {
 		textField.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ENTER) {
 				System.out.println("enter");
-				Main.getTable().setCell(rowIndex - 1, columnIndex - 1, new Cell(textField.getText()));
-				GUI.grid = GUI.populateGrid(Main.table);
-				GUI.sp.setContent(GUI.grid);
-				activeTextField = null;
+//				Main.getTable().setCell(rowIndex - 1, columnIndex - 1, new Cell(textField.getText()));
+//				GUI.grid = GUI.populateGrid(Main.table);
+//				GUI.sp.setContent(GUI.grid);
+//				Cell.selectedCellRow = -1;
+//				Cell.selectedCellColumn = -1;
+//				activeTextField = null;
+				GUI.grid.requestFocus();
 			}
 		});
 		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			if (!newValue) {
 				System.out.println("Focus lost from TextField");
-				Main.getTable().setCell(rowIndex - 1, columnIndex - 1, new Cell(textField.getText()));
+				Format oldFormat = Main.table.getCell(rowIndex-1, columnIndex-1).getFormat();
+				try {
+					Main.getTable().setCell(rowIndex - 1, columnIndex - 1, new Cell(textField.getText(),oldFormat));
+				} catch (FormatChangeUnsuccessful e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				GUI.grid = GUI.populateGrid(Main.table);
 				GUI.sp.setContent(GUI.grid);
+//				Cell.selectedCellRow = -1;
+//				Cell.selectedCellColumn = -1;
 				activeTextField = null;
+				GUI.grid.requestFocus();
 			}
 		});
 		GridPane.setConstraints(textField, columnIndex, rowIndex);
@@ -177,7 +201,7 @@ public class GUI {
 		GridPane grid = new GridPane();
 
 		// Create column constraints and set them to grow always
-		for (int j = 0; j <= table.getNumOfColumns(); j++) {
+		for (int j = 0; j <= Table.numOfCols; j++) {
 			ColumnConstraints columnConstraints = new ColumnConstraints();
 			columnConstraints.setHgrow(Priority.ALWAYS);
 			grid.getColumnConstraints().add(columnConstraints);
@@ -191,7 +215,7 @@ public class GUI {
 		}
 
 		for (int i = 0; i <= table.getNumOfRows(); i++) {
-			for (int j = 0; j <= table.getNumOfColumns(); j++) {
+			for (int j = 0; j <= Table.numOfCols; j++) {
 				String val = "";
 				Label label = new Label();
 				GridPane.setConstraints(label, j, i);
@@ -206,12 +230,14 @@ public class GUI {
 				} else if (j == 0) {
 					val = String.format("%d", i);
 				} else {
-					val = table.getData().get(i - 1).get(j - 1).getValue();
+					val = table.getData().get(i - 1).get(j - 1).getFormattedValue();
 					label.setOnMouseClicked(e -> {
 						int ri = GridPane.getRowIndex(label);
 						int ci = GridPane.getColumnIndex(label);
 						// indeksi su u gridu
 						System.out.println("red " + ri + "/kolona " + ci);
+						Cell.selectedCellRow = ri-1;
+						Cell.selectedCellColumn = ci-1;
 						replaceLabelWithTextField(grid, ci, ri);
 					});
 

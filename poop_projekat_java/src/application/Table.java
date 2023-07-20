@@ -50,10 +50,6 @@ public class Table {
 		return data.get(row).get(col);
 	}
 
-	public int getNumOfColumns() {
-		return data.get(0).size();
-	}
-
 	public int getNumOfRows() {
 		return data.size();
 	}

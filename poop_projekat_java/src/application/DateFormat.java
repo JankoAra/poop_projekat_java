@@ -4,11 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DateFormat implements Format {
-
-	public DateFormat() {
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public String getDescription() {
 		return "D";
@@ -16,6 +11,8 @@ public class DateFormat implements Format {
 
 	@Override
 	public boolean stringFitsFormat(String string) {
+		if (string.equals(""))
+			return true;
 		// Define the regex pattern for the date format "dd.MM.yyyy" with capturing
 		// groups
 		String dateFormatPattern = "^(\\d{1,2})\\.(\\d{1,2})\\.(\\d{1,4})\\.$";
@@ -44,6 +41,7 @@ public class DateFormat implements Format {
 
 	@Override
 	public String formattedValue(String value) {
+		if(value.equals("")) return "";
 		String dateFormatPattern = "^(\\d{1,2})\\.(\\d{1,2})\\.(\\d{1,4})\\.$";
 
 		// Create the regex pattern object

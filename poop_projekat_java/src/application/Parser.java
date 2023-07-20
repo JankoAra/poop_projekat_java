@@ -9,6 +9,7 @@ import java.io.IOException;
 public class Parser {
 	static File currentFile = new File("Untitled");
 
+	//extracts file extension (ex. .csv or .json)
 	public static String getExtensionFromFilePath(File file) {
 		String path = file.getName();
 		int lastIndex = path.lastIndexOf('.');
@@ -67,7 +68,7 @@ public class Parser {
 				for (String value : row) {
 					if (colNum >= Table.numOfCols)
 						throw new Exception();
-					Cell cell = new Cell(value);
+					Cell cell = new Cell(value, Cell.TEXT_FORMAT);
 					table.setCell(rowNum, colNum, cell);
 					colNum++;
 				}

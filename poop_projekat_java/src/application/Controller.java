@@ -11,8 +11,8 @@ public class Controller {
 		FileChooser.ExtensionFilter allExtensionFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		FileChooser.ExtensionFilter csvExtensionFilter = new FileChooser.ExtensionFilter("CSV files", "*.csv");
 		FileChooser.ExtensionFilter jsonExtensionFilter = new FileChooser.ExtensionFilter("JSON files", "*.json");
-		fc.setSelectedExtensionFilter(allExtensionFilter);
 		fc.getExtensionFilters().addAll(csvExtensionFilter, jsonExtensionFilter, allExtensionFilter);
+		fc.setSelectedExtensionFilter(allExtensionFilter);
 		File file;
 		if (saving) {
 			// save file
@@ -43,25 +43,32 @@ public class Controller {
 			System.out.println("Fatalna greska pri cuvanju tabele");
 		}
 	}
-	
+
 	public static void openTable() {
 		File path = getFilePath(false);
-		if(path==null) {
+		if (path == null) {
 			System.out.println("Fajl ne postoji ili je akcija prekinuta");
 			return;
 		}
 		String extension = Parser.getExtensionFromFilePath(path);
-		if(extension.equals(".csv")) {
+		if (extension.equals(".csv")) {
 			Main.table = Parser.convertCSVToTable(path);
-		}
-		else if(extension.equals(".json")) {
+		} else if (extension.equals(".json")) {
 			Main.table = Parser.convertJSONToTable(path);
-		}
-		else {
+		} else {
 			System.out.println("Ekstenzija nije podrzana.");
 			return;
 		}
 		Parser.currentFile = path;
 		GUI.primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+	}
+	
+	public static void formatSelectedCells(Format format) {
+		System.out.println("Changing format");
+		if(Cell.selectedCellColumn<0 || Cell.selectedCellRow<0) {
+			System.out.println("Nijedna celija nije selektovana");
+			return;
+		}
+		Cell.convertCellToFormat(Cell.selectedCellRow, Cell.selectedCellColumn, format);
 	}
 }
