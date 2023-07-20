@@ -59,7 +59,7 @@ public class GUI {
 		});
 		MenuItem openMenuItem = new MenuItem("Open Table");
 		openMenuItem.setOnAction(e -> {
-			Main.table = Parser.loadCSVTable(Controller.getFilePath(false));
+			Controller.openTable();
 			GUI.grid = populateGrid(Main.table);
 			GUI.sp.setContent(GUI.grid);
 		});
@@ -86,6 +86,11 @@ public class GUI {
 		saveBtn.setOnAction(e -> Controller.saveTable(Main.table, false));
 
 		Button addRowBtn = new Button("Add row");
+		addRowBtn.setOnAction(e -> {
+			Main.table.addRow();
+			GUI.grid = GUI.populateGrid(Main.table);
+			GUI.sp.setContent(GUI.grid);
+		});
 
 		TextField rowIndexField = new TextField();
 		rowIndexField.setPromptText("row");
@@ -228,4 +233,8 @@ public class GUI {
 		return grid;
 	}
 
+	public static void repaintGrid() {
+		GUI.grid = GUI.populateGrid(Main.table);
+		GUI.sp.setContent(GUI.grid);
+	}
 }

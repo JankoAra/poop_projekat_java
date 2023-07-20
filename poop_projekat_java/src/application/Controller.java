@@ -23,9 +23,9 @@ public class Controller {
 	public static File getFilePath(boolean saving) {
 		FileChooser fc = new FileChooser();
 		fc.setInitialDirectory(new File("savedTables"));
+		FileChooser.ExtensionFilter allExtensionFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		FileChooser.ExtensionFilter csvExtensionFilter = new FileChooser.ExtensionFilter("CSV files", "*.csv");
 		FileChooser.ExtensionFilter jsonExtensionFilter = new FileChooser.ExtensionFilter("JSON files", "*.json");
-		FileChooser.ExtensionFilter allExtensionFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		fc.getExtensionFilters().addAll(csvExtensionFilter, jsonExtensionFilter, allExtensionFilter);
 		File file;
 		if (saving) {
@@ -56,6 +56,26 @@ public class Controller {
 		} catch (Exception e) {
 			System.out.println("Fatalna greska pri cuvanju tabele");
 		}
-
+	}
+	
+	public static void openTable() {
+		File path = getFilePath(false);
+		if(path==null) {
+			System.out.println("Fajl ne postoji ili je akcija prekinuta");
+			return;
+		}
+		String extension = Parser.getExtensionFromFilePath(path);
+		if(extension.equals(".csv")) {
+			Main.table = Parser.convertCSVToTable(path);
+		}
+		else if(extension.equals(".json")) {
+			Main.table = Parser.convertJSONToTable(path);
+		}
+		else {
+			System.out.println("Ekstenzija nije podrzana.");
+			return;
+		}
+		Parser.currentFile = path;
+		GUI.primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 	}
 }
