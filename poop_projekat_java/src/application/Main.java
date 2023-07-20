@@ -58,6 +58,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		GUI.primaryStage = primaryStage;
 		primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+		GUI.addAskToSaveOnExit();
 
 //		String currentDirectory = System.getProperty("user.dir");
 //		System.out.println("Current Directory: " + currentDirectory);

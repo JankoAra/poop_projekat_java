@@ -7,7 +7,9 @@ import java.io.PrintWriter;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -236,5 +238,44 @@ public class GUI {
 	public static void repaintGrid() {
 		GUI.grid = GUI.populateGrid(Main.table);
 		GUI.sp.setContent(GUI.grid);
+	}
+
+	public static void addAskToSaveOnExit() {
+		Stage primaryStage = GUI.primaryStage;
+		primaryStage.setOnCloseRequest(event -> {
+			event.consume(); // Consume the event to prevent the application from closing immediately
+
+			// Show the custom Alert dialog
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.getDialogPane().getScene().getWindow().setOnCloseRequest(e -> {
+				alert.close();
+			});
+			alert.setTitle("Confirmation");
+			alert.setHeaderText("Do you want to save the table before exiting?");
+			alert.setContentText("Choose your option.");
+
+			ButtonType saveButton = new ButtonType("Save");
+			ButtonType discardButton = new ButtonType("Discard");
+			ButtonType cancelButton = new ButtonType("Cancel");
+
+			alert.getButtonTypes().setAll(saveButton, discardButton, cancelButton);
+
+			// Show the dialog and wait for the user's response
+			alert.showAndWait().ifPresent(response -> {
+				if (response == saveButton) {
+					// Save the table here (call a method to handle the save operation)
+					// For example: saveTable();
+					Controller.saveTable(Main.table, false);
+					System.out.println("Table saved!");
+					primaryStage.close(); // Close the application after saving
+				} else if (response == discardButton) {
+					// No need to save, just exit the application
+					primaryStage.close();
+				} else {
+					// User clicked Cancel, do nothing (let the application continue running)
+				}
+			});
+
+		});
 	}
 }

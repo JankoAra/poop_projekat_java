@@ -22,14 +22,14 @@ public class Parser {
 		return "";
 	}
 
-	public static String convertTableToString(Table table, String extension) {
+	public static String convertTableToString(Table table, String extension) throws Exception {
 		if (extension.equals(".csv")) {
 			return convertTableToCSVString(table);
 		} else if (extension.equals(".json")) {
 			return convertTableToJSONString(table);
 		}
 		System.out.println("Format nije podrzan");
-		return "";
+		throw new Exception();
 	}
 
 	private static String convertTableToJSONString(Table table) {
