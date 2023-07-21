@@ -160,7 +160,7 @@ public class GUI {
 
 			grid.getChildren().add(label);
 		}
-		Label label = (Label) grid.getChildren().get((rowIndex * (Table.numOfCols + 1) + columnIndex +1));
+		Label label = (Label) grid.getChildren().get((rowIndex * (Table.numOfCols + 1) + columnIndex + 1));
 		grid.getChildren().remove(label);
 
 		TextField textField = new TextField(label.getText());
@@ -205,7 +205,6 @@ public class GUI {
 
 	public static GridPane populateGrid(Table table) {
 		GridPane grid = new GridPane();
-		
 
 		// Create column constraints and set them to grow always
 		for (int j = 0; j <= Table.numOfCols; j++) {
@@ -221,82 +220,97 @@ public class GUI {
 			grid.getRowConstraints().add(rowConstraints);
 		}
 
-		for (int i = 0; i <= table.getNumOfRows(); i++) {
-			for (int j = 0; j <= Table.numOfCols; j++) {
-				String val = "";
-				Label label = new Label();
-				GridPane.setConstraints(label, j, i);
-				if (i == 0 && j == 0) {
+		// popunjavanje celija sa sadrzajem (bez prvog reda i prve kolone koji su za
+		// indeksiranje)
+		for (int i = 0; i < table.getNumOfRows(); i++) {
+			for (int j = 0; j < Table.numOfCols; j++) {
+				Label label = table.getLabel(i, j);
+				GridPane.setConstraints(label, j + 1, i + 1);
+				grid.getChildren().add(label);
+			}
+		}
 
-				} else if (i == 0) {
-					val = String.format("%c", 'A' + j - 1);
-					label.setAlignment(Pos.CENTER);
+		// popunjavanje prve kolone
+		for (int i = 0; i < table.getNumOfRows(); i++) {
+			Label label = new Label("" + (i + 1));
+			label.setMinWidth(80);
+			label.setStyle("-fx-background-color:white;-fx-border-color:black;-fx-alignment:center;");
+			label.setFont(new Font("Arial", 20));
+			label.setPadding(new Insets(5));
+			label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+			GridPane.setConstraints(label, 0, i + 1);
+			grid.getChildren().add(label);
+		}
+
+		// popunjavanje prvog reda
+		for (int j = 0; j < Table.numOfCols; j++) {
+			Label label = new Label(String.format("%c", j + 'A'));
+			label.setMinWidth(80);
+			label.setStyle("-fx-background-color:white;-fx-border-color:black;-fx-alignment:center;");
+			label.setFont(new Font("Arial", 20));
+			label.setPadding(new Insets(5));
+			label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+			GridPane.setConstraints(label, j + 1, 0);
+			grid.getChildren().add(label);
+		}
+		
+		//gornji levi cosak, za selektovanje cele tabele
+		Label firstLabel = new Label();
+		firstLabel.setMinWidth(80);
+		firstLabel.setStyle("-fx-background-color:white;-fx-border-color:black;");
+		firstLabel.setPadding(new Insets(5));
+		firstLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		GridPane.setConstraints(firstLabel, 0, 0);
+		grid.getChildren().add(firstLabel);
+
+//		for (int i = 0; i <= table.getNumOfRows(); i++) {
+//			for (int j = 0; j <= Table.numOfCols; j++) {
+//				String val = "";
+//				Label label = new Label();
+//				GridPane.setConstraints(label, j, i);
+//				if (i == 0 && j == 0) {
+//
+//				} else if (i == 0) {
+//					val = String.format("%c", 'A' + j - 1);
+//					label.setAlignment(Pos.CENTER);
+////					label.setOnMouseClicked(e -> {
+////						System.out.println(label.getText());
+////					});
+//				} else if (j == 0) {
+//					val = String.format("%d", i);
+//				} else {
+//					val = table.getData().get(i - 1).get(j - 1).getFormattedValue();
 //					label.setOnMouseClicked(e -> {
-//						System.out.println(label.getText());
+//						int ri = GridPane.getRowIndex(label);
+//						int ci = GridPane.getColumnIndex(label);
+//						// indeksi su u gridu
+//						System.out.println("red " + ri + "/kolona " + ci);
+//						Cell.selectedCellRow = ri - 1;
+//						Cell.selectedCellColumn = ci - 1;
+//						replaceLabelWithTextField(grid, ci, ri);
 //					});
-				} else if (j == 0) {
-					val = String.format("%d", i);
-				} else {
-					val = table.getData().get(i - 1).get(j - 1).getFormattedValue();
-					label.setOnMouseClicked(e -> {
-						int ri = GridPane.getRowIndex(label);
-						int ci = GridPane.getColumnIndex(label);
-						// indeksi su u gridu
-						System.out.println("red " + ri + "/kolona " + ci);
-						Cell.selectedCellRow = ri - 1;
-						Cell.selectedCellColumn = ci - 1;
-						replaceLabelWithTextField(grid, ci, ri);
-					});
-
-				}
-				label.setOnDragDetected(e->{
-					int ri = GridPane.getRowIndex(label);
-					int ci = GridPane.getColumnIndex(label);
-					// indeksi su u gridu
-//					System.out.println("drag detected: red " + ri + "/kolona " + ci);
-//					System.out.println(e.getSceneX() +" "+e.getSceneY());
-					Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
-                    ClipboardContent content = new ClipboardContent();
-                    content.putString(ri + "," + ci);
-                    dragboard.setContent(content);
-					//e.consume();
-				});
-				label.setOnDragEntered(e->{
-					int ri = GridPane.getRowIndex(label);
-					int ci = GridPane.getColumnIndex(label);
-					// indeksi su u gridu
-					//System.out.println("Drag over: red " + ri + "/kolona " + ci);
-					//System.out.println(e.getSceneX() +" "+e.getSceneY());
-					if (/*e.getGestureSource() != label &&*/ e.getDragboard().hasString()) {
-                        e.acceptTransferModes(TransferMode.ANY);
-                        Dragboard dragboard = e.getDragboard();
-                        if (dragboard.hasString()) {
-                            String draggedText = dragboard.getString();
-                            String[] parts = draggedText.split(",");
-                            if (parts.length == 2) {
-                                int intValue1 = Integer.parseInt(parts[0]);
-                                int intValue2 = Integer.parseInt(parts[1]);
-                                System.out.println("Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
-                                if(intValue1*intValue1+intValue2*intValue2<ri*ri+ci*ci) {
-                                	paintSelection(intValue1, intValue2, ri, ci);
-                                }
-                                else {
-                                	paintSelection(ri, ci, intValue1, intValue2);
-                                }
-                                // Handle the integers here
-                            }
-                        }
-                    }
-					e.consume();
-				});
-				label.setOnDragOver(e->{
-					int ri = GridPane.getRowIndex(label);
-					int ci = GridPane.getColumnIndex(label);
-					// indeksi su u gridu
-					//System.out.println("Drag over: red " + ri + "/kolona " + ci);
-					//System.out.println(e.getSceneX() +" "+e.getSceneY());
-					if (/*e.getGestureSource() != label &&*/ e.getDragboard().hasString()) {
-                        e.acceptTransferModes(TransferMode.ANY);
+//
+//				}
+//				label.setOnDragDetected(e->{
+//					int ri = GridPane.getRowIndex(label);
+//					int ci = GridPane.getColumnIndex(label);
+//					// indeksi su u gridu
+////					System.out.println("drag detected: red " + ri + "/kolona " + ci);
+////					System.out.println(e.getSceneX() +" "+e.getSceneY());
+//					Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
+//                    ClipboardContent content = new ClipboardContent();
+//                    content.putString(ri + "," + ci);
+//                    dragboard.setContent(content);
+//					//e.consume();
+//				});
+//				label.setOnDragEntered(e->{
+//					int ri = GridPane.getRowIndex(label);
+//					int ci = GridPane.getColumnIndex(label);
+//					// indeksi su u gridu
+//					//System.out.println("Drag over: red " + ri + "/kolona " + ci);
+//					//System.out.println(e.getSceneX() +" "+e.getSceneY());
+//					if (/*e.getGestureSource() != label &&*/ e.getDragboard().hasString()) {
+//                        e.acceptTransferModes(TransferMode.ANY);
 //                        Dragboard dragboard = e.getDragboard();
 //                        if (dragboard.hasString()) {
 //                            String draggedText = dragboard.getString();
@@ -305,43 +319,71 @@ public class GUI {
 //                                int intValue1 = Integer.parseInt(parts[0]);
 //                                int intValue2 = Integer.parseInt(parts[1]);
 //                                System.out.println("Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
+//                                if(intValue1*intValue1+intValue2*intValue2<ri*ri+ci*ci) {
+//                                	paintSelection(intValue1, intValue2, ri, ci);
+//                                }
+//                                else {
+//                                	paintSelection(ri, ci, intValue1, intValue2);
+//                                }
 //                                // Handle the integers here
 //                            }
 //                        }
-                    }
-					e.consume();
-				});
-				label.setOnDragDropped(e->{
-					int ri = GridPane.getRowIndex(label);
-					int ci = GridPane.getColumnIndex(label);
-					// indeksi su u gridu
-//					System.out.println("Drag exited: red " + ri + "/kolona " + ci);
-//					System.out.println(e.getSceneX() +" "+e.getSceneY());
-					Dragboard dragboard = e.getDragboard();
-                    if (dragboard.hasString()) {
-                        String draggedText = dragboard.getString();
-                        String[] parts = draggedText.split(",");
-                        if (parts.length == 2) {
-                            int intValue1 = Integer.parseInt(parts[0]);
-                            int intValue2 = Integer.parseInt(parts[1]);
-                            System.out.println("KRAJ! Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
-                            // Handle the integers here
-                        }
-                    }
-                    e.setDropCompleted(true);
-                    e.consume();
-				});
-				label.setMinWidth(80);
-				label.setText(val);
-				label.setStyle("-fx-background-color:white;-fx-border-color:black;");
-				label.setFont(new Font("Arial", 20));
-				label.setPadding(new Insets(5));
-				label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-
-				grid.getChildren().add(label);
-			}
-			
-		}
+//                    }
+//					e.consume();
+//				});
+//				label.setOnDragOver(e->{
+//					int ri = GridPane.getRowIndex(label);
+//					int ci = GridPane.getColumnIndex(label);
+//					// indeksi su u gridu
+//					//System.out.println("Drag over: red " + ri + "/kolona " + ci);
+//					//System.out.println(e.getSceneX() +" "+e.getSceneY());
+//					if (/*e.getGestureSource() != label &&*/ e.getDragboard().hasString()) {
+//                        e.acceptTransferModes(TransferMode.ANY);
+////                        Dragboard dragboard = e.getDragboard();
+////                        if (dragboard.hasString()) {
+////                            String draggedText = dragboard.getString();
+////                            String[] parts = draggedText.split(",");
+////                            if (parts.length == 2) {
+////                                int intValue1 = Integer.parseInt(parts[0]);
+////                                int intValue2 = Integer.parseInt(parts[1]);
+////                                System.out.println("Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
+////                                // Handle the integers here
+////                            }
+////                        }
+//                    }
+//					e.consume();
+//				});
+//				label.setOnDragDropped(e->{
+//					int ri = GridPane.getRowIndex(label);
+//					int ci = GridPane.getColumnIndex(label);
+//					// indeksi su u gridu
+////					System.out.println("Drag exited: red " + ri + "/kolona " + ci);
+////					System.out.println(e.getSceneX() +" "+e.getSceneY());
+//					Dragboard dragboard = e.getDragboard();
+//                    if (dragboard.hasString()) {
+//                        String draggedText = dragboard.getString();
+//                        String[] parts = draggedText.split(",");
+//                        if (parts.length == 2) {
+//                            int intValue1 = Integer.parseInt(parts[0]);
+//                            int intValue2 = Integer.parseInt(parts[1]);
+//                            System.out.println("KRAJ! Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
+//                            // Handle the integers here
+//                        }
+//                    }
+//                    e.setDropCompleted(true);
+//                    e.consume();
+//				});
+//				label.setMinWidth(80);
+//				label.setText(val);
+//				label.setStyle("-fx-background-color:white;-fx-border-color:black;");
+//				label.setFont(new Font("Arial", 20));
+//				label.setPadding(new Insets(5));
+//				label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+//
+//				grid.getChildren().add(label);
+//			}
+//			
+//		}
 
 		return grid;
 	}
@@ -350,11 +392,11 @@ public class GUI {
 		GUI.grid = GUI.populateGrid(Main.table);
 		GUI.sp.setContent(GUI.grid);
 	}
-	
+
 	private static void paintSelection(int rs, int cs, int re, int ce) {
-		for(int i=rs;i<=re;i++) {
-			for(int j=cs;j<=ce;j++) {
-				Label label = (Label) grid.getChildren().get((i * (Table.numOfCols + 1) + j ));
+		for (int i = rs; i <= re; i++) {
+			for (int j = cs; j <= ce; j++) {
+				Label label = (Label) grid.getChildren().get((i * (Table.numOfCols + 1) + j));
 				label.setStyle("-fx-background-color:lightgray;-fx-border-color:black;");
 			}
 		}

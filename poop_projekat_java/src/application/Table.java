@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 public class Table {
 	ArrayList<ArrayList<Cell>> data = new ArrayList<ArrayList<Cell>>();
+	ArrayList<ArrayList<CellLabel>> labels = new ArrayList<ArrayList<CellLabel>>();
 	public static final int numOfCols = 26;
 	
 	LinkedList<Cell> selectedCells = new LinkedList<>();
@@ -25,29 +26,28 @@ public class Table {
 
 	public void addRow() {
 		data.add(new ArrayList<Cell>());
+		labels.add(new ArrayList<CellLabel>());
 		for (int x = 0; x < numOfCols; x++) {
 			data.get(data.size() - 1).add(new Cell());
+			labels.get(data.size()-1).add(new CellLabel());
 		}
 	}
 
-	public void addRow(int index) {
-		// TODO ovo
-	}
-
-	public void removeRow(int index) {
-		data.remove(index);
-	}
-
-	public void setCell(int x, int y, Cell newCell) {
-		if (x < 0 || x >= getNumOfRows() || y < 0 || y > 25) {
-			System.out.println("Nepostojeca celija (" + x + "," + y + ")");
+	public void setCell(int row, int col, Cell newCell) {
+		if (row < 0 || row >= getNumOfRows() || col < 0 || col > 25) {
+			System.out.println("Nepostojeca celija (" + row + "," + col + ")");
 			return;
 		}
-		data.get(x).set(y, newCell);
+		data.get(row).set(col, newCell);
+		labels.get(row).get(col).setText(newCell.getFormattedValue());
 	}
 	
 	public Cell getCell(int row, int col) {
 		return data.get(row).get(col);
+	}
+	
+	public CellLabel getLabel(int row, int col) {
+		return labels.get(row).get(col);
 	}
 
 	public int getNumOfRows() {
@@ -91,7 +91,6 @@ public class Table {
 		Table t = new Table(7);
 		t.setCell(0, 4, new Cell("janko"));
 		t.setCell(3, 4, new Cell("123.2"));
-		t.removeRow(2);
 		System.out.println(t);
 
 	}
