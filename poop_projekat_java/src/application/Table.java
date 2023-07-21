@@ -7,8 +7,15 @@ public class Table {
 	ArrayList<ArrayList<Cell>> data = new ArrayList<ArrayList<Cell>>();
 	ArrayList<ArrayList<CellLabel>> labels = new ArrayList<ArrayList<CellLabel>>();
 	public static final int numOfCols = 26;
-	
+
 	LinkedList<Cell> selectedCells = new LinkedList<>();
+	int clickedLabelRowIndex = -1, clickedLabelColumnIndex = -1;
+
+	class Selector {
+		public int r1, r2, c1, c2;
+	}
+
+	Selector selector = new Selector();
 
 	public ArrayList<ArrayList<Cell>> getData() {
 		return data;
@@ -28,8 +35,8 @@ public class Table {
 		data.add(new ArrayList<Cell>());
 		labels.add(new ArrayList<CellLabel>());
 		for (int x = 0; x < numOfCols; x++) {
-			data.get(data.size() - 1).add(new Cell());
-			labels.get(data.size()-1).add(new CellLabel());
+			data.get(data.size() - 1).add(new Cell(this.getNumOfRows() - 1, x));
+			labels.get(data.size() - 1).add(new CellLabel());
 		}
 	}
 
@@ -41,17 +48,57 @@ public class Table {
 		data.get(row).set(col, newCell);
 		labels.get(row).get(col).setText(newCell.getFormattedValue());
 	}
-	
+
 	public Cell getCell(int row, int col) {
 		return data.get(row).get(col);
 	}
-	
+
 	public CellLabel getLabel(int row, int col) {
 		return labels.get(row).get(col);
 	}
 
 	public int getNumOfRows() {
 		return data.size();
+	}
+
+	public void setSelectedRange(int r1, int c1, int r2, int c2) {
+		selector.r1 = r1;
+		selector.r2 = r2;
+		selector.c1 = c1;
+		selector.c2 = c2;
+	}
+
+	public Selector getSelectedRange() {
+		return selector;
+	}
+
+	public void setClickedLabelIndices(int row, int col) {
+		clickedLabelRowIndex = row;
+		clickedLabelColumnIndex = col;
+	}
+
+	public void clearClickedLabelIndices() {
+		setClickedLabelIndices(-1, -1);
+	}
+	
+	public CellLabel getClickedLabel() {
+		return getLabel(clickedLabelRowIndex, clickedLabelColumnIndex);
+	}
+
+	public void markSelectedCells() {
+		for (int i = selector.r1; i <= selector.r2; i++) {
+			for (int j = selector.c1; j <= selector.c2; j++) {
+				getLabel(i, j).selectLabel();
+			}
+		}
+	}
+
+	public void demarkSelectedCells() {
+		for (int i = selector.r1; i <= selector.r2; i++) {
+			for (int j = selector.c1; j <= selector.c2; j++) {
+				getLabel(i, j).deselectLabel();
+			}
+		}
 	}
 
 	public String toString() {
@@ -88,10 +135,10 @@ public class Table {
 	}
 
 	public static void main(String[] args) {
-		Table t = new Table(7);
-		t.setCell(0, 4, new Cell("janko"));
-		t.setCell(3, 4, new Cell("123.2"));
-		System.out.println(t);
+//		Table t = new Table(7);
+//		t.setCell(0, 4, new Cell("janko"));
+//		t.setCell(3, 4, new Cell("123.2"));
+//		System.out.println(t);
 
 	}
 }

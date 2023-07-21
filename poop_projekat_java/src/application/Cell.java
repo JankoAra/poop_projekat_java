@@ -8,24 +8,48 @@ public class Cell {
 	public static final TextFormat TEXT_FORMAT = new TextFormat();
 	public static final DateFormat DATE_FORMAT = new DateFormat();
 	public static final NumberFormat NUMBER_FORMAT_DEFAULT = new NumberFormat(2);
-	
+
 	static int selectedCellRow = -1;
 	static int selectedCellColumn = -1;
 
-	public Cell() {
+	private int row, col;
+
+	public Cell(int r, int c) {
 		format = TEXT_FORMAT;
+		row = r;
+		col = c;
 	}
 
-	public Cell(String value, Format format) throws FormatChangeUnsuccessful {
+	public Cell(String value, Format format, int r, int c) throws FormatChangeUnsuccessful {
 		if (format.stringFitsFormat(value) == false)
 			throw new FormatChangeUnsuccessful();
 		this.value = value;
 		this.format = format;
+		row = r;
+		col = c;
 	}
 
-	public Cell(String value) {
+	public Cell(String value, int r, int c) {
 		this.value = value;
 		this.format = TEXT_FORMAT;
+		row = r;
+		col = c;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public int getCol() {
+		return col;
+	}
+
+	public void setCol(int col) {
+		this.col = col;
 	}
 
 	public void setValue(String val) {
@@ -56,7 +80,7 @@ public class Cell {
 		}
 		Cell newCell = null;
 		try {
-			newCell = new Cell(oldCell.value, newFormat);
+			newCell = new Cell(oldCell.value, newFormat, oldCell.getRow(), oldCell.getCol());
 		} catch (FormatChangeUnsuccessful e) {
 			// TODO: handle exception
 			System.out.println("Promena formata nije uspela");

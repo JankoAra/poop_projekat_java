@@ -41,7 +41,7 @@ public class Main extends Application {
 		GUI.primaryStage = primaryStage;
 		primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		GUI.addAskToSaveOnExit();
-		table = new Table(5);
+		table = new Table(10);
 
 		// Create the scene and set it on the stage
 		primaryStage.setScene(GUI.makeAndPopulateScene());

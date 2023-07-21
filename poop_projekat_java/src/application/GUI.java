@@ -37,7 +37,6 @@ public class GUI {
 	static GridPane grid;
 	static Scene scene;
 	static Stage primaryStage;
-	private static TextField activeTextField = null;
 
 	// create, populate and return the main scene; called in start method of
 	// Main(Application) class
@@ -143,38 +142,19 @@ public class GUI {
 		return scene;
 	}
 
-	private static void replaceLabelWithTextField(GridPane grid, int columnIndex, int rowIndex) {
-		if (activeTextField != null) {
-			int ri = GridPane.getRowIndex(activeTextField);
-			int ci = GridPane.getColumnIndex(activeTextField);
-			Main.getTable().setCell(ri - 1, ci - 1, new Cell(activeTextField.getText()));
-			grid.getChildren().remove(activeTextField);
-
-			Label label = new Label(activeTextField.getText());
-			label.setFont(new Font("Arial", 20));
-			label.setPadding(new Insets(5));
-			label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-			GridPane.setConstraints(label, GridPane.getColumnIndex(activeTextField),
-					GridPane.getRowIndex(activeTextField));
-			activeTextField = null;
-
-			grid.getChildren().add(label);
-		}
-		Label label = (Label) grid.getChildren().get((rowIndex * (Table.numOfCols + 1) + columnIndex + 1));
+	static void replaceLabelWithTextField(GridPane grid, int rowIndex, int columnIndex) {
+		// rowIndex i columnIndex su u gridu, u tabeli su za 1 manji
+		int tri = rowIndex - 1;
+		int tci = columnIndex - 1;
+		Label label = Main.table.getLabel(tri, tci);
 		grid.getChildren().remove(label);
 
-		TextField textField = new TextField(label.getText());
+		TextField textField = new TextField(Main.table.getCell(tri, tci).getValue());
 		textField.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		textField.setFont(new Font("Arial", 20));
 		textField.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ENTER) {
 				System.out.println("enter");
-//				Main.getTable().setCell(rowIndex - 1, columnIndex - 1, new Cell(textField.getText()));
-//				GUI.grid = GUI.populateGrid(Main.table);
-//				GUI.sp.setContent(GUI.grid);
-//				Cell.selectedCellRow = -1;
-//				Cell.selectedCellColumn = -1;
-//				activeTextField = null;
 				GUI.grid.requestFocus();
 			}
 		});
@@ -183,24 +163,68 @@ public class GUI {
 				System.out.println("Focus lost from TextField");
 				Format oldFormat = Main.table.getCell(rowIndex - 1, columnIndex - 1).getFormat();
 				try {
-					Main.getTable().setCell(rowIndex - 1, columnIndex - 1, new Cell(textField.getText(), oldFormat));
+					// promena vrednosti celije u tabeli
+					Main.getTable().setCell(rowIndex - 1, columnIndex - 1,
+							new Cell(textField.getText(), oldFormat, rowIndex - 1, columnIndex - 1));
 				} catch (FormatChangeUnsuccessful e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				GUI.grid = GUI.populateGrid(Main.table);
-				GUI.sp.setContent(GUI.grid);
-//				Cell.selectedCellRow = -1;
-//				Cell.selectedCellColumn = -1;
-				activeTextField = null;
-				GUI.grid.requestFocus();
+				// menjanje textField-a labelom
+				CellLabel lab = Main.table.getLabel(tri, tci);
+				grid.getChildren().remove(textField);
+				grid.getChildren().add(lab);
+
+				lab.requestFocus();
 			}
 		});
 		GridPane.setConstraints(textField, columnIndex, rowIndex);
 		grid.getChildren().add(rowIndex * (Table.numOfCols + 1) + columnIndex + 1, textField);
 		textField.requestFocus();
 		textField.selectAll();
-		activeTextField = textField;
+	}
+
+	static void replaceLabelWithTextFieldWithStartValue(GridPane grid, int rowIndex, int columnIndex, String sValue) {
+		// rowIndex i columnIndex su u gridu, u tabeli su za 1 manji
+		int tri = rowIndex - 1;
+		int tci = columnIndex - 1;
+		Label label = Main.table.getLabel(tri, tci);
+		grid.getChildren().remove(label);
+
+		TextField textField = new TextField(sValue);
+		textField.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		textField.setFont(new Font("Arial", 20));
+		textField.setOnKeyPressed(event -> {
+			if (event.getCode() == KeyCode.ENTER) {
+				System.out.println("enter");
+				GUI.grid.requestFocus();
+			}
+		});
+		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+			if (!newValue) {
+				System.out.println("Focus lost from TextField");
+				Format oldFormat = Main.table.getCell(rowIndex - 1, columnIndex - 1).getFormat();
+				try {
+					// promena vrednosti celije u tabeli
+					Main.getTable().setCell(rowIndex - 1, columnIndex - 1,
+							new Cell(textField.getText(), oldFormat, rowIndex - 1, columnIndex - 1));
+				} catch (FormatChangeUnsuccessful e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				// menjanje textField-a labelom
+				CellLabel lab = Main.table.getLabel(tri, tci);
+				grid.getChildren().remove(textField);
+				grid.getChildren().add(lab);
+
+				lab.requestFocus();
+			}
+		});
+		GridPane.setConstraints(textField, columnIndex, rowIndex);
+		grid.getChildren().add(rowIndex * (Table.numOfCols + 1) + columnIndex + 1, textField);
+		textField.positionCaret(textField.getText().length());
+		textField.requestFocus();
+
 	}
 
 	public static GridPane populateGrid(Table table) {
@@ -253,8 +277,8 @@ public class GUI {
 			GridPane.setConstraints(label, j + 1, 0);
 			grid.getChildren().add(label);
 		}
-		
-		//gornji levi cosak, za selektovanje cele tabele
+
+		// gornji levi cosak, za selektovanje cele tabele
 		Label firstLabel = new Label();
 		firstLabel.setMinWidth(80);
 		firstLabel.setStyle("-fx-background-color:white;-fx-border-color:black;");
