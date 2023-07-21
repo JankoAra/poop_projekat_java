@@ -1,5 +1,7 @@
 package application;
 
+import java.awt.event.ContainerEvent;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,8 +15,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
@@ -23,6 +28,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class GUI {
@@ -103,7 +109,7 @@ public class GUI {
 
 		// formatting options
 		Button formatTextBtn = new Button("Format to text");
-		formatTextBtn.setOnAction(e->{
+		formatTextBtn.setOnAction(e -> {
 			Controller.formatSelectedCells(Cell.TEXT_FORMAT);
 			repaintGrid();
 		});
@@ -113,7 +119,7 @@ public class GUI {
 		TextField decimalsField = new TextField();
 		decimalsField.setPromptText("number of decimals");
 		Button formatNumberBtn = new Button("Format to number");
-		formatNumberBtn.setOnAction(e->{
+		formatNumberBtn.setOnAction(e -> {
 			Controller.formatSelectedCells(new NumberFormat(Integer.parseInt(decimalsField.getText())));
 			repaintGrid();
 		});
@@ -121,7 +127,7 @@ public class GUI {
 		vbox3.setPadding(new Insets(5));
 		vbox3.setAlignment(Pos.CENTER);
 		Button formatDateBtn = new Button("Format to date");
-		formatDateBtn.setOnAction(e->{
+		formatDateBtn.setOnAction(e -> {
 			Controller.formatSelectedCells(Cell.DATE_FORMAT);
 			repaintGrid();
 		});
@@ -154,7 +160,7 @@ public class GUI {
 
 			grid.getChildren().add(label);
 		}
-		Label label = (Label) grid.getChildren().get((rowIndex * (Table.numOfCols + 1) + columnIndex + 1));
+		Label label = (Label) grid.getChildren().get((rowIndex * (Table.numOfCols + 1) + columnIndex +1));
 		grid.getChildren().remove(label);
 
 		TextField textField = new TextField(label.getText());
@@ -175,9 +181,9 @@ public class GUI {
 		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			if (!newValue) {
 				System.out.println("Focus lost from TextField");
-				Format oldFormat = Main.table.getCell(rowIndex-1, columnIndex-1).getFormat();
+				Format oldFormat = Main.table.getCell(rowIndex - 1, columnIndex - 1).getFormat();
 				try {
-					Main.getTable().setCell(rowIndex - 1, columnIndex - 1, new Cell(textField.getText(),oldFormat));
+					Main.getTable().setCell(rowIndex - 1, columnIndex - 1, new Cell(textField.getText(), oldFormat));
 				} catch (FormatChangeUnsuccessful e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -199,6 +205,7 @@ public class GUI {
 
 	public static GridPane populateGrid(Table table) {
 		GridPane grid = new GridPane();
+		
 
 		// Create column constraints and set them to grow always
 		for (int j = 0; j <= Table.numOfCols; j++) {
@@ -224,9 +231,9 @@ public class GUI {
 				} else if (i == 0) {
 					val = String.format("%c", 'A' + j - 1);
 					label.setAlignment(Pos.CENTER);
-					label.setOnMouseClicked(e -> {
-						System.out.println(label.getText());
-					});
+//					label.setOnMouseClicked(e -> {
+//						System.out.println(label.getText());
+//					});
 				} else if (j == 0) {
 					val = String.format("%d", i);
 				} else {
@@ -236,28 +243,121 @@ public class GUI {
 						int ci = GridPane.getColumnIndex(label);
 						// indeksi su u gridu
 						System.out.println("red " + ri + "/kolona " + ci);
-						Cell.selectedCellRow = ri-1;
-						Cell.selectedCellColumn = ci-1;
+						Cell.selectedCellRow = ri - 1;
+						Cell.selectedCellColumn = ci - 1;
 						replaceLabelWithTextField(grid, ci, ri);
 					});
 
 				}
-
+				label.setOnDragDetected(e->{
+					int ri = GridPane.getRowIndex(label);
+					int ci = GridPane.getColumnIndex(label);
+					// indeksi su u gridu
+//					System.out.println("drag detected: red " + ri + "/kolona " + ci);
+//					System.out.println(e.getSceneX() +" "+e.getSceneY());
+					Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(ri + "," + ci);
+                    dragboard.setContent(content);
+					//e.consume();
+				});
+				label.setOnDragEntered(e->{
+					int ri = GridPane.getRowIndex(label);
+					int ci = GridPane.getColumnIndex(label);
+					// indeksi su u gridu
+					//System.out.println("Drag over: red " + ri + "/kolona " + ci);
+					//System.out.println(e.getSceneX() +" "+e.getSceneY());
+					if (/*e.getGestureSource() != label &&*/ e.getDragboard().hasString()) {
+                        e.acceptTransferModes(TransferMode.ANY);
+                        Dragboard dragboard = e.getDragboard();
+                        if (dragboard.hasString()) {
+                            String draggedText = dragboard.getString();
+                            String[] parts = draggedText.split(",");
+                            if (parts.length == 2) {
+                                int intValue1 = Integer.parseInt(parts[0]);
+                                int intValue2 = Integer.parseInt(parts[1]);
+                                System.out.println("Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
+                                if(intValue1*intValue1+intValue2*intValue2<ri*ri+ci*ci) {
+                                	paintSelection(intValue1, intValue2, ri, ci);
+                                }
+                                else {
+                                	paintSelection(ri, ci, intValue1, intValue2);
+                                }
+                                // Handle the integers here
+                            }
+                        }
+                    }
+					e.consume();
+				});
+				label.setOnDragOver(e->{
+					int ri = GridPane.getRowIndex(label);
+					int ci = GridPane.getColumnIndex(label);
+					// indeksi su u gridu
+					//System.out.println("Drag over: red " + ri + "/kolona " + ci);
+					//System.out.println(e.getSceneX() +" "+e.getSceneY());
+					if (/*e.getGestureSource() != label &&*/ e.getDragboard().hasString()) {
+                        e.acceptTransferModes(TransferMode.ANY);
+//                        Dragboard dragboard = e.getDragboard();
+//                        if (dragboard.hasString()) {
+//                            String draggedText = dragboard.getString();
+//                            String[] parts = draggedText.split(",");
+//                            if (parts.length == 2) {
+//                                int intValue1 = Integer.parseInt(parts[0]);
+//                                int intValue2 = Integer.parseInt(parts[1]);
+//                                System.out.println("Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
+//                                // Handle the integers here
+//                            }
+//                        }
+                    }
+					e.consume();
+				});
+				label.setOnDragDropped(e->{
+					int ri = GridPane.getRowIndex(label);
+					int ci = GridPane.getColumnIndex(label);
+					// indeksi su u gridu
+//					System.out.println("Drag exited: red " + ri + "/kolona " + ci);
+//					System.out.println(e.getSceneX() +" "+e.getSceneY());
+					Dragboard dragboard = e.getDragboard();
+                    if (dragboard.hasString()) {
+                        String draggedText = dragboard.getString();
+                        String[] parts = draggedText.split(",");
+                        if (parts.length == 2) {
+                            int intValue1 = Integer.parseInt(parts[0]);
+                            int intValue2 = Integer.parseInt(parts[1]);
+                            System.out.println("KRAJ! Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
+                            // Handle the integers here
+                        }
+                    }
+                    e.setDropCompleted(true);
+                    e.consume();
+				});
+				label.setMinWidth(80);
 				label.setText(val);
+				label.setStyle("-fx-background-color:white;-fx-border-color:black;");
 				label.setFont(new Font("Arial", 20));
 				label.setPadding(new Insets(5));
 				label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
 				grid.getChildren().add(label);
-				grid.setGridLinesVisible(true);
 			}
+			
 		}
+
 		return grid;
 	}
 
 	public static void repaintGrid() {
 		GUI.grid = GUI.populateGrid(Main.table);
 		GUI.sp.setContent(GUI.grid);
+	}
+	
+	private static void paintSelection(int rs, int cs, int re, int ce) {
+		for(int i=rs;i<=re;i++) {
+			for(int j=cs;j<=ce;j++) {
+				Label label = (Label) grid.getChildren().get((i * (Table.numOfCols + 1) + j ));
+				label.setStyle("-fx-background-color:lightgray;-fx-border-color:black;");
+			}
+		}
 	}
 
 	public static void addAskToSaveOnExit() {

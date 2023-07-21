@@ -41,10 +41,6 @@ public class Main extends Application {
 		GUI.primaryStage = primaryStage;
 		primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		GUI.addAskToSaveOnExit();
-
-//		String currentDirectory = System.getProperty("user.dir");
-//		System.out.println("Current Directory: " + currentDirectory);
-		// table = Parser.loadCSVTable("test1.csv");
 		table = new Table(5);
 
 		// Create the scene and set it on the stage
