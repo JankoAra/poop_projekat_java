@@ -67,11 +67,6 @@ public class CellLabel extends Label {
 						System.out.println("Pocetna celija (" + parts[0] + "," + parts[1] + "), Krajnja celija (" + ri
 								+ "," + ci + ")");
 						Main.table.demarkSelectedCells();
-//						if (intValue1 * intValue1 + intValue2 * intValue2 < ri * ri + ci * ci) {
-//							Main.table.setSelectedRange(intValue1 - 1, intValue2 - 1, ri - 1, ci - 1);
-//						} else {
-//							Main.table.setSelectedRange(ri - 1, ci - 1, intValue1 - 1, intValue2 - 1);
-//						}
 						Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
 						Main.table.markSelectedCells();
 						// Handle the integers here
@@ -211,7 +206,17 @@ public class CellLabel extends Label {
 					GUI.grid.requestFocus();
 					e.consume();
 					break;
+				case DELETE:
+					Cell oldCell = Main.table.getCell(tri, tci);
+					try {
+						Cell newCell = new Cell("", oldCell.getFormat(), tri, tci);
+						Main.table.setCell(tri, tci, newCell);
+					} catch (Exception ex) {
+					}
+					e.consume();
+					break;
 				}
+
 			}
 		});
 		label.setMinWidth(80);

@@ -14,6 +14,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -37,6 +38,18 @@ public class GUI {
 	static GridPane grid;
 	static Scene scene;
 	static Stage primaryStage;
+	static TextArea logArea;
+	
+	public static void printLog(String text) {
+		if(logArea.getText().length()>1000) {
+			logArea.setText(logArea.getText().substring(250));
+		}
+		logArea.appendText(text);
+	}
+	
+	public static void printlnLog(String text) {
+		printLog(text);printlnLog("\n");
+	}
 
 	// create, populate and return the main scene; called in start method of
 	// Main(Application) class
@@ -47,6 +60,15 @@ public class GUI {
 		// grid in a scroll pane
 		sp = new ScrollPane(grid = GUI.populateGrid(Main.table));
 		rootBorderPane.setCenter(sp);
+		
+		// log area on the right
+		logArea = new TextArea();
+		logArea.setFont(new Font("Arial", 15));
+		logArea.setWrapText(true);
+		logArea.setEditable(false);
+		ScrollPane eastSp = new ScrollPane(logArea);
+		eastSp.setFitToWidth(true);
+		rootBorderPane.setBottom(eastSp);
 
 		// make the main scene
 		scene = new Scene(rootBorderPane, 1000, 800);

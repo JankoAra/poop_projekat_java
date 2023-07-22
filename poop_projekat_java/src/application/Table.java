@@ -66,6 +66,23 @@ public class Table {
 		selector.r2 = r2;
 		selector.c1 = c1;
 		selector.c2 = c2;
+		
+		LinkedList<Cell> newSelectedCells = new LinkedList<>();
+		GUI.printLog("\n");
+//		if(r1<0||r2<0||c1<0||c2<0) {
+//			GUI.printlnLog("NISTA");
+//			selectedCells = newSelectedCells;
+//			return;
+//		}
+		for (int i = selector.r1; i <= selector.r2; i++) {
+			for (int j = selector.c1; j <= selector.c2; j++) {
+				newSelectedCells.add(getCell(i, j));
+				char chr = (char) (j+65);
+				String s = chr + "" + (i+1)+",";
+				GUI.printLog(s);
+			}
+		}
+		selectedCells = newSelectedCells;
 	}
 
 	public Selector getSelectedRange() {
@@ -86,18 +103,24 @@ public class Table {
 	}
 
 	public void markSelectedCells() {
-		for (int i = selector.r1; i <= selector.r2; i++) {
-			for (int j = selector.c1; j <= selector.c2; j++) {
-				getLabel(i, j).selectLabel();
-			}
+//		for (int i = selector.r1; i <= selector.r2; i++) {
+//			for (int j = selector.c1; j <= selector.c2; j++) {
+//				getLabel(i, j).selectLabel();
+//			}
+//		}
+		for(Cell c:selectedCells) {
+			getLabel(c.getRow(), c.getCol()).selectLabel();
 		}
 	}
 
 	public void demarkSelectedCells() {
-		for (int i = selector.r1; i <= selector.r2; i++) {
-			for (int j = selector.c1; j <= selector.c2; j++) {
-				getLabel(i, j).deselectLabel();
-			}
+//		for (int i = selector.r1; i <= selector.r2; i++) {
+//			for (int j = selector.c1; j <= selector.c2; j++) {
+//				getLabel(i, j).deselectLabel();
+//			}
+//		}
+		for(Cell c:selectedCells) {
+			getLabel(c.getRow(), c.getCol()).deselectLabel();
 		}
 	}
 
@@ -134,11 +157,4 @@ public class Table {
 		return sb.toString();
 	}
 
-	public static void main(String[] args) {
-//		Table t = new Table(7);
-//		t.setCell(0, 4, new Cell("janko"));
-//		t.setCell(3, 4, new Cell("123.2"));
-//		System.out.println(t);
-
-	}
 }

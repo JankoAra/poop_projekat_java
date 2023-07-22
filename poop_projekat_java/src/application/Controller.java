@@ -65,10 +65,9 @@ public class Controller {
 	
 	public static void formatSelectedCells(Format format) {
 		System.out.println("Changing format");
-		if(Cell.selectedCellColumn<0 || Cell.selectedCellRow<0) {
-			System.out.println("Nijedna celija nije selektovana");
-			return;
+		for(Cell c:Main.table.selectedCells) {
+			Cell.convertCellToFormat(c.getRow(), c.getCol(), format);
 		}
-		Cell.convertCellToFormat(Cell.selectedCellRow, Cell.selectedCellColumn, format);
+		
 	}
 }
