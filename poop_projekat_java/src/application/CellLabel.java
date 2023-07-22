@@ -3,7 +3,6 @@ package application;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView.EditEvent;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -75,45 +74,34 @@ public class CellLabel extends Label {
 			}
 			e.consume();
 		});
-		label.setOnDragOver(e -> {
-			// indeksi u gridu, u tabeli su za 1 manji
-			int ri = GridPane.getRowIndex(label);
-			int ci = GridPane.getColumnIndex(label);
-			if (/* e.getGestureSource() != label && */ e.getDragboard().hasString()) {
-				e.acceptTransferModes(TransferMode.ANY);
-//                Dragboard dragboard = e.getDragboard();
-//                if (dragboard.hasString()) {
-//                    String draggedText = dragboard.getString();
-//                    String[] parts = draggedText.split(",");
-//                    if (parts.length == 2) {
-//                        int intValue1 = Integer.parseInt(parts[0]);
-//                        int intValue2 = Integer.parseInt(parts[1]);
-//                        System.out.println("Pocetna celija ("+parts[0]+","+parts[1]+"), Krajnja celija ("+ri+","+ci+")");
-//                        // Handle the integers here
-//                    }
-//                }
-			}
-			e.consume();
-		});
-		label.setOnDragDropped(e -> {
-			// indeksi u gridu, u tabeli su za 1 manji
-			int ri = GridPane.getRowIndex(label);
-			int ci = GridPane.getColumnIndex(label);
-			Dragboard dragboard = e.getDragboard();
-			if (dragboard.hasString()) {
-				String draggedText = dragboard.getString();
-				String[] parts = draggedText.split(",");
-				if (parts.length == 2) {
-					int intValue1 = Integer.parseInt(parts[0]);
-					int intValue2 = Integer.parseInt(parts[1]);
-					System.out.println("KRAJ! Pocetna celija (" + parts[0] + "," + parts[1] + "), Krajnja celija (" + ri
-							+ "," + ci + ")");
-					// Handle the integers here
-				}
-			}
-			e.setDropCompleted(true);
-			e.consume();
-		});
+//		label.setOnDragOver(e -> {
+//			// indeksi u gridu, u tabeli su za 1 manji
+//			int ri = GridPane.getRowIndex(label);
+//			int ci = GridPane.getColumnIndex(label);
+//			if (/* e.getGestureSource() != label && */ e.getDragboard().hasString()) {
+//				e.acceptTransferModes(TransferMode.ANY);
+//			}
+//			e.consume();
+//		});
+//		label.setOnDragDropped(e -> {
+//			// indeksi u gridu, u tabeli su za 1 manji
+//			int ri = GridPane.getRowIndex(label);
+//			int ci = GridPane.getColumnIndex(label);
+//			Dragboard dragboard = e.getDragboard();
+//			if (dragboard.hasString()) {
+//				String draggedText = dragboard.getString();
+//				String[] parts = draggedText.split(",");
+//				if (parts.length == 2) {
+//					int intValue1 = Integer.parseInt(parts[0]);
+//					int intValue2 = Integer.parseInt(parts[1]);
+//					System.out.println("KRAJ! Pocetna celija (" + parts[0] + "," + parts[1] + "), Krajnja celija (" + ri
+//							+ "," + ci + ")");
+//					// Handle the integers here
+//				}
+//			}
+//			e.setDropCompleted(true);
+//			e.consume();
+//		});
 		label.setOnMouseClicked(e -> {
 			// indeksi u gridu, u tabeli su za 1 manji
 			int ri = GridPane.getRowIndex(label);
