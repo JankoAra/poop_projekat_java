@@ -11,7 +11,7 @@ public class Table {
 	LinkedList<Cell> selectedCells = new LinkedList<>();
 	int clickedLabelRowIndex = -1, clickedLabelColumnIndex = -1;
 	
-	String resolvedFormulasCsvString;
+	static String resolvedFormulasCsvString = "";
 
 	class Selector {
 		public int r1, r2, c1, c2;
@@ -49,6 +49,7 @@ public class Table {
 		}
 		data.get(row).set(col, newCell);
 		resolvedFormulasCsvString = Main.table.resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
+		System.out.println(resolvedFormulasCsvString);
 		labels.get(row).get(col).setText(newCell.getFormattedValue());
 	}
 

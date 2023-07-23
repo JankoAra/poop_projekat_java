@@ -242,7 +242,13 @@ public class GUI {
 			}
 		});
 		GridPane.setConstraints(textField, columnIndex, rowIndex);
-		grid.getChildren().add(rowIndex * (Table.numOfCols + 1) + columnIndex + 1, textField);
+		try {
+//			grid.getChildren().add(rowIndex * (Table.numOfCols + 1) + columnIndex + 1, textField);
+			grid.getChildren().add(textField);
+		}
+		catch(Exception ex) {
+			System.out.println("greska pri dodavanju fielda");
+		}
 		textField.positionCaret(textField.getText().length());
 		textField.requestFocus();
 

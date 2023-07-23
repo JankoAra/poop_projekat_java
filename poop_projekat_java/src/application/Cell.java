@@ -9,8 +9,7 @@ public class Cell {
 	public static final DateFormat DATE_FORMAT = new DateFormat();
 	public static final NumberFormat NUMBER_FORMAT_DEFAULT = new NumberFormat(2);
 
-	static int selectedCellRow = -1;
-	static int selectedCellColumn = -1;
+
 
 	private int row, col;
 
