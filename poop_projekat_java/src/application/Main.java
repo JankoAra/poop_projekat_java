@@ -45,6 +45,7 @@ public class Main extends Application {
 
 		// Create the scene and set it on the stage
 		primaryStage.setScene(GUI.makeAndPopulateScene());
+		System.out.println(table.resolveTableFormulas("jani"));
 		primaryStage.show();
 	}
 

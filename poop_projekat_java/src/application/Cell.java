@@ -82,7 +82,6 @@ public class Cell {
 		try {
 			newCell = new Cell(oldCell.value, newFormat, oldCell.getRow(), oldCell.getCol());
 		} catch (FormatChangeUnsuccessful e) {
-			// TODO: handle exception
 			System.out.println("Promena formata nije uspela");
 			return;
 		}

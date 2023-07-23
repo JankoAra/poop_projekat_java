@@ -10,6 +10,8 @@ public class Table {
 
 	LinkedList<Cell> selectedCells = new LinkedList<>();
 	int clickedLabelRowIndex = -1, clickedLabelColumnIndex = -1;
+	
+	String resolvedFormulasCsvString;
 
 	class Selector {
 		public int r1, r2, c1, c2;
@@ -46,6 +48,7 @@ public class Table {
 			return;
 		}
 		data.get(row).set(col, newCell);
+		resolvedFormulasCsvString = Main.table.resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
 		labels.get(row).get(col).setText(newCell.getFormattedValue());
 	}
 
@@ -156,5 +159,11 @@ public class Table {
 
 		return sb.toString();
 	}
+	
+	static {
+		System.loadLibrary("POOP_domaci2_jni");
+	}
+	
+	public native String resolveTableFormulas(String csvTable); 
 
 }

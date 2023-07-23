@@ -135,7 +135,14 @@ public class GUI {
 		decimalsField.setPromptText("number of decimals");
 		Button formatNumberBtn = new Button("Format to number");
 		formatNumberBtn.setOnAction(e -> {
-			Controller.formatSelectedCells(new NumberFormat(Integer.parseInt(decimalsField.getText())));
+			int decimals;
+			try {
+				decimals = Integer.parseInt(decimalsField.getText());
+			}
+			catch (NumberFormatException ex) {
+				decimals = 2;
+			}
+			Controller.formatSelectedCells(new NumberFormat(decimals));
 			repaintGrid();
 		});
 		VBox vbox3 = new VBox(decimalsField, formatNumberBtn);

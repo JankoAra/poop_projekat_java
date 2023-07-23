@@ -34,6 +34,7 @@ public class ColumnLabel extends Label {
 		label.setOnMouseClicked(e -> {
 			int ci = GridPane.getColumnIndex(label);
 			int tci = ci - 1;
+			Main.table.clearClickedLabelIndices();
 			Main.table.demarkSelectedCells();
 			Main.table.setSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
 			Main.table.markSelectedCells();
