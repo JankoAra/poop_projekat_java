@@ -68,7 +68,11 @@ public class Cell {
 	}
 
 	public String getFormattedValue() {
-		return format.formattedValue(value);
+		String inputVal = value;
+		if(format.getDescription().equals("N")) {
+			inputVal = Main.table.calculatedLabels.get(row).get(col);
+		}
+		return format.formattedValue(inputVal);
 	}
 
 	public static void convertCellToFormat(int rowIndex, int colIndex, Format newFormat) {

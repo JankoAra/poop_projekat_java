@@ -31,7 +31,7 @@ public class NumberFormat implements Format {
 
 	@Override
 	public boolean stringFitsFormat(String string) {
-		if (string.equals("") || string.charAt(0)=='=')
+		if (string.equals("") || string.charAt(0) == '=')
 			return true;
 		String numberPattern = "[-+]?(\\d+\\.?\\d*|\\.\\d+)";
 		Pattern pattern = Pattern.compile(numberPattern);
@@ -42,18 +42,12 @@ public class NumberFormat implements Format {
 	public String formattedValue(String value) {
 		if (value.equals(""))
 			return "";
-		if(value.charAt(0)!='=') {
-			//samo broj
-			double doubleValue = Double.parseDouble(value);
-			String pattern = "%." + decimalsToShow + "f";
-			return String.format(Locale.US, pattern, doubleValue);
+		if(value.equals("ERROR")) {
+			return value;
 		}
-		//pocinje sa =
-		
-		
-		//formula
-		return "formula";
-		
+		double doubleValue = Double.parseDouble(value);
+		String pattern = "%." + decimalsToShow + "f";
+		return String.format(Locale.US, pattern, doubleValue);
 	}
 
 	@Override

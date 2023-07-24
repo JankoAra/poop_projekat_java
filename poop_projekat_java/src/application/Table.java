@@ -10,8 +10,9 @@ public class Table {
 
 	LinkedList<Cell> selectedCells = new LinkedList<>();
 	int clickedLabelRowIndex = -1, clickedLabelColumnIndex = -1;
-	
+
 	static String resolvedFormulasCsvString = "";
+	ArrayList<ArrayList<String>> calculatedLabels = new ArrayList<ArrayList<String>>();
 
 	class Selector {
 		public int r1, r2, c1, c2;
@@ -49,8 +50,18 @@ public class Table {
 		}
 		data.get(row).set(col, newCell);
 		resolvedFormulasCsvString = Main.table.resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
-		System.out.println(resolvedFormulasCsvString);
-		labels.get(row).get(col).setText(newCell.getFormattedValue());
+		//System.out.println(resolvedFormulasCsvString);
+		calculatedLabels = calculateLabels();
+		//labels.get(row).get(col).setText(newCell.getFormattedValue());
+		repaintLabels();
+	}
+	
+	public void repaintLabels() {
+		for(int i=0;i<getNumOfRows();i++) {
+			for(int j=0;j<Table.numOfCols;j++) {
+				labels.get(i).get(j).setText(getCell(i, j).getFormattedValue());
+			}
+		}
 	}
 
 	public Cell getCell(int row, int col) {
@@ -70,7 +81,7 @@ public class Table {
 		selector.r2 = r2;
 		selector.c1 = c1;
 		selector.c2 = c2;
-		
+
 		LinkedList<Cell> newSelectedCells = new LinkedList<>();
 		GUI.printLog("\n");
 //		if(r1<0||r2<0||c1<0||c2<0) {
@@ -81,8 +92,8 @@ public class Table {
 		for (int i = selector.r1; i <= selector.r2; i++) {
 			for (int j = selector.c1; j <= selector.c2; j++) {
 				newSelectedCells.add(getCell(i, j));
-				char chr = (char) (j+65);
-				String s = chr + "" + (i+1)+",";
+				char chr = (char) (j + 65);
+				String s = chr + "" + (i + 1) + ",";
 				GUI.printLog(s);
 			}
 		}
@@ -101,7 +112,7 @@ public class Table {
 	public void clearClickedLabelIndices() {
 		setClickedLabelIndices(-1, -1);
 	}
-	
+
 	public CellLabel getClickedLabel() {
 		return getLabel(clickedLabelRowIndex, clickedLabelColumnIndex);
 	}
@@ -112,7 +123,7 @@ public class Table {
 //				getLabel(i, j).selectLabel();
 //			}
 //		}
-		for(Cell c:selectedCells) {
+		for (Cell c : selectedCells) {
 			getLabel(c.getRow(), c.getCol()).selectLabel();
 		}
 	}
@@ -123,7 +134,7 @@ public class Table {
 //				getLabel(i, j).deselectLabel();
 //			}
 //		}
-		for(Cell c:selectedCells) {
+		for (Cell c : selectedCells) {
 			getLabel(c.getRow(), c.getCol()).deselectLabel();
 		}
 	}
@@ -160,11 +171,31 @@ public class Table {
 
 		return sb.toString();
 	}
-	
+
 	static {
 		System.loadLibrary("POOP_domaci2_jni");
 	}
-	
-	public native String resolveTableFormulas(String csvTable); 
+
+	public native String resolveTableFormulas(String csvTable);
+
+	ArrayList<ArrayList<String>> calculateLabels() {
+		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+		int row = 0;
+		int col = 0;
+		String csv = resolvedFormulasCsvString;
+		while(!csv.isEmpty()) {
+			int index = csv.indexOf('\n');
+			String line = csv.substring(0,index+1);
+			csv = csv.substring(index+1);
+			
+			String[] cells = line.split(",");
+			ArrayList<String> rowList = new ArrayList();
+			for(String cell:cells) {
+				rowList.add(cell);
+			}
+			list.add(rowList);
+		}
+		return list;
+	}
 
 }
