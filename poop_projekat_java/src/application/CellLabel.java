@@ -119,6 +119,7 @@ public class CellLabel extends Label {
 				// drugi klik na labelu
 				GUI.replaceLabelWithTextField(GUI.grid, ri, ci);
 			}
+
 			e.consume();
 		});
 		label.setOnKeyPressed(e -> {

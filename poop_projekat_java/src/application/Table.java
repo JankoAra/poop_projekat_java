@@ -1,5 +1,8 @@
 package application;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -50,15 +53,15 @@ public class Table {
 		}
 		data.get(row).set(col, newCell);
 		resolvedFormulasCsvString = Main.table.resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
-		//System.out.println(resolvedFormulasCsvString);
-		calculatedLabels = calculateLabels();
-		//labels.get(row).get(col).setText(newCell.getFormattedValue());
+		System.out.println("|" + resolvedFormulasCsvString + "|");
+		calculatedLabels = calculateLabels2();
+		// labels.get(row).get(col).setText(newCell.getFormattedValue());
 		repaintLabels();
 	}
-	
+
 	public void repaintLabels() {
-		for(int i=0;i<getNumOfRows();i++) {
-			for(int j=0;j<Table.numOfCols;j++) {
+		for (int i = 0; i < getNumOfRows(); i++) {
+			for (int j = 0; j < Table.numOfCols; j++) {
 				labels.get(i).get(j).setText(getCell(i, j).getFormattedValue());
 			}
 		}
@@ -183,19 +186,38 @@ public class Table {
 		int row = 0;
 		int col = 0;
 		String csv = resolvedFormulasCsvString;
-		while(!csv.isEmpty()) {
+		while (!csv.isEmpty()) {
 			int index = csv.indexOf('\n');
-			String line = csv.substring(0,index+1);
-			csv = csv.substring(index+1);
-			
+			String line = csv.substring(0, index + 1);
+			csv = csv.substring(index + 1);
+
 			String[] cells = line.split(",");
 			ArrayList<String> rowList = new ArrayList();
-			for(String cell:cells) {
+			for (String cell : cells) {
 				rowList.add(cell);
 			}
 			list.add(rowList);
 		}
+		// System.out.println(list);
 		return list;
 	}
 
+	ArrayList<ArrayList<String>> calculateLabels2() {
+		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+		try {
+			BufferedReader reader = new BufferedReader(new StringReader(resolvedFormulasCsvString));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] cells = line.split(",", -1);
+				ArrayList<String> row = new ArrayList<String>();
+				for (String s : cells) {
+					row.add(s);
+				}
+				list.add(row);
+			}
+		} catch (IOException ex) {
+			System.out.println("greska");
+		}
+		return list;
+	}
 }

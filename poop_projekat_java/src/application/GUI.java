@@ -33,16 +33,17 @@ public class GUI {
 	static Scene scene;
 	static Stage primaryStage;
 	static TextArea logArea;
-	
+
 	public static void printLog(String text) {
-		if(logArea.getText().length()>1000) {
+		if (logArea.getText().length() > 1000) {
 			logArea.setText(logArea.getText().substring(250));
 		}
 		logArea.appendText(text);
 	}
-	
+
 	public static void printlnLog(String text) {
-		printLog(text);printlnLog("\n");
+		printLog(text);
+		printlnLog("\n");
 	}
 
 	// create, populate and return the main scene; called in start method of
@@ -54,7 +55,7 @@ public class GUI {
 		// grid in a scroll pane
 		sp = new ScrollPane(grid = GUI.populateGrid(Main.table));
 		rootBorderPane.setCenter(sp);
-		
+
 		// log area on the right
 		logArea = new TextArea();
 		logArea.setFont(new Font("Arial", 15));
@@ -138,8 +139,7 @@ public class GUI {
 			int decimals;
 			try {
 				decimals = Integer.parseInt(decimalsField.getText());
-			}
-			catch (NumberFormatException ex) {
+			} catch (NumberFormatException ex) {
 				decimals = 2;
 			}
 			Controller.formatSelectedCells(new NumberFormat(decimals));
@@ -201,7 +201,7 @@ public class GUI {
 			}
 		});
 		GridPane.setConstraints(textField, columnIndex, rowIndex);
-		grid.getChildren().add(rowIndex * (Table.numOfCols + 1) + columnIndex + 1, textField);
+		grid.getChildren().add(textField);
 		textField.requestFocus();
 		textField.selectAll();
 	}
@@ -245,8 +245,7 @@ public class GUI {
 		try {
 //			grid.getChildren().add(rowIndex * (Table.numOfCols + 1) + columnIndex + 1, textField);
 			grid.getChildren().add(textField);
-		}
-		catch(Exception ex) {
+		} catch (Exception ex) {
 			System.out.println("greska pri dodavanju fielda");
 		}
 		textField.positionCaret(textField.getText().length());
@@ -301,9 +300,9 @@ public class GUI {
 		firstLabel.setStyle("-fx-background-color:white;-fx-border-color:black;");
 		firstLabel.setPadding(new Insets(5));
 		firstLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		firstLabel.setOnMouseClicked(e->{
+		firstLabel.setOnMouseClicked(e -> {
 			Main.table.demarkSelectedCells();
-			Main.table.setSelectedRange(0, 0, Main.table.getNumOfRows()-1, Table.numOfCols-1);
+			Main.table.setSelectedRange(0, 0, Main.table.getNumOfRows() - 1, Table.numOfCols - 1);
 			Main.table.markSelectedCells();
 		});
 		GridPane.setConstraints(firstLabel, 0, 0);

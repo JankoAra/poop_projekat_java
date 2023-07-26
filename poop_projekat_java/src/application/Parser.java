@@ -44,7 +44,9 @@ public class Parser {
 				sb.append(j == Table.numOfCols - 1 ? "\n" : ",");
 			}
 		}
-		return sb.toString();
+		String csv = sb.toString();
+		//System.out.println("CSV tabele iz jave:\n" + csv);
+		return csv;
 	}
 
 	public static Table convertCSVToTable(File file) {
@@ -63,7 +65,7 @@ public class Parser {
 			while ((line = buffer.readLine()) != null) {
 				if (rowNum != 0)
 					table.addRow();
-				String row[] = line.split(",");
+				String row[] = line.split(",", -1);
 				int colNum = 0;
 				for (String value : row) {
 					if (colNum >= Table.numOfCols)

@@ -45,7 +45,14 @@ public class NumberFormat implements Format {
 		if(value.equals("ERROR")) {
 			return value;
 		}
-		double doubleValue = Double.parseDouble(value);
+		double doubleValue = 0;
+		try {
+			doubleValue = Double.parseDouble(value);
+		}
+		catch(NumberFormatException ex) {
+			System.out.println("greska u konverziji");
+			System.out.println("|"+value+"|");
+		}
 		String pattern = "%." + decimalsToShow + "f";
 		return String.format(Locale.US, pattern, doubleValue);
 	}
