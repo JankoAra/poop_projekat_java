@@ -3,9 +3,7 @@ package application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -27,12 +25,24 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class GUI {
+	// Main stage(window)
+	static Stage stage;
+
+	// Components of GUI when it's in editing mode (a table is active)
+	static Scene runningScene;
 	static BorderPane rootBorderPane;
-	static ScrollPane sp;
+	static ScrollPane gridScrollPane;
 	static GridPane grid;
-	static Scene scene;
-	static Stage primaryStage;
 	static TextArea logArea;
+
+	// Components of GUI when the program starts
+	// (choosing whether to open a table or to create new one)
+	static Scene startScene;
+
+	static {
+		GUI.startScene = makeStartScene();
+		GUI.runningScene = makeRunningScene();
+	}
 
 	public static void printLog(String text) {
 		if (logArea.getText().length() > 1000) {
@@ -43,43 +53,42 @@ public class GUI {
 
 	public static void printlnLog(String text) {
 		printLog(text);
-		printlnLog("\n");
+		printLog("\n");
 	}
 
-	// create, populate and return the main scene; called in start method of
-	// Main(Application) class
-	public static Scene makeAndPopulateScene() {
-		// create the main layout
+	// Populate and return the running scene
+	private static Scene makeRunningScene() {
+		// Main layout manager
 		rootBorderPane = new BorderPane();
 
-		// grid in a scroll pane
-		sp = new ScrollPane(grid = GUI.populateGrid(Main.table));
-		rootBorderPane.setCenter(sp);
+		// Table grid in a scroll pane
+		gridScrollPane = new ScrollPane(grid = GUI.populateGrid(Main.table));
+		rootBorderPane.setCenter(gridScrollPane);
 
-		// log area on the right
+		// log area on the bottom
 		logArea = new TextArea();
 		logArea.setFont(new Font("Arial", 15));
 		logArea.setWrapText(true);
 		logArea.setEditable(false);
-		ScrollPane eastSp = new ScrollPane(logArea);
-		eastSp.setFitToWidth(true);
-		rootBorderPane.setBottom(eastSp);
+		ScrollPane southSp = new ScrollPane(logArea);
+		southSp.setFitToWidth(true);
+		rootBorderPane.setBottom(southSp);
 
-		// make the main scene
-		scene = new Scene(rootBorderPane, 1000, 800);
+		Scene scene = new Scene(rootBorderPane, 1000, 800);
 
 		// Create menu bar
 		MenuBar menuBar = new MenuBar();
 		Menu fileMenu = new Menu("File");
 		MenuItem newMenuItem = new MenuItem("New Table");
+		newMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
 		newMenuItem.setOnAction(e -> {
 			System.out.println("nova");
 		});
 		MenuItem openMenuItem = new MenuItem("Open Table");
+		openMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
 		openMenuItem.setOnAction(e -> {
-			Controller.openTable();
-			GUI.grid = populateGrid(Main.table);
-			GUI.sp.setContent(GUI.grid);
+			Main.table = Controller.openTable();
+			rebuildGrid();
 		});
 		MenuItem saveAsMenuItem = new MenuItem("Save As");
 		saveAsMenuItem.setOnAction(e -> Controller.saveTable(Main.table, true));
@@ -91,7 +100,7 @@ public class GUI {
 		fileMenu.getItems().addAll(newMenuItem, openMenuItem, new SeparatorMenuItem(), saveAsMenuItem, saveMenuItem);
 		menuBar.getMenus().add(fileMenu);
 
-		// pane for menubar and options
+		// Pane for menubar and table options
 		BorderPane northPane = new BorderPane();
 		northPane.setTop(menuBar);
 
@@ -106,10 +115,10 @@ public class GUI {
 		Button addRowBtn = new Button("Add row");
 		addRowBtn.setOnAction(e -> {
 			Main.table.addRow();
-			GUI.grid = GUI.populateGrid(Main.table);
-			GUI.sp.setContent(GUI.grid);
+			rebuildGrid();
 		});
 
+		// Unused
 		TextField rowIndexField = new TextField();
 		rowIndexField.setPromptText("row");
 		TextField columnIndexField = new TextField();
@@ -123,15 +132,16 @@ public class GUI {
 		vbox1.setPadding(new Insets(5));
 		vbox2.setPadding(new Insets(5));
 
-		// formatting options
+		// Formatting options
 		Button formatTextBtn = new Button("Format to text");
 		formatTextBtn.setOnAction(e -> {
 			Controller.formatSelectedCells(Cell.TEXT_FORMAT);
-			repaintGrid();
+			rebuildGrid();
 		});
 		VBox vbox4 = new VBox(formatTextBtn);
 		vbox4.setPadding(new Insets(5));
 		vbox4.setAlignment(Pos.CENTER);
+
 		TextField decimalsField = new TextField();
 		decimalsField.setPromptText("number of decimals");
 		Button formatNumberBtn = new Button("Format to number");
@@ -143,15 +153,16 @@ public class GUI {
 				decimals = 2;
 			}
 			Controller.formatSelectedCells(new NumberFormat(decimals));
-			repaintGrid();
+			rebuildGrid();
 		});
 		VBox vbox3 = new VBox(decimalsField, formatNumberBtn);
 		vbox3.setPadding(new Insets(5));
 		vbox3.setAlignment(Pos.CENTER);
+
 		Button formatDateBtn = new Button("Format to date");
 		formatDateBtn.setOnAction(e -> {
 			Controller.formatSelectedCells(Cell.DATE_FORMAT);
-			repaintGrid();
+			rebuildGrid();
 		});
 		VBox vbox5 = new VBox(formatDateBtn);
 		vbox5.setPadding(new Insets(5));
@@ -159,9 +170,15 @@ public class GUI {
 
 		northMenu.getChildren().addAll(vbox1, vbox2, vbox4, vbox3, vbox5);
 
-		// populate layout and make scene
 		rootBorderPane.setTop(northPane);
 
+		return scene;
+	}
+	
+	// Populate and return start scene
+	private static Scene makeStartScene() {
+		BorderPane bp = new BorderPane();
+		Scene scene = new Scene(bp,400,400);
 		return scene;
 	}
 
@@ -253,6 +270,9 @@ public class GUI {
 
 	}
 
+	// Fills a GridPane with labels displaying table content and
+	// labels for numerating rows and columns;
+	// Returns newly made grid
 	public static GridPane populateGrid(Table table) {
 		GridPane grid = new GridPane();
 
@@ -274,7 +294,7 @@ public class GUI {
 		// indeksiranje)
 		for (int i = 0; i < table.getNumOfRows(); i++) {
 			for (int j = 0; j < Table.numOfCols; j++) {
-				Label label = table.getLabel(i, j);
+				CellLabel label = table.getLabel(i, j);
 				GridPane.setConstraints(label, j + 1, i + 1);
 				grid.getChildren().add(label);
 			}
@@ -311,47 +331,11 @@ public class GUI {
 		return grid;
 	}
 
-	public static void repaintGrid() {
+	// Populates a new GridPane with labels and sets it as main grid
+	public static void rebuildGrid() {
 		GUI.grid = GUI.populateGrid(Main.table);
-		GUI.sp.setContent(GUI.grid);
+		GUI.gridScrollPane.setContent(GUI.grid);
 	}
 
-	public static void addAskToSaveOnExit() {
-		Stage primaryStage = GUI.primaryStage;
-		primaryStage.setOnCloseRequest(event -> {
-			event.consume(); // Consume the event to prevent the application from closing immediately
-
-			// Show the custom Alert dialog
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.getDialogPane().getScene().getWindow().setOnCloseRequest(e -> {
-				alert.close();
-			});
-			alert.setTitle("Confirmation");
-			alert.setHeaderText("Do you want to save the table before exiting?");
-			alert.setContentText("Choose your option.");
-
-			ButtonType saveButton = new ButtonType("Save");
-			ButtonType discardButton = new ButtonType("Discard");
-			ButtonType cancelButton = new ButtonType("Cancel");
-
-			alert.getButtonTypes().setAll(saveButton, discardButton, cancelButton);
-
-			// Show the dialog and wait for the user's response
-			alert.showAndWait().ifPresent(response -> {
-				if (response == saveButton) {
-					// Save the table here (call a method to handle the save operation)
-					// For example: saveTable();
-					Controller.saveTable(Main.table, false);
-					System.out.println("Table saved!");
-					primaryStage.close(); // Close the application after saving
-				} else if (response == discardButton) {
-					// No need to save, just exit the application
-					primaryStage.close();
-				} else {
-					// User clicked Cancel, do nothing (let the application continue running)
-				}
-			});
-
-		});
-	}
+	
 }

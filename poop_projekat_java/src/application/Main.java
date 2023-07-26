@@ -1,13 +1,14 @@
 package application;
 
 import javafx.application.Application;
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
-	static Table table;
+	static Table table = new Table();
 
 	public static Table getTable() {
 		return table;
@@ -17,38 +18,59 @@ public class Main extends Application {
 		Main.table = table;
 	}
 
-	// indeksiranje pocinje od 0
-	public Node getElementOfGrid(GridPane grid, int rowIndex, int colIndex) {
-		rowIndex++;
-		colIndex++;
-		int index = rowIndex * Table.numOfCols + colIndex;
-		if (index < 0 || index > grid.getChildren().size())
-			return null;
-		return grid.getChildren().get(index);
-	}
-
-	public void replaceElementInGrid(GridPane grid, Node newElem, int rowIndex, int colIndex) {
-		rowIndex++;
-		colIndex++;
-		int index = rowIndex * Table.numOfCols + colIndex;
-		if (index < 0 || index > grid.getChildren().size())
-			return;
-		grid.getChildren().set(index, newElem);
-	}
-
 	@Override
-	public void start(Stage primaryStage) {
-		GUI.primaryStage = primaryStage;
-		primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
-		GUI.addAskToSaveOnExit();
-		table = new Table(3);
+	public void start(Stage stage) {
+		stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 
-		// Create the scene and set it on the stage
-		primaryStage.setScene(GUI.makeAndPopulateScene());
-		//System.out.println(table.resolveTableFormulas("jani"));
-		//table.setCell(0, 0, new Cell("Janko pise u tabeli",0,0));
-		//System.out.println(Table.resolvedFormulasCsvString);
-		primaryStage.show();
+		// Pocetno pravljenje GUI-a
+		// TODO prvo ucitati startScene pa onda promeniti na runningScene
+		GUI.stage = stage;
+		Scene scene = GUI.runningScene;
+		addAskToSaveOnExit(stage);
+
+		stage.setScene(scene);
+		stage.show();
+	}
+
+	private static void addAskToSaveOnExit(Stage stage) {
+		stage.setOnCloseRequest(event -> {
+			if (stage.getScene() != GUI.runningScene) {
+				return;
+			}
+
+			event.consume();// Consume the event to prevent the application from closing immediately
+			// Show the custom Alert dialog
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.getDialogPane().getScene().getWindow().setOnCloseRequest(e -> {
+				alert.close();
+			});
+			alert.setTitle("Confirmation");
+			alert.setHeaderText("Do you want to save the table before exiting?");
+			alert.setContentText("Choose your option.");
+
+			ButtonType saveButton = new ButtonType("Save");
+			ButtonType discardButton = new ButtonType("Discard");
+			ButtonType cancelButton = new ButtonType("Cancel");
+
+			alert.getButtonTypes().setAll(saveButton, discardButton, cancelButton);
+
+			// Show the dialog and wait for the user's response
+			alert.showAndWait().ifPresent(response -> {
+				if (response == saveButton) {
+					// Save the table here (call a method to handle the save operation)
+					// For example: saveTable();
+					Controller.saveTable(Main.table, false);
+					System.out.println("Table saved!");
+					stage.close(); // Close the application after saving
+				} else if (response == discardButton) {
+					// No need to save, just exit the application
+					stage.close();
+				} else {
+					// User clicked Cancel, do nothing (let the application continue running)
+				}
+			});
+
+		});
 	}
 
 	public static void main(String[] args) {

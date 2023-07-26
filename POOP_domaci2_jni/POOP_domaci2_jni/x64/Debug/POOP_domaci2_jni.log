@@ -1,0 +1,5 @@
+﻿  TableJNI.cpp
+C:\Users\janko\git\poop_projekat_java\POOP_domaci2_jni\POOP_domaci2_jni\TableJNI.h(17,1): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\janko\git\poop_projekat_java\POOP_domaci2_jni\POOP_domaci2_jni\TableJNI.h(20,1): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+     Creating library C:\Users\janko\git\poop_projekat_java\POOP_domaci2_jni\x64\Debug\POOP_domaci2_jni.lib and object C:\Users\janko\git\poop_projekat_java\POOP_domaci2_jni\x64\Debug\POOP_domaci2_jni.exp
+  POOP_domaci2_jni.vcxproj -> C:\Users\janko\git\poop_projekat_java\POOP_domaci2_jni\x64\Debug\POOP_domaci2_jni.dll

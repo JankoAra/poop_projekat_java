@@ -56,7 +56,7 @@ public class Parser {
 		}
 		Table table = new Table();
 		Parser.currentFile = file;
-		GUI.primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+		GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		BufferedReader buffer = null;
 		try {
 			buffer = new BufferedReader(new FileReader(file));

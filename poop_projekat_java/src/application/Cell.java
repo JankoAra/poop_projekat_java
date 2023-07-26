@@ -89,7 +89,7 @@ public class Cell {
 			return;
 		}
 		Main.table.setCell(rowIndex, colIndex, newCell);
-		GUI.repaintGrid();
+		GUI.rebuildGrid();
 	}
 
 }

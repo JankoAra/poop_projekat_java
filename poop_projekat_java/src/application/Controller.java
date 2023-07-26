@@ -16,10 +16,10 @@ public class Controller {
 		File file;
 		if (saving) {
 			// save file
-			file = fc.showSaveDialog(GUI.scene.getWindow());
+			file = fc.showSaveDialog(GUI.runningScene.getWindow());
 		} else {
 			// open file
-			file = fc.showOpenDialog(GUI.scene.getWindow());
+			file = fc.showOpenDialog(GUI.runningScene.getWindow());
 		}
 		return file;
 	}
@@ -38,29 +38,31 @@ public class Controller {
 			String fileContent = Parser.convertTableToString(table, extension);
 			Parser.createNewSaveFile(path, fileContent);
 			Parser.currentFile = path;
-			GUI.primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+			GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		} catch (Exception e) {
 			System.out.println("Fatalna greska pri cuvanju tabele");
 		}
 	}
 
-	public static void openTable() {
+	public static Table openTable() {
 		File path = getFilePath(false);
 		if (path == null) {
 			System.out.println("Fajl ne postoji ili je akcija prekinuta");
-			return;
+			return Main.table;
 		}
 		String extension = Parser.getExtensionFromFilePath(path);
+		Table loadedTable = null;
 		if (extension.equals(".csv")) {
-			Main.table = Parser.convertCSVToTable(path);
+			loadedTable = Parser.convertCSVToTable(path);
 		} else if (extension.equals(".json")) {
-			Main.table = Parser.convertJSONToTable(path);
+			loadedTable = Parser.convertJSONToTable(path);
 		} else {
 			System.out.println("Ekstenzija nije podrzana.");
-			return;
+			return Main.table;
 		}
 		Parser.currentFile = path;
-		GUI.primaryStage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+		GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+		return loadedTable;
 	}
 	
 	public static void formatSelectedCells(Format format) {
