@@ -41,6 +41,7 @@ public class Controller {
 			GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		} catch (Exception e) {
 			System.out.println("Fatalna greska pri cuvanju tabele");
+			System.out.println(e.getMessage());
 		}
 	}
 

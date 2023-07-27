@@ -6,6 +6,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import application.JsonMappedData.MetaCell;
+
 public class Parser {
 	static File currentFile = new File("Untitled");
 
@@ -31,8 +36,18 @@ public class Parser {
 	}
 
 	private static String convertTableToJSONString(Table table) {
-		// TODO nije implementirana
-		return "Nije napravljen";
+		String jsonString = "";
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonMappedData data = new JsonMappedData(table);
+		
+		try {
+			jsonString = objectMapper.writeValueAsString(data);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return jsonString;
 	}
 
 	public static String convertTableToCSVString(Table table) {
@@ -45,7 +60,7 @@ public class Parser {
 			}
 		}
 		String csv = sb.toString();
-		//System.out.println("CSV tabele iz jave:\n" + csv);
+		// System.out.println("CSV tabele iz jave:\n" + csv);
 		return csv;
 	}
 
@@ -92,8 +107,47 @@ public class Parser {
 	}
 
 	public static Table convertJSONToTable(File file) {
-		// TODO nije implementirana
-		return new Table(10);
+		if (file == null) {
+			System.out.println("Greska pri ucitavanju fajla");
+			return null;
+		}
+		Table table = new Table();
+		Parser.currentFile = file;
+		GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			JsonMappedData data = objectMapper.readValue(file, JsonMappedData.class);
+			// Process the data...
+			// Now you can work with the Java object representation of the JSON data
+			System.out.println(data.getGlobalColumnFormats());
+			System.out.println(data.getGlobalColumnDecimals());
+			System.out.println(data.getCells());
+
+			// find numOfRows
+			int rowsNeeded = 1;
+			rowsNeeded = data.getCells().get(data.getCells().size() - 1).getRow() + 1;
+			table = new Table(rowsNeeded);
+			// Access individual cells
+			for (MetaCell metaCell : data.getCells()) {
+				Cell newCell = new Cell(metaCell.getValue(), Format.makeFormat(metaCell.getFormat()), metaCell.getRow(),
+						metaCell.getColumn());
+				table.setCell(metaCell.getRow(), metaCell.getColumn(), newCell);
+
+				System.out.println("Row: " + metaCell.getRow() + ", Column: " + metaCell.getColumn());
+				System.out.println("Value: " + metaCell.getValue());
+				System.out.println("Format: " + metaCell.getFormat());
+				System.out.println("Decimals: " + metaCell.getDecimals());
+//                int row = metaCell.getRow();
+//                if(row+1>rowsNeeded) {
+//                	rowsNeeded = row+1;
+//                }
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return table;
 	}
 
 	public static void createNewSaveFile(File path, String content) {

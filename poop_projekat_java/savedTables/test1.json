@@ -1,0 +1,550 @@
+{
+"globalColumnFormats": ["T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T","T"],
+"globalColumnDecimals": ["2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2"],
+"cells": [{
+"row": 0,
+"column": 0,
+"value": "text red",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 1,
+"value": "janko",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 2,
+"value": "arandjelovic",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 3,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 4,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 5,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 6,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 7,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 8,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 9,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 10,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 11,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 12,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 13,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 14,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 15,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 16,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 17,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 18,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 19,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 20,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 21,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 22,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 23,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 24,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 0,
+"column": 25,
+"value": "",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 1,
+"column": 0,
+"value": "number red",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 1,
+"column": 1,
+"value": "2.4",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 2,
+"value": "4.1",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 3,
+"value": "=c2+b2",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 4,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 5,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 6,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 7,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 8,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 9,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 10,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 11,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 12,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 13,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 14,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 15,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 16,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 17,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 18,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 19,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 20,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 21,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 22,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 23,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 24,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 1,
+"column": 25,
+"value": "",
+"format": "N",
+"decimals": 3
+},
+{
+"row": 2,
+"column": 0,
+"value": "date red",
+"format": "T",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 1,
+"value": "01.02.0003.",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 2,
+"value": "29.02.2020.",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 3,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 4,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 5,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 6,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 7,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 8,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 9,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 10,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 11,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 12,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 13,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 14,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 15,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 16,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 17,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 18,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 19,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 20,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 21,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 22,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 23,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 24,
+"value": "",
+"format": "D",
+"decimals": -1
+},
+{
+"row": 2,
+"column": 25,
+"value": "",
+"format": "D",
+"decimals": -1
+}
+]}
