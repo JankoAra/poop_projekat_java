@@ -1,7 +1,5 @@
 package application;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -40,8 +38,9 @@ public class NumberFormat implements Format {
 
 	@Override
 	public String formattedValue(String value) {
-		if (value.equals(""))
+		if (value.equals("")) {
 			return "";
+		}
 		if(value.equals("ERROR")) {
 			return value;
 		}

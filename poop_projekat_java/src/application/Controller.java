@@ -70,6 +70,6 @@ public class Controller {
 		for(Cell c:Main.table.selectedCells) {
 			Cell.convertCellToFormat(c.getRow(), c.getCol(), format);
 		}
-		
+		Main.table.updateLabels();
 	}
 }

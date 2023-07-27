@@ -7,9 +7,7 @@ public class Cell {
 
 	public static final TextFormat TEXT_FORMAT = new TextFormat();
 	public static final DateFormat DATE_FORMAT = new DateFormat();
-	public static final NumberFormat NUMBER_FORMAT_DEFAULT = new NumberFormat(2);
-
-
+	//public static final NumberFormat NUMBER_FORMAT_DEFAULT = new NumberFormat(2);
 
 	private int row, col;
 
@@ -70,7 +68,7 @@ public class Cell {
 	public String getFormattedValue() {
 		String inputVal = value;
 		if(format.getDescription().equals("N")) {
-			inputVal = Main.table.calculatedLabels.get(row).get(col);
+			inputVal = Table.calculatedLabels.get(row).get(col);
 		}
 		return format.formattedValue(inputVal);
 	}
@@ -89,7 +87,7 @@ public class Cell {
 			return;
 		}
 		Main.table.setCell(rowIndex, colIndex, newCell);
-		GUI.rebuildGrid();
+		//GUI.rebuildGrid();
 	}
 
 }

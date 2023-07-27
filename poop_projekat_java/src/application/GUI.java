@@ -89,6 +89,7 @@ public class GUI {
 		openMenuItem.setOnAction(e -> {
 			Main.table = Controller.openTable();
 			rebuildGrid();
+			Main.table.updateLabels();
 		});
 		MenuItem saveAsMenuItem = new MenuItem("Save As");
 		saveAsMenuItem.setOnAction(e -> Controller.saveTable(Main.table, true));
@@ -116,6 +117,8 @@ public class GUI {
 		addRowBtn.setOnAction(e -> {
 			Main.table.addRow();
 			rebuildGrid();
+			Main.table.updateLabels();
+			
 		});
 
 		// Unused
@@ -209,6 +212,7 @@ public class GUI {
 				} catch (FormatChangeUnsuccessful e) {
 					e.printStackTrace();
 				}
+				Main.table.updateLabels();
 				// menjanje textField-a labelom
 				CellLabel lab = Main.table.getLabel(tri, tci);
 				grid.getChildren().remove(textField);
@@ -250,6 +254,7 @@ public class GUI {
 				} catch (FormatChangeUnsuccessful e) {
 					e.printStackTrace();
 				}
+				Main.table.updateLabels();
 				// menjanje textField-a labelom
 				CellLabel lab = Main.table.getLabel(tri, tci);
 				grid.getChildren().remove(textField);

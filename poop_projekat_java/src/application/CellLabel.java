@@ -200,9 +200,12 @@ public class CellLabel extends Label {
 					try {
 						Cell newCell = new Cell("", oldCell.getFormat(), tri, tci);
 						Main.table.setCell(tri, tci, newCell);
+						Main.table.updateLabels();
 					} catch (Exception ex) {
 					}
 					e.consume();
+					break;
+				default:
 					break;
 				}
 

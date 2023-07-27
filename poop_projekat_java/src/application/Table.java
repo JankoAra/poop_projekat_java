@@ -14,8 +14,7 @@ public class Table {
 	LinkedList<Cell> selectedCells = new LinkedList<>();
 	int clickedLabelRowIndex = -1, clickedLabelColumnIndex = -1;
 
-	static String resolvedFormulasCsvString = "";
-	ArrayList<ArrayList<String>> calculatedLabels = new ArrayList<ArrayList<String>>();
+	static ArrayList<ArrayList<String>> calculatedLabels = new ArrayList<ArrayList<String>>();
 
 	class Selector {
 		public int r1, r2, c1, c2;
@@ -47,19 +46,32 @@ public class Table {
 	}
 
 	public void setCell(int row, int col, Cell newCell) {
-		if (row < 0 || row >= getNumOfRows() || col < 0 || col > 25) {
+		if (row < 0 || row >= getNumOfRows() || col < 0 || col >= Table.numOfCols) {
 			System.out.println("Nepostojeca celija (" + row + "," + col + ")");
 			return;
 		}
 		data.get(row).set(col, newCell);
-		resolvedFormulasCsvString = Main.table.resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
-		System.out.println("|" + resolvedFormulasCsvString + "|");
-		calculatedLabels = calculateLabels2();
-		// labels.get(row).get(col).setText(newCell.getFormattedValue());
-		repaintLabels();
 	}
 
-	public void repaintLabels() {
+	public void updateLabels() {
+		String resolvedFormulasCsvString =resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
+		calculatedLabels = new ArrayList<ArrayList<String>>();
+		try {
+			BufferedReader reader = new BufferedReader(new StringReader(resolvedFormulasCsvString));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] cells = line.split(",", -1);
+				ArrayList<String> row = new ArrayList<String>();
+				for (String s : cells) {
+					row.add(s);
+				}
+				calculatedLabels.add(row);
+			}
+			reader.close();
+		} catch (IOException ex) {
+			System.out.println("greska");
+		}
+		
 		for (int i = 0; i < getNumOfRows(); i++) {
 			for (int j = 0; j < Table.numOfCols; j++) {
 				labels.get(i).get(j).setText(getCell(i, j).getFormattedValue());
@@ -87,11 +99,6 @@ public class Table {
 
 		LinkedList<Cell> newSelectedCells = new LinkedList<>();
 		GUI.printLog("\n");
-//		if(r1<0||r2<0||c1<0||c2<0) {
-//			GUI.printlnLog("NISTA");
-//			selectedCells = newSelectedCells;
-//			return;
-//		}
 		for (int i = selector.r1; i <= selector.r2; i++) {
 			for (int j = selector.c1; j <= selector.c2; j++) {
 				newSelectedCells.add(getCell(i, j));
@@ -121,22 +128,12 @@ public class Table {
 	}
 
 	public void markSelectedCells() {
-//		for (int i = selector.r1; i <= selector.r2; i++) {
-//			for (int j = selector.c1; j <= selector.c2; j++) {
-//				getLabel(i, j).selectLabel();
-//			}
-//		}
 		for (Cell c : selectedCells) {
 			getLabel(c.getRow(), c.getCol()).selectLabel();
 		}
 	}
 
 	public void demarkSelectedCells() {
-//		for (int i = selector.r1; i <= selector.r2; i++) {
-//			for (int j = selector.c1; j <= selector.c2; j++) {
-//				getLabel(i, j).deselectLabel();
-//			}
-//		}
 		for (Cell c : selectedCells) {
 			getLabel(c.getRow(), c.getCol()).deselectLabel();
 		}
@@ -181,43 +178,4 @@ public class Table {
 
 	public native String resolveTableFormulas(String csvTable);
 
-	ArrayList<ArrayList<String>> calculateLabels() {
-		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
-		int row = 0;
-		int col = 0;
-		String csv = resolvedFormulasCsvString;
-		while (!csv.isEmpty()) {
-			int index = csv.indexOf('\n');
-			String line = csv.substring(0, index + 1);
-			csv = csv.substring(index + 1);
-
-			String[] cells = line.split(",");
-			ArrayList<String> rowList = new ArrayList();
-			for (String cell : cells) {
-				rowList.add(cell);
-			}
-			list.add(rowList);
-		}
-		// System.out.println(list);
-		return list;
-	}
-
-	ArrayList<ArrayList<String>> calculateLabels2() {
-		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
-		try {
-			BufferedReader reader = new BufferedReader(new StringReader(resolvedFormulasCsvString));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] cells = line.split(",", -1);
-				ArrayList<String> row = new ArrayList<String>();
-				for (String s : cells) {
-					row.add(s);
-				}
-				list.add(row);
-			}
-		} catch (IOException ex) {
-			System.out.println("greska");
-		}
-		return list;
-	}
 }
