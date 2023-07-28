@@ -1,5 +1,8 @@
 package application;
 
+import java.io.IOException;
+
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,6 +21,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
@@ -74,7 +78,7 @@ public class GUI {
 		southSp.setFitToWidth(true);
 		rootBorderPane.setBottom(southSp);
 
-		Scene scene = new Scene(rootBorderPane, 1000, 800);
+		Scene scene = new Scene(rootBorderPane);
 
 		// Create menu bar
 		MenuBar menuBar = new MenuBar();
@@ -118,7 +122,7 @@ public class GUI {
 			Main.table.addRow();
 			rebuildGrid();
 			Main.table.updateLabels();
-			
+
 		});
 
 		// Unused
@@ -177,12 +181,10 @@ public class GUI {
 
 		return scene;
 	}
-	
+
 	// Populate and return start scene
 	private static Scene makeStartScene() {
-		BorderPane bp = new BorderPane();
-		Scene scene = new Scene(bp,400,400);
-		return scene;
+		return null;
 	}
 
 	static void replaceLabelWithTextField(GridPane grid, int rowIndex, int columnIndex) {
@@ -342,5 +344,4 @@ public class GUI {
 		GUI.gridScrollPane.setContent(GUI.grid);
 	}
 
-	
 }

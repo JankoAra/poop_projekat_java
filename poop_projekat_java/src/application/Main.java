@@ -1,9 +1,13 @@
 package application;
 
+import java.io.IOException;
+
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -20,15 +24,24 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) {
-		stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
-
-		// Pocetno pravljenje GUI-a
-		// TODO prvo ucitati startScene pa onda promeniti na runningScene
+		stage.setTitle("Excel by JANKO");
 		GUI.stage = stage;
-		Scene scene = GUI.runningScene;
+		// Load startMenu
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("startScene.fxml"));
+		Scene scene = null;
+		try {
+			Pane startRoot = loader.load();
+			scene = new Scene(startRoot);
+			StartSceneController ctrl = loader.getController();
+			ctrl.setStage(stage);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		addAskToSaveOnExit(stage);
 
 		stage.setScene(scene);
+		//stage.setMaximized(true);
 		stage.show();
 	}
 

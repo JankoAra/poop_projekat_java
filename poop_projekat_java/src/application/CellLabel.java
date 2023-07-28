@@ -63,8 +63,8 @@ public class CellLabel extends Label {
 						int maxRow = Math.max(intValue1 - 1, ri - 1);
 						int minCol = Math.min(intValue2 - 1, ci - 1);
 						int maxCol = Math.max(intValue2 - 1, ci - 1);
-						System.out.println("Pocetna celija (" + parts[0] + "," + parts[1] + "), Krajnja celija (" + ri
-								+ "," + ci + ")");
+//						System.out.println("Pocetna celija (" + parts[0] + "," + parts[1] + "), Krajnja celija (" + ri
+//								+ "," + ci + ")");
 						Main.table.demarkSelectedCells();
 						Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
 						Main.table.markSelectedCells();
