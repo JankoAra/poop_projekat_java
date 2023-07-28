@@ -27,11 +27,31 @@ public class CellLabel extends Label {
 	}
 
 	public void selectLabel() {
-		setStyle("-fx-background-color:lightgray;-fx-border-color:black;");
+		// setStyle("-fx-background-color:lightgray;-fx-border-color:black;");
+		getStyleClass().clear();
+		getStyleClass().add("selected-label");
 	}
 
 	public void deselectLabel() {
-		setStyle("-fx-background-color:white;-fx-border-color:black;");
+		// setStyle("-fx-background-color:white;-fx-border-color:black;");
+		int ri = GridPane.getRowIndex(this);
+		int ci = GridPane.getColumnIndex(this);
+		int tri = ri - 1;
+		int tci = ci - 1;
+		Format f = Main.table.getCell(tri, tci).getFormat();
+		getStyleClass().clear();
+		switch (f.getDescription()) {
+		case "N":
+			getStyleClass().add("number-label");
+			break;
+		case "D":
+			getStyleClass().add("date-label");
+			break;
+		default:
+			getStyleClass().add("default-label");
+			break;
+		}
+		getStyleClass().add("default-label");
 	}
 
 	private static void initCellLabel(CellLabel label) {
@@ -141,7 +161,7 @@ public class CellLabel extends Label {
 					e.consume();
 				}
 			} else if (!pressedCharacter.isEmpty()) {
-				System.out.println("ima texta");
+				// System.out.println("ima texta");
 				// pritisnut nexi printabilni karakter
 				GUI.replaceLabelWithTextFieldWithStartValue(GUI.grid, ri, ci, pressedCharacter);
 				e.consume();
@@ -212,7 +232,8 @@ public class CellLabel extends Label {
 			}
 		});
 		label.setMinWidth(80);
-		label.setStyle("-fx-background-color:white;-fx-border-color:black;");
+		// label.setStyle("-fx-background-color:white;-fx-border-color:black;");
+		label.getStyleClass().add("default-label");
 		label.setFont(new Font("Arial", 20));
 		label.setPadding(new Insets(5));
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);

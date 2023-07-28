@@ -178,6 +178,8 @@ public class GUI {
 		northMenu.getChildren().addAll(vbox1, vbox2, vbox4, vbox3, vbox5);
 
 		rootBorderPane.setTop(northPane);
+		
+		scene.getStylesheets().add(GUI.class.getResource("labelStyles.css").toExternalForm());
 
 		return scene;
 	}
