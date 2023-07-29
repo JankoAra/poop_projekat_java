@@ -39,14 +39,14 @@ public class Parser {
 		String jsonString = "";
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonMappedData data = new JsonMappedData(table);
-		
+
 		try {
 			jsonString = objectMapper.writeValueAsString(data);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return jsonString;
 	}
 
@@ -128,10 +128,33 @@ public class Parser {
 			int rowsNeeded = 1;
 			rowsNeeded = data.getCells().get(data.getCells().size() - 1).getRow() + 1;
 			table = new Table(rowsNeeded);
+			
+			//apply global formats
+			for (int i = 0; i < data.getGlobalColumnDecimals().size(); i++) {
+				String decimalsString = data.getGlobalColumnDecimals().get(i);
+				String formatString = data.getGlobalColumnFormats().get(i);
+				int dec = Integer.parseInt(decimalsString);
+				for (int r = 0; r < table.getNumOfRows(); r++) {
+					Format f = Format.makeFormat(formatString);
+					if (formatString.equals("N")) {
+						((NumberFormat) f).setDecimalsToShow(dec);
+					}
+					Cell formattedCell = new Cell("", f, r, i);
+					table.setCell(r, i, formattedCell);
+				}
+			}
+
 			// Access individual cells
 			for (MetaCell metaCell : data.getCells()) {
-				Cell newCell = new Cell(metaCell.getValue(), Format.makeFormat(metaCell.getFormat()), metaCell.getRow(),
+				String formatString = metaCell.getFormat();
+				Format f = Format.makeFormat(formatString);
+				int dec = metaCell.getDecimals();
+				if (formatString.equals("N")) {
+					((NumberFormat) f).setDecimalsToShow(dec);
+				}
+				Cell newCell = new Cell(metaCell.getValue(), f, metaCell.getRow(),
 						metaCell.getColumn());
+				
 				table.setCell(metaCell.getRow(), metaCell.getColumn(), newCell);
 
 //				System.out.println("Row: " + metaCell.getRow() + ", Column: " + metaCell.getColumn());

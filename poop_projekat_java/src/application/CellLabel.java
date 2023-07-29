@@ -27,13 +27,11 @@ public class CellLabel extends Label {
 	}
 
 	public void selectLabel() {
-		// setStyle("-fx-background-color:lightgray;-fx-border-color:black;");
 		getStyleClass().clear();
 		getStyleClass().add("selected-label");
 	}
 
 	public void deselectLabel() {
-		// setStyle("-fx-background-color:white;-fx-border-color:black;");
 		int ri = GridPane.getRowIndex(this);
 		int ci = GridPane.getColumnIndex(this);
 		int tri = ri - 1;

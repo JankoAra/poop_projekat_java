@@ -256,7 +256,8 @@ public class GUI {
 					Main.getTable().setCell(rowIndex - 1, columnIndex - 1,
 							new Cell(textField.getText(), oldFormat, rowIndex - 1, columnIndex - 1));
 				} catch (FormatChangeUnsuccessful e) {
-					e.printStackTrace();
+					GUI.printlnLog("Upisana vrednost ne odgovara formatu celije");
+					//e.printStackTrace();
 				}
 				Main.table.updateLabels();
 				// menjanje textField-a labelom
@@ -306,6 +307,7 @@ public class GUI {
 				CellLabel label = table.getLabel(i, j);
 				GridPane.setConstraints(label, j + 1, i + 1);
 				grid.getChildren().add(label);
+				label.deselectLabel();
 			}
 		}
 
