@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-	static Table table = new Table(10);
+	static Table table = new Table();
 
 	public static Table getTable() {
 		return table;

@@ -120,9 +120,6 @@ public class Parser {
 			JsonMappedData data = objectMapper.readValue(file, JsonMappedData.class);
 			// Process the data...
 			// Now you can work with the Java object representation of the JSON data
-//			System.out.println(data.getGlobalColumnFormats());
-//			System.out.println(data.getGlobalColumnDecimals());
-//			System.out.println(data.getCells());
 
 			// find numOfRows
 			int rowsNeeded = 1;
@@ -157,14 +154,6 @@ public class Parser {
 				
 				table.setCell(metaCell.getRow(), metaCell.getColumn(), newCell);
 
-//				System.out.println("Row: " + metaCell.getRow() + ", Column: " + metaCell.getColumn());
-//				System.out.println("Value: " + metaCell.getValue());
-//				System.out.println("Format: " + metaCell.getFormat());
-//				System.out.println("Decimals: " + metaCell.getDecimals());
-//                int row = metaCell.getRow();
-//                if(row+1>rowsNeeded) {
-//                	rowsNeeded = row+1;
-//                }
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
