@@ -5,15 +5,25 @@
 
 .selected-label{
 	-fx-border-color:black;
-	-fx-background-color:lightgray;
+	-fx-background-color:#cccccc;
+}
+
+.selected-number{
+	-fx-border-color:black;
+	-fx-background-color:#b3b300;
+}
+
+.selected-date{
+	-fx-border-color:black;
+	-fx-background-color:#00b3b3;
 }
 
 .number-label{
 	-fx-border-color:black;
-	-fx-background-color:#ebeb34;
+	-fx-background-color:yellow;
 }
 
 .date-label{
 	-fx-border-color:black;
-	-fx-background-color:#34d9eb;
+	-fx-background-color:cyan;
 }

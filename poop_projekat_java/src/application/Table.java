@@ -54,7 +54,7 @@ public class Table {
 	}
 
 	public void updateLabels() {
-		String resolvedFormulasCsvString =resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
+		String resolvedFormulasCsvString = resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
 		calculatedLabels = new ArrayList<ArrayList<String>>();
 		try {
 			BufferedReader reader = new BufferedReader(new StringReader(resolvedFormulasCsvString));
@@ -71,7 +71,7 @@ public class Table {
 		} catch (IOException ex) {
 			System.out.println("greska");
 		}
-		
+
 		for (int i = 0; i < getNumOfRows(); i++) {
 			for (int j = 0; j < Table.numOfCols; j++) {
 				labels.get(i).get(j).setText(getCell(i, j).getFormattedValue());
@@ -109,6 +109,17 @@ public class Table {
 		}
 		selectedCells = newSelectedCells;
 	}
+	
+	public void addToSelectedRange(int r1, int c1, int r2, int c2) {
+		for(int i=r1;i<=r2;i++) {
+			for(int j=c1;j<=c2;j++) {
+				Cell cell = getCell(i, j);
+				if(!selectedCells.contains(cell)) {
+					selectedCells.add(cell);
+				}
+			}
+		}
+	}
 
 	public Selector getSelectedRange() {
 		return selector;
@@ -139,38 +150,38 @@ public class Table {
 		}
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < numOfCols; i++) {
-			if (i == 0) {
-				sb.append(String.format("%3c ", ' '));
-			}
-			sb.append(String.format("%9c ", 'A' + i));
-		}
-		sb.append("\n");
-		int cnt = 0;
-		for (ArrayList<Cell> l : data) {
-			sb.append(String.format("%3d ", cnt++));
-			for (Object o : l) {
-				Cell c = (Cell) o;
-				String s = c.getValue();
-
-				if (s.equals("")) {
-					s = "-empty- ";
-				} else {
-					s += " ";
-				}
-				s = String.format("%10s", s);
-				sb.append(s);
-
-			}
-
-			sb.append("\n");
-
-		}
-
-		return sb.toString();
-	}
+//	public String toString() {
+//		StringBuilder sb = new StringBuilder();
+//		for (int i = 0; i < numOfCols; i++) {
+//			if (i == 0) {
+//				sb.append(String.format("%3c ", ' '));
+//			}
+//			sb.append(String.format("%9c ", 'A' + i));
+//		}
+//		sb.append("\n");
+//		int cnt = 0;
+//		for (ArrayList<Cell> l : data) {
+//			sb.append(String.format("%3d ", cnt++));
+//			for (Object o : l) {
+//				Cell c = (Cell) o;
+//				String s = c.getValue();
+//
+//				if (s.equals("")) {
+//					s = "-empty- ";
+//				} else {
+//					s += " ";
+//				}
+//				s = String.format("%10s", s);
+//				sb.append(s);
+//
+//			}
+//
+//			sb.append("\n");
+//
+//		}
+//
+//		return sb.toString();
+//	}
 
 	static {
 		System.loadLibrary("POOP_domaci2_jni");

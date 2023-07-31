@@ -27,8 +27,23 @@ public class CellLabel extends Label {
 	}
 
 	public void selectLabel() {
+		int ri = GridPane.getRowIndex(this);
+		int ci = GridPane.getColumnIndex(this);
+		int tri = ri - 1;
+		int tci = ci - 1;
+		Format f = Main.table.getCell(tri, tci).getFormat();
 		getStyleClass().clear();
-		getStyleClass().add("selected-label");
+		switch (f.getDescription()) {
+		case "N":
+			getStyleClass().add("selected-number");
+			break;
+		case "D":
+			getStyleClass().add("selected-date");
+			break;
+		default:
+			getStyleClass().add("selected-label");
+			break;
+		}
 	}
 
 	public void deselectLabel() {
@@ -49,7 +64,7 @@ public class CellLabel extends Label {
 			getStyleClass().add("default-label");
 			break;
 		}
-		getStyleClass().add("default-label");
+		//getStyleClass().add("default-label");
 	}
 
 	private static void initCellLabel(CellLabel label) {
@@ -129,8 +144,14 @@ public class CellLabel extends Label {
 			if (tri != Main.table.clickedLabelRowIndex || tci != Main.table.clickedLabelColumnIndex) {
 				// prvi klik na labelu
 				Main.table.demarkSelectedCells();
-				Main.table.setSelectedRange(tri, tci, tri, tci);
-				Main.table.setClickedLabelIndices(tri, tci);
+				if(e.isControlDown()) {
+					Main.table.addToSelectedRange(tri, tci, tri, tci);
+					Main.table.clearClickedLabelIndices();
+				}else {
+					Main.table.setSelectedRange(tri, tci, tri, tci);
+					Main.table.setClickedLabelIndices(tri, tci);
+				}
+				
 				Main.table.markSelectedCells();
 				label.requestFocus();
 			} else {
@@ -206,23 +227,23 @@ public class CellLabel extends Label {
 					}
 					e.consume();
 					break;
-				case ESCAPE:
-					Main.table.demarkSelectedCells();
-					Main.table.setSelectedRange(0, 0, 0, 0);
-					Main.table.clearClickedLabelIndices();
-					GUI.grid.requestFocus();
-					e.consume();
-					break;
-				case DELETE:
-					Cell oldCell = Main.table.getCell(tri, tci);
-					try {
-						Cell newCell = new Cell("", oldCell.getFormat(), tri, tci);
-						Main.table.setCell(tri, tci, newCell);
-						Main.table.updateLabels();
-					} catch (Exception ex) {
-					}
-					e.consume();
-					break;
+//				case ESCAPE:
+//					Main.table.demarkSelectedCells();
+//					Main.table.setSelectedRange(0, 0, 0, 0);
+//					Main.table.clearClickedLabelIndices();
+//					GUI.grid.requestFocus();
+//					e.consume();
+//					break;
+//				case DELETE:
+//					Cell oldCell = Main.table.getCell(tri, tci);
+//					try {
+//						Cell newCell = new Cell("", oldCell.getFormat(), tri, tci);
+//						Main.table.setCell(tri, tci, newCell);
+//						Main.table.updateLabels();
+//					} catch (Exception ex) {
+//					}
+//					e.consume();
+//					break;
 				default:
 					break;
 				}

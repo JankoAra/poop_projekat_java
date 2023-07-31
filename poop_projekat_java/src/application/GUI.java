@@ -34,12 +34,34 @@ public class GUI {
 	// Main stage(window)
 	static Stage stage;
 
+	public enum UpdateType {
+		TABLE_CHANGE, CELL_CHANGE, CELLS_SELECTION
+	}
+
+	public static void updateGUI(UpdateType type) {
+		switch (type) {
+		case TABLE_CHANGE:
+			Main.table.updateLabels();
+			GUI.rebuildGrid();
+			break;
+		case CELL_CHANGE:
+			Main.table.updateLabels();
+			break;
+		case CELLS_SELECTION:
+			break;
+		default:
+			break;
+		}
+
+	}
+
 	// Components of GUI when it's in editing mode (a table is active)
 	static Scene runningScene;
 	static BorderPane rootBorderPane;
 	static ScrollPane gridScrollPane;
 	static GridPane grid;
 	static TextArea logArea;
+	static MenuBar menubar;
 
 	// Components of GUI when the program starts
 	// (choosing whether to open a table or to create new one)
@@ -70,6 +92,26 @@ public class GUI {
 		// Table grid in a scroll pane
 		gridScrollPane = new ScrollPane(grid = GUI.populateGrid(Main.table));
 		rootBorderPane.setCenter(gridScrollPane);
+		gridScrollPane.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.DELETE) {
+				for (Cell c : Main.table.selectedCells) {
+					try {
+						Cell newCell = new Cell("", c.getFormat(), c.getRow(), c.getCol());
+						Main.table.setCell(c.getRow(), c.getCol(), newCell);
+					} catch (FormatChangeUnsuccessful e1) {
+						e1.printStackTrace();
+					}
+				}
+				updateGUI(UpdateType.CELL_CHANGE);
+			} else if (e.getCode() == KeyCode.ESCAPE) {
+				Main.table.demarkSelectedCells();
+				Main.table.setSelectedRange(0, 0, 0, 0);
+				Main.table.clearClickedLabelIndices();
+				menubar.requestFocus();
+				e.consume();
+			}
+			e.consume();
+		});
 
 		// log area on the bottom
 		logArea = new TextArea();
@@ -84,6 +126,7 @@ public class GUI {
 
 		// Create menu bar
 		MenuBar menuBar = new MenuBar();
+		menubar = menuBar;
 		Menu fileMenu = new Menu("File");
 		MenuItem newMenuItem = new MenuItem("New Table");
 		newMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));

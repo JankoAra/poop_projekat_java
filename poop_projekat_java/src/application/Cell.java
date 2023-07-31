@@ -9,7 +9,6 @@ public class Cell {
 
 	public static final TextFormat TEXT_FORMAT = new TextFormat();
 	public static final DateFormat DATE_FORMAT = new DateFormat();
-	//public static final NumberFormat NUMBER_FORMAT_DEFAULT = new NumberFormat(2);
 
 	private int row, col;
 
@@ -85,7 +84,7 @@ public class Cell {
 		try {
 			newCell = new Cell(oldCell.value, newFormat, oldCell.getRow(), oldCell.getCol());
 		} catch (FormatChangeUnsuccessful e) {
-			System.out.println("Promena formata nije uspela");
+			System.out.println(e.getMessage());
 			return;
 		}
 		Main.table.setCell(rowIndex, colIndex, newCell);
