@@ -1,5 +1,7 @@
 package application;
 
+import application.MyExceptions.FormatChangeUnsuccessful;
+
 public class Cell {
 	private String value = "";
 

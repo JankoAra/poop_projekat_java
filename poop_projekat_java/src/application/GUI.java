@@ -1,12 +1,15 @@
 package application;
 
-import java.io.IOException;
+import java.io.File;
+import java.util.Optional;
 
-import javafx.fxml.FXMLLoader;
+import application.MyExceptions.FormatChangeUnsuccessful;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -21,7 +24,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
@@ -86,7 +88,30 @@ public class GUI {
 		MenuItem newMenuItem = new MenuItem("New Table");
 		newMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
 		newMenuItem.setOnAction(e -> {
-			System.out.println("nova");
+			Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+			confirmationAlert.setTitle("Confirmation Dialog");
+			confirmationAlert.setHeaderText("Do you want to save the current table?");
+			confirmationAlert.setContentText("Choose an option.");
+
+			ButtonType saveButtonType = new ButtonType("Save");
+			ButtonType noSaveButtonType = new ButtonType("Don't Save");
+			ButtonType cancelButtonType = new ButtonType("Cancel");
+			confirmationAlert.getButtonTypes().setAll(saveButtonType, noSaveButtonType, cancelButtonType);
+
+			Optional<ButtonType> result = confirmationAlert.showAndWait();
+			if (result.isPresent() && result.get() == saveButtonType) {
+				// User clicked OK, perform the action
+				Controller.saveTable(Main.table, false);
+			} else if (result.isPresent() && result.get() == cancelButtonType) {
+				// User clicked Cancel, handle accordingly
+				return;
+			}
+
+			Main.table = new Table(50);
+			rebuildGrid();
+			Main.table.updateLabels();
+			Parser.currentFile = new File("Untitled");
+			GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		});
 		MenuItem openMenuItem = new MenuItem("Open Table");
 		openMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
@@ -122,7 +147,6 @@ public class GUI {
 			Main.table.addRow();
 			rebuildGrid();
 			Main.table.updateLabels();
-
 		});
 
 		// Unused
@@ -178,7 +202,7 @@ public class GUI {
 		northMenu.getChildren().addAll(vbox1, vbox2, vbox4, vbox3, vbox5);
 
 		rootBorderPane.setTop(northPane);
-		
+
 		scene.getStylesheets().add(GUI.class.getResource("labelStyles.css").toExternalForm());
 
 		return scene;
@@ -257,7 +281,7 @@ public class GUI {
 							new Cell(textField.getText(), oldFormat, rowIndex - 1, columnIndex - 1));
 				} catch (FormatChangeUnsuccessful e) {
 					GUI.printlnLog("Upisana vrednost ne odgovara formatu celije");
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
 				Main.table.updateLabels();
 				// menjanje textField-a labelom
