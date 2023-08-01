@@ -1,11 +1,9 @@
 package application;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -13,54 +11,32 @@ public class Test extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        GridPane grid = new GridPane();
-        int numRows = 5;
-        int numCols = 5;
+        Label label = new Label("Right-click me!");
 
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                Label label = new Label("Cell " + i + "-" + j);
-                label.setStyle("-fx-background-color: white; -fx-border-color: black;");
-                label.setPrefSize(100, 100);
+        ContextMenu contextMenu = new ContextMenu();
 
-                // Set up drag gesture
-                label.setOnDragDetected(event -> {
-                    Dragboard dragboard = label.startDragAndDrop(TransferMode.COPY);
-                    ClipboardContent content = new ClipboardContent();
-                    content.putString(label.getText());
-                    dragboard.setContent(content);
-                });
+        MenuItem menuItem1 = new MenuItem("Option 1");
+        MenuItem menuItem2 = new MenuItem("Option 2");
+        MenuItem menuItem3 = new MenuItem("Option 3");
 
-                // Set up drag over
-                label.setOnDragOver(event -> {
-                    if (event.getGestureSource() != label && event.getDragboard().hasString()) {
-                        event.acceptTransferModes(TransferMode.COPY);
-                    }
-                    System.out.println(event.getTarget().getClass());
-                    event.consume();
-                });
+        // Add event handlers for menu items if needed
+        menuItem1.setOnAction(e -> System.out.println("Option 1 selected"));
+        menuItem2.setOnAction(e -> System.out.println("Option 2 selected"));
+        menuItem3.setOnAction(e -> System.out.println("Option 3 selected"));
 
-                // Set up drag dropped
-                label.setOnDragDropped(event -> {
-                    Dragboard dragboard = event.getDragboard();
-                    if (dragboard.hasString()) {
-                        String draggedText = dragboard.getString();
-                        System.out.println("Dropped on cell: " + label.getText() + ", Dragged data: " + draggedText);
-                        // Handle the dragged data here
-                    }
-                    event.setDropCompleted(true);
-                    event.consume();
-                });
+        contextMenu.getItems().addAll(menuItem1, menuItem2, menuItem3);
 
-                GridPane.setConstraints(label, j, i);
-                grid.getChildren().add(label);
-            }
-        }
+        label.setOnContextMenuRequested(event -> {
+            contextMenu.show(label, event.getScreenX(), event.getScreenY());
+            event.consume();
+        });
 
-        StackPane root = new StackPane(grid);
-        Scene scene = new Scene(root, 500, 500);
-        primaryStage.setTitle("Drag and Drop Example");
+        StackPane root = new StackPane();
+        root.getChildren().add(label);
+
+        Scene scene = new Scene(root, 300, 250);
         primaryStage.setScene(scene);
+        primaryStage.setTitle("Right-Click Menu Example");
         primaryStage.show();
     }
 

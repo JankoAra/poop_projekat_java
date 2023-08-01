@@ -20,7 +20,7 @@ public class StartSceneController {
 
 	@FXML
 	void createNewTableFromStartMenu(ActionEvent event) {
-		Main.table = new Table(50);
+		Main.table = new Table(5);
 		GUI.rebuildGrid();
 		Main.table.updateLabels();
 		stage.setScene(GUI.runningScene);

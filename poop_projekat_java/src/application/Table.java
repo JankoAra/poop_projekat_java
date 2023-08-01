@@ -44,6 +44,28 @@ public class Table {
 			labels.get(data.size() - 1).add(new CellLabel());
 		}
 	}
+	public void addRow(int newRowIndex) {
+		try {
+			ArrayList<Cell> cells = new ArrayList<>();
+			ArrayList<CellLabel> newLabels = new ArrayList<>();
+			data.add(newRowIndex, cells);
+			labels.add(newRowIndex, newLabels);
+			for (int x = 0; x < numOfCols; x++) {
+				data.get(newRowIndex).add(new Cell(newRowIndex, x));
+				labels.get(newRowIndex).add(new CellLabel());
+			}
+			for(int i=newRowIndex+1;i<this.getNumOfRows();i++) {
+				for(int j=0;j<numOfCols;j++) {
+					Cell oldCell = getCell(i, j);
+					oldCell.setRow(oldCell.getRow()+1);
+				}
+			}
+		}
+		catch(Exception e) {
+			System.out.println("Uhvacen");
+		}
+		
+	}
 
 	public void setCell(int row, int col, Cell newCell) {
 		if (row < 0 || row >= getNumOfRows() || col < 0 || col >= Table.numOfCols) {

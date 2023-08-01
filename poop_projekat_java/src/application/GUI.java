@@ -323,9 +323,16 @@ public class GUI {
 					Main.table.setClickedLabelIndices(tri + 1, tci);
 					Main.table.markSelectedCells();
 					// Main.table.getClickedLabel().requestFocus();
+					GUI.grid.requestFocus();
 				}
+				
+			}
+			else if(event.getCode()==KeyCode.ESCAPE) {
+				System.out.println("esc");
+				event.consume();
 				GUI.grid.requestFocus();
 			}
+			
 		});
 		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			//System.out.println(runningScene.getFocusOwner());
