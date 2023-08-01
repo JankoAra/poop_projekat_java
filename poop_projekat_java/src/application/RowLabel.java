@@ -27,9 +27,9 @@ public class RowLabel extends Label {
 
 	private static void initRowLabel(RowLabel label) {
 		label.setMinWidth(80);
-		label.setStyle("-fx-background-color:white;-fx-border-color:black;-fx-alignment:center;");
-		label.setFont(new Font("Arial", 20));
-		label.setPadding(new Insets(5));
+		//label.setStyle("-fx-background-color:white;-fx-border-color:black;-fx-alignment:center;");
+		//label.setFont(new Font("Arial", 20));
+		//label.setPadding(new Insets(5));
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		label.setOnMouseClicked(e->{
 			int ri = GridPane.getRowIndex(label);

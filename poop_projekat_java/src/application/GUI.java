@@ -122,7 +122,7 @@ public class GUI {
 		southSp.setFitToWidth(true);
 		rootBorderPane.setBottom(southSp);
 
-		Scene scene = new Scene(rootBorderPane);
+		Scene scene = new Scene(rootBorderPane, 1000, 800);
 
 		// Create menu bar
 		MenuBar menuBar = new MenuBar();
@@ -256,47 +256,47 @@ public class GUI {
 		return null;
 	}
 
-	static void replaceLabelWithTextField(GridPane grid, int rowIndex, int columnIndex) {
-		// rowIndex i columnIndex su u gridu, u tabeli su za 1 manji
-		int tri = rowIndex - 1;
-		int tci = columnIndex - 1;
-		Label label = Main.table.getLabel(tri, tci);
-		grid.getChildren().remove(label);
-
-		TextField textField = new TextField(Main.table.getCell(tri, tci).getValue());
-		textField.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		textField.setFont(new Font("Arial", 20));
-		textField.setOnKeyPressed(event -> {
-			if (event.getCode() == KeyCode.ENTER) {
-				System.out.println("enter");
-				GUI.grid.requestFocus();
-			}
-		});
-		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-			if (!newValue) {
-				System.out.println("Focus lost from TextField");
-				Format oldFormat = Main.table.getCell(rowIndex - 1, columnIndex - 1).getFormat();
-				try {
-					// promena vrednosti celije u tabeli
-					Main.getTable().setCell(rowIndex - 1, columnIndex - 1,
-							new Cell(textField.getText(), oldFormat, rowIndex - 1, columnIndex - 1));
-				} catch (FormatChangeUnsuccessful e) {
-					e.printStackTrace();
-				}
-				Main.table.updateLabels();
-				// menjanje textField-a labelom
-				CellLabel lab = Main.table.getLabel(tri, tci);
-				grid.getChildren().remove(textField);
-				grid.getChildren().add(lab);
-
-				lab.requestFocus();
-			}
-		});
-		GridPane.setConstraints(textField, columnIndex, rowIndex);
-		grid.getChildren().add(textField);
-		textField.requestFocus();
-		textField.selectAll();
-	}
+//	static void replaceLabelWithTextField(GridPane grid, int rowIndex, int columnIndex) {
+//		// rowIndex i columnIndex su u gridu, u tabeli su za 1 manji
+//		int tri = rowIndex - 1;
+//		int tci = columnIndex - 1;
+//		Label label = Main.table.getLabel(tri, tci);
+//		grid.getChildren().remove(label);
+//
+//		TextField textField = new TextField(Main.table.getCell(tri, tci).getValue());
+//		textField.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+//		textField.setFont(new Font("Arial", 20));
+//		textField.setOnKeyPressed(event -> {
+//			if (event.getCode() == KeyCode.ENTER) {
+//				System.out.println("enter");
+//				GUI.grid.requestFocus();
+//			}
+//		});
+//		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+//			if (!newValue) {
+//				System.out.println("Focus lost from TextField");
+//				Format oldFormat = Main.table.getCell(rowIndex - 1, columnIndex - 1).getFormat();
+//				try {
+//					// promena vrednosti celije u tabeli
+//					Main.getTable().setCell(rowIndex - 1, columnIndex - 1,
+//							new Cell(textField.getText(), oldFormat, rowIndex - 1, columnIndex - 1));
+//				} catch (FormatChangeUnsuccessful e) {
+//					e.printStackTrace();
+//				}
+//				Main.table.updateLabels();
+//				// menjanje textField-a labelom
+//				CellLabel lab = Main.table.getLabel(tri, tci);
+//				grid.getChildren().remove(textField);
+//				grid.getChildren().add(lab);
+//
+//				lab.requestFocus();
+//			}
+//		});
+//		GridPane.setConstraints(textField, columnIndex, rowIndex);
+//		grid.getChildren().add(textField);
+//		textField.requestFocus();
+//		textField.selectAll();
+//	}
 
 	static void replaceLabelWithTextFieldWithStartValue(GridPane grid, int rowIndex, int columnIndex, String sValue) {
 		// rowIndex i columnIndex su u gridu, u tabeli su za 1 manji
@@ -304,24 +304,38 @@ public class GUI {
 		int tci = columnIndex - 1;
 		Label label = Main.table.getLabel(tri, tci);
 		grid.getChildren().remove(label);
-
-		TextField textField = new TextField(sValue);
+		TextField textField = null;
+		if (sValue == null) {
+			textField = new TextField(Main.table.getCell(tri, tci).getValue());
+		} else {
+			textField = new TextField(sValue);
+		}
+		final TextField tf = textField;
 		textField.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		textField.setFont(new Font("Arial", 20));
+		//textField.setFont(new Font("Arial", 20));
+		textField.getStyleClass().add("active-text-field");
 		textField.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ENTER) {
-				System.out.println("enter");
+				// System.out.println("enter");
+				if (tri + 1 < Main.table.getNumOfRows()) {
+					Main.table.demarkSelectedCells();
+					Main.table.setSelectedRange(tri + 1, tci, tri + 1, tci);
+					Main.table.setClickedLabelIndices(tri + 1, tci);
+					Main.table.markSelectedCells();
+					// Main.table.getClickedLabel().requestFocus();
+				}
 				GUI.grid.requestFocus();
 			}
 		});
 		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+			//System.out.println(runningScene.getFocusOwner());
 			if (!newValue) {
-				System.out.println("Focus lost from TextField");
+				// System.out.println("Focus lost from TextField");
 				Format oldFormat = Main.table.getCell(rowIndex - 1, columnIndex - 1).getFormat();
 				try {
 					// promena vrednosti celije u tabeli
 					Main.getTable().setCell(rowIndex - 1, columnIndex - 1,
-							new Cell(textField.getText(), oldFormat, rowIndex - 1, columnIndex - 1));
+							new Cell(tf.getText(), oldFormat, rowIndex - 1, columnIndex - 1));
 				} catch (FormatChangeUnsuccessful e) {
 					GUI.printlnLog("Upisana vrednost ne odgovara formatu celije");
 					// e.printStackTrace();
@@ -329,10 +343,11 @@ public class GUI {
 				Main.table.updateLabels();
 				// menjanje textField-a labelom
 				CellLabel lab = Main.table.getLabel(tri, tci);
-				grid.getChildren().remove(textField);
+				grid.getChildren().remove(tf);
 				grid.getChildren().add(lab);
 
-				lab.requestFocus();
+				// lab.requestFocus();
+				Main.table.getClickedLabel().requestFocus();
 			}
 		});
 		GridPane.setConstraints(textField, columnIndex, rowIndex);
@@ -342,8 +357,12 @@ public class GUI {
 		} catch (Exception ex) {
 			System.out.println("greska pri dodavanju fielda");
 		}
-		textField.positionCaret(textField.getText().length());
 		textField.requestFocus();
+		if (sValue == null) {
+			textField.selectAll();
+		} else {
+			textField.positionCaret(textField.getText().length());
+		}
 
 	}
 
@@ -395,8 +414,9 @@ public class GUI {
 		// gornji levi cosak, za selektovanje cele tabele
 		Label firstLabel = new Label();
 		firstLabel.setMinWidth(80);
-		firstLabel.setStyle("-fx-background-color:white;-fx-border-color:black;");
-		firstLabel.setPadding(new Insets(5));
+		firstLabel.getStyleClass().add("corner-label");
+//		firstLabel.setStyle("-fx-background-color:white;-fx-border-color:black;");
+//		firstLabel.setPadding(new Insets(5));
 		firstLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		firstLabel.setOnMouseClicked(e -> {
 			Main.table.demarkSelectedCells();

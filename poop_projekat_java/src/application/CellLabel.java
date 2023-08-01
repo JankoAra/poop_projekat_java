@@ -64,7 +64,7 @@ public class CellLabel extends Label {
 			getStyleClass().add("default-label");
 			break;
 		}
-		//getStyleClass().add("default-label");
+		// getStyleClass().add("default-label");
 	}
 
 	private static void initCellLabel(CellLabel label) {
@@ -144,19 +144,19 @@ public class CellLabel extends Label {
 			if (tri != Main.table.clickedLabelRowIndex || tci != Main.table.clickedLabelColumnIndex) {
 				// prvi klik na labelu
 				Main.table.demarkSelectedCells();
-				if(e.isControlDown()) {
+				if (e.isControlDown()) {
 					Main.table.addToSelectedRange(tri, tci, tri, tci);
 					Main.table.clearClickedLabelIndices();
-				}else {
+				} else {
 					Main.table.setSelectedRange(tri, tci, tri, tci);
 					Main.table.setClickedLabelIndices(tri, tci);
 				}
-				
+
 				Main.table.markSelectedCells();
 				label.requestFocus();
 			} else {
 				// drugi klik na labelu
-				GUI.replaceLabelWithTextField(GUI.grid, ri, ci);
+				GUI.replaceLabelWithTextFieldWithStartValue(GUI.grid, ri, ci, null);
 			}
 
 			e.consume();
@@ -182,8 +182,11 @@ public class CellLabel extends Label {
 			} else if (!pressedCharacter.isEmpty()) {
 				// System.out.println("ima texta");
 				// pritisnut nexi printabilni karakter
-				GUI.replaceLabelWithTextFieldWithStartValue(GUI.grid, ri, ci, pressedCharacter);
-				e.consume();
+				if (tri == Main.table.clickedLabelRowIndex && tci == Main.table.clickedLabelColumnIndex) {
+					GUI.replaceLabelWithTextFieldWithStartValue(GUI.grid, ri, ci, pressedCharacter);
+					e.consume();
+				}
+
 			} else {
 				KeyCode keycode = e.getCode();
 				switch (keycode) {
@@ -251,10 +254,9 @@ public class CellLabel extends Label {
 			}
 		});
 		label.setMinWidth(80);
-		// label.setStyle("-fx-background-color:white;-fx-border-color:black;");
 		label.getStyleClass().add("default-label");
-		label.setFont(new Font("Arial", 20));
-		label.setPadding(new Insets(5));
+		// label.setFont(new Font("Arial", 20));
+		// label.setPadding(new Insets(5));
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 	}
 

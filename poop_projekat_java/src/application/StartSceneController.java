@@ -25,7 +25,7 @@ public class StartSceneController {
 		Main.table.updateLabels();
 		stage.setScene(GUI.runningScene);
 		stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
-		stage.setMaximized(true);
+		//stage.setMaximized(true);
 //		stage.hide();
 //		stage.show();
 	}

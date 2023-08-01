@@ -1,29 +1,54 @@
 .default-label{
 	-fx-border-color:black;
 	-fx-background-color:white;
+	-fx-padding:5px;
+}
+CellLabel {
+    -fx-font-family: "Arial";
+    -fx-font-size: 20px;
+}
+ColumnLabel, RowLabel, .corner-label{
+	-fx-background-color:#f2f2f2;
+	-fx-border-color:black;
+	-fx-alignment:center;
+	-fx-font-family: "Arial";
+    -fx-font-size: 20px;
+    -fx-padding:5px;
 }
 
 .selected-label{
 	-fx-border-color:black;
 	-fx-background-color:#cccccc;
+	-fx-padding:5px;
 }
 
 .selected-number{
 	-fx-border-color:black;
 	-fx-background-color:#b3b300;
+	-fx-padding:5px;
 }
 
 .selected-date{
 	-fx-border-color:black;
 	-fx-background-color:#00b3b3;
+	-fx-padding:5px;
 }
 
 .number-label{
 	-fx-border-color:black;
 	-fx-background-color:yellow;
+	-fx-padding:5px;
 }
 
 .date-label{
 	-fx-border-color:black;
 	-fx-background-color:cyan;
+	-fx-padding:5px;
+}
+
+.active-text-field{
+	-fx-border-color:green;
+	-fx-background-color:white;
+	-fx-font-family: "Arial";
+    -fx-font-size: 20px;
 }
