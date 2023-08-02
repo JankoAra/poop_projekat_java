@@ -275,7 +275,9 @@ void TableJNI::resolveFormulas() {
 							changed = true;
 						}
 						else if (!isNumber(cellValue)) {
-							unableToSolve = true;
+							token = "ERROR";
+							//unableToSolve = true;
+							changed = true;
 						}
 						else {
 							token = cellValue;
