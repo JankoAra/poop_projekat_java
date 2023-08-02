@@ -1,13 +1,12 @@
 package application;
 
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 
 public class ColumnLabel extends Label {
 
@@ -27,9 +26,6 @@ public class ColumnLabel extends Label {
 
 	private static void initColumnLabel(ColumnLabel label) {
 		label.setMinWidth(80);
-		//label.setStyle("-fx-background-color:white;-fx-border-color:black;-fx-alignment:center;");
-		//label.setFont(new Font("Arial", 20));
-		//label.setPadding(new Insets(5));
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		label.setOnMouseClicked(e -> {
 			int ci = GridPane.getColumnIndex(label);
@@ -40,12 +36,15 @@ public class ColumnLabel extends Label {
 			Main.table.markSelectedCells();
 		});
 		label.setOnDragDetected(e -> {
-			int ci = GridPane.getColumnIndex(label);
-			int tci = ci - 1;
-			Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
-			ClipboardContent content = new ClipboardContent();
-			content.putString("column:"+tci);
-			dragboard.setContent(content);
+			if(e.getButton()==MouseButton.PRIMARY) {
+				int ci = GridPane.getColumnIndex(label);
+				int tci = ci - 1;
+				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
+				ClipboardContent content = new ClipboardContent();
+				content.putString("column:"+tci);
+				dragboard.setContent(content);
+			}
+			
 			e.consume();
 		});
 		label.setOnDragEntered(e -> {

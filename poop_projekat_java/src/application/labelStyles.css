@@ -46,7 +46,7 @@ ColumnLabel, RowLabel, .corner-label{
 	-fx-padding:5px;
 }
 
-.active-text-field{
+.active-text-field, EditingField{
 	-fx-border-color:green;
 	-fx-background-color:white;
 	-fx-font-family: "Arial";

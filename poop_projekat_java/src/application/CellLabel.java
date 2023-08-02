@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
@@ -69,13 +70,17 @@ public class CellLabel extends Label {
 
 	private static void initCellLabel(CellLabel label) {
 		label.setOnDragDetected(e -> {
-			// indeksi u gridu, u tabeli su za 1 manji
-			int ri = GridPane.getRowIndex(label);
-			int ci = GridPane.getColumnIndex(label);
-			Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
-			ClipboardContent content = new ClipboardContent();
-			content.putString(ri + "," + ci);
-			dragboard.setContent(content);
+			if (e.getButton() == MouseButton.PRIMARY) {
+				// indeksi u gridu, u tabeli su za 1 manji
+				int ri = GridPane.getRowIndex(label);
+				int ci = GridPane.getColumnIndex(label);
+				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
+				ClipboardContent content = new ClipboardContent();
+				content.putString(ri + "," + ci);
+				dragboard.setContent(content);
+			} else if (e.getButton() == MouseButton.SECONDARY) {
+				System.out.println("desni drag");
+			}
 			e.consume();
 		});
 		label.setOnDragEntered(e -> {
@@ -156,7 +161,7 @@ public class CellLabel extends Label {
 				label.requestFocus();
 			} else {
 				// drugi klik na labelu
-				GUI.replaceLabelWithTextFieldWithStartValue(GUI.grid, ri, ci, null);
+				GUI.replaceLabelWithEditingField(GUI.grid, ri, ci, null);
 			}
 
 			e.consume();
@@ -183,7 +188,7 @@ public class CellLabel extends Label {
 				// System.out.println("ima texta");
 				// pritisnut nexi printabilni karakter
 				if (tri == Main.table.clickedLabelRowIndex && tci == Main.table.clickedLabelColumnIndex) {
-					GUI.replaceLabelWithTextFieldWithStartValue(GUI.grid, ri, ci, pressedCharacter);
+					GUI.replaceLabelWithEditingField(GUI.grid, ri, ci, pressedCharacter);
 					e.consume();
 				}
 

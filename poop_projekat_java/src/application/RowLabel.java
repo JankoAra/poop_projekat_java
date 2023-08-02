@@ -54,9 +54,6 @@ public class RowLabel extends Label {
 
 	private static void initRowLabel(RowLabel label) {
 		label.setMinWidth(80);
-		// label.setStyle("-fx-background-color:white;-fx-border-color:black;-fx-alignment:center;");
-		// label.setFont(new Font("Arial", 20));
-		// label.setPadding(new Insets(5));
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		label.setOnMouseClicked(e -> {
 			int ri = GridPane.getRowIndex(label);
@@ -72,12 +69,15 @@ public class RowLabel extends Label {
 
 		});
 		label.setOnDragDetected(e -> {
-			int ri = GridPane.getRowIndex(label);
-			int tri = ri - 1;
-			Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
-			ClipboardContent content = new ClipboardContent();
-			content.putString("row:" + tri);
-			dragboard.setContent(content);
+			if(e.getButton()==MouseButton.PRIMARY) {
+				int ri = GridPane.getRowIndex(label);
+				int tri = ri - 1;
+				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
+				ClipboardContent content = new ClipboardContent();
+				content.putString("row:" + tri);
+				dragboard.setContent(content);
+			}
+			
 			e.consume();
 		});
 		label.setOnDragEntered(e -> {
