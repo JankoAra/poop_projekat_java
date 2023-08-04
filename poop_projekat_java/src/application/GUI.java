@@ -3,7 +3,6 @@ package application;
 import java.io.File;
 import java.util.Optional;
 
-import application.GUI.UpdateType;
 import application.MyExceptions.FormatChangeUnsuccessful;
 import application.UndoRedoStack.ActionType;
 import javafx.geometry.Insets;
@@ -168,7 +167,7 @@ public class GUI {
 				return;
 			}
 
-			Main.table = new Table(50);
+			Main.table = new Table(Table.DEFAULT_TABLE_SIZE);
 			rebuildGrid();
 			Main.table.updateLabels();
 			Parser.currentFile = new File("Untitled");
@@ -205,9 +204,10 @@ public class GUI {
 
 		Button addRowBtn = new Button("Add row");
 		addRowBtn.setOnAction(e -> {
-			Main.table.addRow();
-			rebuildGrid();
-			Main.table.updateLabels();
+			UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
+			UndoRedoStack.undoStackNumber.push(Main.table.getNumOfRows());
+			Main.table.addRow(Main.table.getNumOfRows());
+			GUI.updateGUI(UpdateType.TABLE_CHANGE);
 		});
 
 		Button undoBtn = new Button("Undo");

@@ -1,6 +1,7 @@
 package application;
 
 import application.GUI.UpdateType;
+import application.UndoRedoStack.ActionType;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -18,19 +19,35 @@ public class RowLabel extends Label {
 			super();
 			MenuItem addRowAboveItem = new MenuItem("Add row above");
 			MenuItem addRowBelowItem = new MenuItem("Add row below");
+			MenuItem deleteRowItem = new MenuItem("Delete row");
 
 			addRowAboveItem.setOnAction(e -> {
 				int ri = GridPane.getRowIndex(label);
+				UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
+				UndoRedoStack.undoStackNumber.push(ri-1);
 				Main.table.addRow(ri - 1);
 				GUI.updateGUI(UpdateType.TABLE_CHANGE);
 			});
 			addRowBelowItem.setOnAction(e -> {
 				int ri = GridPane.getRowIndex(label);
+				UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
+				UndoRedoStack.undoStackNumber.push(ri);
 				Main.table.addRow(ri);
 				GUI.updateGUI(UpdateType.TABLE_CHANGE);
 			});
+			deleteRowItem.setOnAction(e -> {
+				int ri = GridPane.getRowIndex(label);
+				UndoRedoStack.undoStackType.push(ActionType.ROW_DELETED);
+				UndoRedoStack.undoStackNumber.push(ri-1);
+				for(int i=0;i<Table.numOfCols;i++) {
+					Cell c = Main.table.getCell(ri-1, i);
+					UndoRedoStack.undoStackCells.push(c);
+				}
+				Main.table.deleteRow(ri - 1);
+				GUI.updateGUI(UpdateType.TABLE_CHANGE);
+			});
 
-			this.getItems().addAll(addRowAboveItem, addRowBelowItem);
+			this.getItems().addAll(addRowAboveItem, addRowBelowItem, deleteRowItem);
 		}
 	}
 
@@ -67,7 +84,7 @@ public class RowLabel extends Label {
 
 		});
 		label.setOnDragDetected(e -> {
-			if(e.getButton()==MouseButton.PRIMARY) {
+			if (e.getButton() == MouseButton.PRIMARY) {
 				int ri = GridPane.getRowIndex(label);
 				int tri = ri - 1;
 				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
@@ -75,7 +92,7 @@ public class RowLabel extends Label {
 				content.putString("row:" + tri);
 				dragboard.setContent(content);
 			}
-			
+
 			e.consume();
 		});
 		label.setOnDragEntered(e -> {

@@ -6,10 +6,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import application.UndoRedoStack.ActionType;
+
 public class Table {
 	ArrayList<ArrayList<Cell>> data = new ArrayList<ArrayList<Cell>>();
 	ArrayList<ArrayList<CellLabel>> labels = new ArrayList<ArrayList<CellLabel>>();
 	public static final int numOfCols = 26;
+	public static final int DEFAULT_TABLE_SIZE = 5;
 
 	LinkedList<Cell> selectedCells = new LinkedList<>();
 	int clickedLabelRowIndex = -1, clickedLabelColumnIndex = -1;
@@ -60,11 +63,24 @@ public class Table {
 					oldCell.setRow(oldCell.getRow()+1);
 				}
 			}
+//			UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
+//			UndoRedoStack.undoStackNumber.push(newRowIndex);
 		}
 		catch(Exception e) {
 			System.out.println("Uhvacen");
 		}
 		
+	}
+	
+	public void deleteRow(int rowIndex) {
+		data.remove(rowIndex);
+		labels.remove(rowIndex);
+		for (int i = rowIndex; i < this.getNumOfRows(); i++) {
+			for (int j = 0; j < Table.numOfCols; j++) {
+				Cell c = Main.table.getCell(i, j);
+				c.setRow(c.getRow() - 1);
+			}
+		}
 	}
 
 	public void setCell(int row, int col, Cell newCell) {
@@ -114,7 +130,8 @@ public class Table {
 				label.setText(getCell(i, j).getFormattedValue());
 			}
 		}
-		colorLabels();
+		//bojenje mora biti zasebno
+		//colorLabels();
 	}
 
 	public Cell getCell(int row, int col) {
