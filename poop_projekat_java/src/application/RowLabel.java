@@ -1,7 +1,6 @@
 package application;
 
 import application.GUI.UpdateType;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -11,7 +10,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 
 public class RowLabel extends Label {
 

@@ -1,6 +1,7 @@
 package application;
 
 import application.MyExceptions.FormatChangeUnsuccessful;
+import application.UndoRedoStack.ActionType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
@@ -62,8 +63,13 @@ public class EditingField extends TextField {
 				Format oldFormat = Main.table.getCell(textField.tri, textField.tci).getFormat();
 				try {
 					// promena vrednosti celije u tabeli
+					Cell oldCell = Main.table.getCell(textField.tri, textField.tci);
 					Main.getTable().setCell(textField.tri, textField.tci,
 							new Cell(textField.getText(), oldFormat, textField.tri, textField.tci));
+					UndoRedoStack.clearRedoStack();
+					UndoRedoStack.undoStackType.push(ActionType.CELL_CHANGE);
+					UndoRedoStack.undoStackNumber.push(1);
+					UndoRedoStack.undoStackCells.push(oldCell);
 				} catch (FormatChangeUnsuccessful e) {
 					GUI.printlnLog("Upisana vrednost ne odgovara formatu celije");
 					// e.printStackTrace();

@@ -84,13 +84,17 @@ public class Cell {
 		try {
 			newCell = new Cell(oldCell.value, newFormat, oldCell.getRow(), oldCell.getCol());
 		} catch (FormatChangeUnsuccessful e) {
-			System.out.println(e.getMessage());
+			String cellName = tableIndexToCellName(rowIndex, colIndex);
+			GUI.printlnLog(e.getMessage() + " Sadrzaj celije "+cellName+" ne odgovara zeljenom formatu.");
 			return;
 		}
 		Main.table.setCell(rowIndex, colIndex, newCell);
-//		Main.table.getLabel(rowIndex, colIndex).getStyleClass().clear();
-//		Main.table.getLabel(rowIndex, colIndex).getStyleClass().add("number-label");
-		//GUI.rebuildGrid();
+	}
+	
+	public static String tableIndexToCellName(int row, int col) {
+		char colChar = (char) ('A' + col);
+		String rowString = ""+(row+1);
+		return colChar+rowString;
 	}
 
 }

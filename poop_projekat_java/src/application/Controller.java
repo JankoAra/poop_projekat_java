@@ -2,6 +2,8 @@ package application;
 
 import java.io.File;
 
+import application.GUI.UpdateType;
+import application.UndoRedoStack.ActionType;
 import javafx.stage.FileChooser;
 
 public class Controller {
@@ -65,12 +67,16 @@ public class Controller {
 		GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		return loadedTable;
 	}
-	
+
 	public static void formatSelectedCells(Format format) {
 		System.out.println("Changing format");
-		for(Cell c:Main.table.selectedCells) {
+		UndoRedoStack.clearRedoStack();
+		UndoRedoStack.undoStackType.push(ActionType.CELL_CHANGE);
+		UndoRedoStack.undoStackNumber.push(Main.table.selectedCells.size());
+		for (Cell c : Main.table.selectedCells) {
+			UndoRedoStack.undoStackCells.push(c);
 			Cell.convertCellToFormat(c.getRow(), c.getCol(), format);
 		}
-		Main.table.updateLabels();
+		GUI.updateGUI(UpdateType.CELL_CHANGE);
 	}
 }

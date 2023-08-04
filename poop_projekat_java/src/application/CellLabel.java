@@ -1,6 +1,5 @@
 package application;
 
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
@@ -9,7 +8,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 
 public class CellLabel extends Label {
 
@@ -65,7 +63,6 @@ public class CellLabel extends Label {
 			getStyleClass().add("default-label");
 			break;
 		}
-		// getStyleClass().add("default-label");
 	}
 
 	private static void initCellLabel(CellLabel label) {
@@ -260,8 +257,6 @@ public class CellLabel extends Label {
 		});
 		label.setMinWidth(80);
 		label.getStyleClass().add("default-label");
-		// label.setFont(new Font("Arial", 20));
-		// label.setPadding(new Insets(5));
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 	}
 

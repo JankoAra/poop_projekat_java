@@ -3,7 +3,9 @@ package application;
 import java.io.File;
 import java.util.Optional;
 
+import application.GUI.UpdateType;
 import application.MyExceptions.FormatChangeUnsuccessful;
+import application.UndoRedoStack.ActionType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -105,11 +107,16 @@ public class GUI {
 		rootBorderPane.setCenter(gridScrollPane);
 		gridScrollPane.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.DELETE) {
+				UndoRedoStack.clearRedoStack();
+				UndoRedoStack.undoStackType.push(ActionType.CELL_CHANGE);
+				UndoRedoStack.undoStackNumber.push(Main.table.selectedCells.size());
 				for (Cell c : Main.table.selectedCells) {
 					try {
+						UndoRedoStack.undoStackCells.push(c);
 						Cell newCell = new Cell("", c.getFormat(), c.getRow(), c.getCol());
 						Main.table.setCell(c.getRow(), c.getCol(), newCell);
 					} catch (FormatChangeUnsuccessful e1) {
+						//nece se desiti
 						e1.printStackTrace();
 					}
 				}
@@ -203,6 +210,20 @@ public class GUI {
 			Main.table.updateLabels();
 		});
 
+		Button undoBtn = new Button("Undo");
+		undoBtn.setOnAction(e -> {
+			UndoRedoStack.undo();
+			Main.table.clearClickedLabelIndices();
+			GUI.updateGUI(UpdateType.CELL_CHANGE);
+		});
+
+		Button redoBtn = new Button("Redo");
+		redoBtn.setOnAction(e -> {
+			UndoRedoStack.redo();
+			Main.table.clearClickedLabelIndices();
+			GUI.updateGUI(UpdateType.CELL_CHANGE);
+		});
+
 		// Unused
 		TextField rowIndexField = new TextField();
 		rowIndexField.setPromptText("row");
@@ -212,7 +233,7 @@ public class GUI {
 		newValueField.setPromptText("new value");
 		Button changeValueBtn = new Button("Change value");
 
-		VBox vbox1 = new VBox(saveBtn, addRowBtn);
+		VBox vbox1 = new VBox(saveBtn, addRowBtn, undoBtn, redoBtn);
 		VBox vbox2 = new VBox(rowIndexField, columnIndexField, newValueField, changeValueBtn);
 		vbox1.setPadding(new Insets(5));
 		vbox2.setPadding(new Insets(5));

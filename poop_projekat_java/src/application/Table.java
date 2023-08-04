@@ -74,6 +74,20 @@ public class Table {
 		}
 		data.get(row).set(col, newCell);
 	}
+	
+	public void colorLabels() {
+		for (int i = 0; i < getNumOfRows(); i++) {
+			for (int j = 0; j < Table.numOfCols; j++) {
+				CellLabel label = labels.get(i).get(j);
+				if(selectedCells.contains(getCell(i, j))) {
+					label.selectLabel();
+				}
+				else {
+					label.deselectLabel();
+				}
+			}
+		}
+	}
 
 	public void updateLabels() {
 		String resolvedFormulasCsvString = resolveTableFormulas(Parser.convertTableToCSVString(Main.table));
@@ -96,9 +110,11 @@ public class Table {
 
 		for (int i = 0; i < getNumOfRows(); i++) {
 			for (int j = 0; j < Table.numOfCols; j++) {
-				labels.get(i).get(j).setText(getCell(i, j).getFormattedValue());
+				CellLabel label = labels.get(i).get(j);
+				label.setText(getCell(i, j).getFormattedValue());
 			}
 		}
+		colorLabels();
 	}
 
 	public Cell getCell(int row, int col) {
