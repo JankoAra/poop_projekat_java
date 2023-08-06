@@ -32,19 +32,24 @@ public class ColumnLabel extends Label {
 			int tci = ci - 1;
 			Main.table.clearClickedLabelIndices();
 			Main.table.demarkSelectedCells();
-			Main.table.setSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
+			if (e.isControlDown()) {
+				Main.table.addToSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
+			} else {
+				Main.table.setSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
+			}
 			Main.table.markSelectedCells();
 		});
 		label.setOnDragDetected(e -> {
-			if(e.getButton()==MouseButton.PRIMARY) {
+			if (e.getButton() == MouseButton.PRIMARY) {
 				int ci = GridPane.getColumnIndex(label);
 				int tci = ci - 1;
 				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
 				ClipboardContent content = new ClipboardContent();
-				content.putString("column:"+tci);
+				String ctrlHeld = e.isControlDown() ? "add" : "set";
+				content.putString("column" + "," + ctrlHeld + "," + tci);
 				dragboard.setContent(content);
 			}
-			
+
 			e.consume();
 		});
 		label.setOnDragEntered(e -> {
@@ -57,19 +62,22 @@ public class ColumnLabel extends Label {
 				Dragboard dragboard = e.getDragboard();
 				if (dragboard.hasString()) {
 					String draggedText = dragboard.getString();
-					String[] parts = draggedText.split(":");
-					if(!parts[0].equals("column")) {
+					String[] parts = draggedText.split(",");
+					if (!parts[0].equals("column")) {
 						return;
 					}
 					try {
-						int startIndex = Integer.parseInt(parts[1]);
+						int startIndex = Integer.parseInt(parts[2]);
 						int minCol = Math.min(startIndex, tci);
 						int maxCol = Math.max(startIndex, tci);
 						Main.table.demarkSelectedCells();
-						Main.table.setSelectedRange(0, minCol, Main.table.getNumOfRows()-1, maxCol);
+						if (parts[1].equals("add")) {
+							Main.table.addToSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
+						} else {
+							Main.table.setSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
+						}
 						Main.table.markSelectedCells();
-					}
-					catch (NumberFormatException ex) {
+					} catch (NumberFormatException ex) {
 						return;
 					}
 				}

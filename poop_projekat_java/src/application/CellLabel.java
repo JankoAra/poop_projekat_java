@@ -73,7 +73,8 @@ public class CellLabel extends Label {
 				int ci = GridPane.getColumnIndex(label);
 				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(ri + "," + ci);
+				String ctrlHeld = e.isControlDown() ? "add" : "set";
+				content.putString(ctrlHeld + "," + ri + "," + ci);
 				dragboard.setContent(content);
 			} else if (e.getButton() == MouseButton.SECONDARY) {
 				System.out.println("desni drag");
@@ -91,9 +92,9 @@ public class CellLabel extends Label {
 				if (dragboard.hasString()) {
 					String draggedText = dragboard.getString();
 					String[] parts = draggedText.split(",");
-					if (parts.length == 2) {
-						int intValue1 = Integer.parseInt(parts[0]);
-						int intValue2 = Integer.parseInt(parts[1]);
+					if (parts.length == 3) {
+						int intValue1 = Integer.parseInt(parts[1]);
+						int intValue2 = Integer.parseInt(parts[2]);
 						int minRow = Math.min(intValue1 - 1, ri - 1);
 						int maxRow = Math.max(intValue1 - 1, ri - 1);
 						int minCol = Math.min(intValue2 - 1, ci - 1);
@@ -101,7 +102,13 @@ public class CellLabel extends Label {
 //						System.out.println("Pocetna celija (" + parts[0] + "," + parts[1] + "), Krajnja celija (" + ri
 //								+ "," + ci + ")");
 						Main.table.demarkSelectedCells();
-						Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
+						if(parts[0].equals("set")) {
+							Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
+						}
+						else {
+							Main.table.addToSelectedRange(minRow, minCol, maxRow, maxCol);
+							Main.table.clearClickedLabelIndices();
+						}
 						Main.table.markSelectedCells();
 						// Handle the integers here
 					}

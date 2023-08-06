@@ -24,7 +24,7 @@ public class RowLabel extends Label {
 			addRowAboveItem.setOnAction(e -> {
 				int ri = GridPane.getRowIndex(label);
 				UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
-				UndoRedoStack.undoStackNumber.push(ri-1);
+				UndoRedoStack.undoStackNumber.push(ri - 1);
 				Main.table.addRow(ri - 1);
 				GUI.updateGUI(UpdateType.TABLE_CHANGE);
 			});
@@ -38,9 +38,9 @@ public class RowLabel extends Label {
 			deleteRowItem.setOnAction(e -> {
 				int ri = GridPane.getRowIndex(label);
 				UndoRedoStack.undoStackType.push(ActionType.ROW_DELETED);
-				UndoRedoStack.undoStackNumber.push(ri-1);
-				for(int i=0;i<Table.numOfCols;i++) {
-					Cell c = Main.table.getCell(ri-1, i);
+				UndoRedoStack.undoStackNumber.push(ri - 1);
+				for (int i = 0; i < Table.numOfCols; i++) {
+					Cell c = Main.table.getCell(ri - 1, i);
 					UndoRedoStack.undoStackCells.push(c);
 				}
 				Main.table.deleteRow(ri - 1);
@@ -76,7 +76,12 @@ public class RowLabel extends Label {
 			if (e.getButton() == MouseButton.PRIMARY) {
 				Main.table.clearClickedLabelIndices();
 				Main.table.demarkSelectedCells();
-				Main.table.setSelectedRange(tri, 0, tri, Table.numOfCols - 1);
+				if (e.isControlDown()) {
+					Main.table.addToSelectedRange(tri, 0, tri, Table.numOfCols - 1);
+				} else {
+					Main.table.setSelectedRange(tri, 0, tri, Table.numOfCols - 1);
+				}
+
 				Main.table.markSelectedCells();
 			} else if (e.getButton() == MouseButton.SECONDARY) {
 				label.optionsMenu.show(label, e.getScreenX(), e.getScreenY());
@@ -89,7 +94,8 @@ public class RowLabel extends Label {
 				int tri = ri - 1;
 				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
 				ClipboardContent content = new ClipboardContent();
-				content.putString("row:" + tri);
+				String ctrlHeld = e.isControlDown() ? "add" : "set";
+				content.putString("row" + "," + ctrlHeld + "," + tri);
 				dragboard.setContent(content);
 			}
 
@@ -105,16 +111,22 @@ public class RowLabel extends Label {
 				Dragboard dragboard = e.getDragboard();
 				if (dragboard.hasString()) {
 					String draggedText = dragboard.getString();
-					String[] parts = draggedText.split(":");
+					String[] parts = draggedText.split(",");
 					if (!parts[0].equals("row")) {
 						return;
 					}
 					try {
-						int startIndex = Integer.parseInt(parts[1]);
+						int startIndex = Integer.parseInt(parts[2]);
 						int minRow = Math.min(startIndex, tri);
 						int maxRow = Math.max(startIndex, tri);
+						Main.table.clearClickedLabelIndices();
 						Main.table.demarkSelectedCells();
-						Main.table.setSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
+						if(parts[1].equals("add")) {
+							Main.table.addToSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
+						}
+						else {
+							Main.table.setSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
+						}
 						Main.table.markSelectedCells();
 					} catch (NumberFormatException ex) {
 						return;
