@@ -74,67 +74,107 @@ public class RowLabel extends Label {
 		label.setMinWidth(80);
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		label.setOnMouseClicked(e -> {
-			int ri = GridPane.getRowIndex(label);
-			int tri = ri - 1;
-			if (e.getButton() == MouseButton.PRIMARY) {
-				Main.table.clearClickedLabelIndices();
-				Main.table.demarkSelectedCells();
+			int gri = GridPane.getRowIndex(label);
+			int tri = gri - 1;
+			Main.table.clearClickedLabelIndices();
+			Main.table.demarkSelectedCells();
+			if (GUI.activeEditingField != null) {
+				if (GUI.activeEditingField.getText().startsWith("=")) {
+					GUI.activeEditingField.appendText(Cell.tableIndicesToCellRange(tri, -1, tri, -1));
+					GUI.activeEditingField.requestFocus();
+					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
+				} else {
+					GUI.replaceEditingFieldWithLabel();
+					Main.table.setSelectedRange(tri, 0, tri, Table.numOfCols - 1);
+				}
+			} else if (e.getButton() == MouseButton.PRIMARY) {
 				if (e.isControlDown()) {
 					Main.table.addToSelectedRange(tri, 0, tri, Table.numOfCols - 1);
 				} else {
 					Main.table.setSelectedRange(tri, 0, tri, Table.numOfCols - 1);
 				}
 
-				Main.table.markSelectedCells();
 			} else if (e.getButton() == MouseButton.SECONDARY) {
 				label.optionsMenu.show(label, e.getScreenX(), e.getScreenY());
 			}
+			Main.table.markSelectedCells();
+			e.consume();
 
 		});
 		label.setOnDragDetected(e -> {
+			int gri = GridPane.getRowIndex(label);
+			int tri = gri - 1;
+			Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
+			ClipboardContent content = new ClipboardContent();
+			String contentString = "";
+			/**
+			 * 0 - "row" 1 - startTri 2 - "primary"/"secondary" (mouse button) 3 -
+			 * "add"/"set" (ctrl held/not held) 4 - editingField start value / ""(if no
+			 * activeEditingField)
+			 */
+			contentString += "row,";
+			contentString += tri + ",";
 			if (e.getButton() == MouseButton.PRIMARY) {
-				int ri = GridPane.getRowIndex(label);
-				int tri = ri - 1;
-				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
-				ClipboardContent content = new ClipboardContent();
-				String ctrlHeld = e.isControlDown() ? "add" : "set";
-				content.putString("row" + "," + ctrlHeld + "," + tri);
-				dragboard.setContent(content);
+				contentString += "primary,";
+			} else if (e.getButton() == MouseButton.SECONDARY) {
+				contentString += "secondary,";
 			}
-
+			if (e.isControlDown()) {
+				contentString += "add,";
+			} else {
+				contentString += "set,";
+			}
+			if (GUI.activeEditingField != null) {
+				if (GUI.activeEditingField.getText().startsWith("=")) {
+					contentString += GUI.activeEditingField.getText();
+				} else {
+					GUI.replaceEditingFieldWithLabel();
+//					Main.table.demarkSelectedCells();
+//					Main.table.clearClickedLabelIndices();
+//					Main.table.setSelectedRange(tri, tci, tri, tci);
+//					Main.table.markSelectedCells();
+				}
+			}
+			content.putString(contentString);
+			dragboard.setContent(content);
 			e.consume();
 		});
 		label.setOnDragEntered(e -> {
-			// indeksi u gridu, u tabeli su za 1 manji
-			int ri = GridPane.getRowIndex(label);
-			int tri = ri - 1;
+			int gri = GridPane.getRowIndex(label);
+			int tri = gri - 1;
 			Main.table.clearClickedLabelIndices();
-			if (/* e.getGestureSource() != label && */ e.getDragboard().hasString()) {
+			if (e.getDragboard().hasString()) {
 				e.acceptTransferModes(TransferMode.ANY);
 				Dragboard dragboard = e.getDragboard();
-				if (dragboard.hasString()) {
-					String draggedText = dragboard.getString();
-					String[] parts = draggedText.split(",");
-					if (!parts[0].equals("row")) {
-						return;
-					}
-					try {
-						int startIndex = Integer.parseInt(parts[2]);
-						int minRow = Math.min(startIndex, tri);
-						int maxRow = Math.max(startIndex, tri);
-						Main.table.clearClickedLabelIndices();
-						Main.table.demarkSelectedCells();
-						if(parts[1].equals("add")) {
-							Main.table.addToSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
-						}
-						else {
-							Main.table.setSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
-						}
-						Main.table.markSelectedCells();
-					} catch (NumberFormatException ex) {
-						return;
+				String draggedText = dragboard.getString();
+				String[] parts = draggedText.split(",", -1);
+				if (parts.length != 5) {
+					System.out.println("Greska u pravljenju dragboard-a.");
+					return;
+				}
+				if (!parts[0].equals("row")) {
+					return;
+				}
+				int startIndex = Integer.parseInt(parts[1]);
+				int minRow = Math.min(startIndex, tri);
+				int maxRow = Math.max(startIndex, tri);
+				Main.table.demarkSelectedCells();
+				if (GUI.activeEditingField != null) {
+					String cellRange = Cell.tableIndicesToCellRange(minRow, -1, maxRow, -1);
+					GUI.activeEditingField.setText(parts[4] + cellRange);
+					GUI.activeEditingField.requestFocus();
+					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
+					Main.table.setSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
+				} else {
+					if (parts[1].equals("add")) {
+						Main.table.addToSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
+					} else {
+						Main.table.setSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
 					}
 				}
+
+				Main.table.markSelectedCells();
+
 			}
 			e.consume();
 		});

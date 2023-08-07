@@ -34,7 +34,7 @@ public class ColumnLabel extends Label {
 			Main.table.demarkSelectedCells();
 			if (GUI.activeEditingField != null) {
 				if (GUI.activeEditingField.getText().startsWith("=")) {
-					GUI.activeEditingField.appendText(Cell.tableIndexToCellName(-1, tci));
+					GUI.activeEditingField.appendText(Cell.tableIndicesToCellRange(-1, tci,-1,tci));
 					GUI.activeEditingField.requestFocus();
 					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
 				} else {
@@ -47,6 +47,7 @@ public class ColumnLabel extends Label {
 				Main.table.setSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
 			}
 			Main.table.markSelectedCells();
+			e.consume();
 		});
 
 		label.setOnDragDetected(e -> {
