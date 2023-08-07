@@ -2,6 +2,7 @@ package application;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -115,11 +116,9 @@ public class CellLabel extends Label {
 			ClipboardContent content = new ClipboardContent();
 			String contentString = "";
 			/*
-			 * 0 - startTri
-			 * 1 - startTci
-			 * 2 - "primary"/"secondary" (mouse button)
-			 * 3 - "add"/"set" (ctrl held/not held)
-			 * 4 - editingField start value / ""(if no activeEditingField)
+			 * 0 - startTri 1 - startTci 2 - "primary"/"secondary" (mouse button) 3 -
+			 * "add"/"set" (ctrl held/not held) 4 - editingField start value / ""(if no
+			 * activeEditingField)
 			 */
 			contentString += tri + ",";
 			contentString += tci + ",";
@@ -153,6 +152,30 @@ public class CellLabel extends Label {
 			int gci = GridPane.getColumnIndex(label);
 			int tri = gri - 1;
 			int tci = gci - 1;
+//			double mouseX = e.getSceneX();
+//			double mouseY = e.getSceneY();
+//			double minY = GUI.rootBorderPane.getCenter().getLayoutY();
+//			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
+//			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
+//			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
+//			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
+//			double deltaX = 50;
+//			double deltaY = 50;
+//			double moveX = 0.05;
+//			double moveY = 0.1;
+//			ScrollPane sp = GUI.gridScrollPane;
+//			if(mouseX-minX<deltaX) {
+//				sp.setHvalue(sp.getHvalue()-moveX);
+//			}
+//			else if(maxX-mouseX<deltaX) {
+//				sp.setHvalue(sp.getHvalue()+moveX);
+//			}
+//			if(mouseY-minY<deltaY) {
+//				sp.setVvalue(sp.getVvalue()-moveY);
+//			}
+//			else if(maxY-mouseY<deltaY) {
+//				sp.setVvalue(sp.getVvalue()+moveY);
+//			}
 			Main.table.clearClickedLabelIndices();
 			if (e.getDragboard().hasString()) {
 				e.acceptTransferModes(TransferMode.ANY);
@@ -168,8 +191,7 @@ public class CellLabel extends Label {
 				try {
 					startTri = Integer.parseInt(parts[0]);
 					startTci = Integer.parseInt(parts[1]);
-				}
-				catch(NumberFormatException ex) {
+				} catch (NumberFormatException ex) {
 					return;
 				}
 				int minRow = Math.min(startTri, tri);
@@ -202,15 +224,33 @@ public class CellLabel extends Label {
 			}
 			e.consume();
 		});
-//		label.setOnDragOver(e -> {
-//			// indeksi u gridu, u tabeli su za 1 manji
-//			int ri = GridPane.getRowIndex(label);
-//			int ci = GridPane.getColumnIndex(label);
-//			if (/* e.getGestureSource() != label && */ e.getDragboard().hasString()) {
-//				e.acceptTransferModes(TransferMode.ANY);
-//			}
-//			e.consume();
-//		});
+		label.setOnDragOver(e -> {
+			double mouseX = e.getSceneX();
+			double mouseY = e.getSceneY();
+			double minY = GUI.rootBorderPane.getCenter().getLayoutY();
+			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
+			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
+			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
+			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
+			double deltaX = 50;
+			double deltaY = 50;
+			double moveX = 0.05;
+			double moveY = 0.1;
+			ScrollPane sp = GUI.gridScrollPane;
+			if(mouseX-minX<deltaX) {
+				sp.setHvalue(sp.getHvalue()-moveX);
+			}
+			else if(maxX-mouseX<deltaX) {
+				sp.setHvalue(sp.getHvalue()+moveX);
+			}
+			if(mouseY-minY<deltaY) {
+				sp.setVvalue(sp.getVvalue()-moveY);
+			}
+			else if(maxY-mouseY<deltaY) {
+				sp.setVvalue(sp.getVvalue()+moveY);
+			}
+			e.consume();
+		});
 
 //		label.setOnDragDropped(e -> {
 //			System.out.println("Hej");

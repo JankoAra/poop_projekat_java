@@ -72,6 +72,8 @@ public class GUI {
 	static GridPane grid;
 	static TextArea logArea;
 	static MenuBar menubar;
+	
+	static double upperMenuHeight = 0;
 
 	// Components of GUI when the program starts
 	// (choosing whether to open a table or to create new one)
@@ -280,6 +282,7 @@ public class GUI {
 		northMenu.getChildren().addAll(vbox1, vbox2, vbox4, vbox3, vbox5);
 
 		rootBorderPane.setTop(northPane);
+		upperMenuHeight = rootBorderPane.getCenter().getLayoutBounds().getHeight();
 
 		scene.getStylesheets().add(GUI.class.getResource("labelStyles.css").toExternalForm());
 
