@@ -68,7 +68,7 @@ public class Cell {
 
 	public String getFormattedValue() {
 		String inputVal = value;
-		if(format.getDescription().equals("N")) {
+		if (format.getDescription().equals("N")) {
 			inputVal = Table.calculatedLabels.get(row).get(col);
 		}
 		return format.formattedValue(inputVal);
@@ -85,26 +85,25 @@ public class Cell {
 			newCell = new Cell(oldCell.value, newFormat, oldCell.getRow(), oldCell.getCol());
 		} catch (FormatChangeUnsuccessful e) {
 			String cellName = tableIndexToCellName(rowIndex, colIndex);
-			GUI.printlnLog(e.getMessage() + " Sadrzaj celije "+cellName+" ne odgovara zeljenom formatu.");
+			GUI.printlnLog(e.getMessage() + " Sadrzaj celije " + cellName + " ne odgovara zeljenom formatu.");
 			return;
 		}
 		Main.table.setCell(rowIndex, colIndex, newCell);
 	}
-	
+
 	public static String tableIndexToCellName(int row, int col) {
 		char colChar = (char) ('A' + col);
-		String rowString = ""+(row+1);
-		if(row<0) {
-			return colChar+"";
-		}
-		else if(col<0) {
+		String rowString = "" + (row + 1);
+		if (row < 0) {
+			return colChar + "";
+		} else if (col < 0) {
 			return rowString;
 		}
-		return colChar+rowString;
+		return colChar + rowString;
 	}
-	
+
 	public static String tableIndicesToCellRange(int minRow, int minCol, int maxRow, int maxCol) {
-		return tableIndexToCellName(minRow, minCol)+":"+tableIndexToCellName(maxRow, maxCol);
+		return tableIndexToCellName(minRow, minCol) + ":" + tableIndexToCellName(maxRow, maxCol);
 	}
 
 }

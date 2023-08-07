@@ -53,10 +53,10 @@ public class Parser {
 	public static String convertTableToCSVString(Table table) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < table.getNumOfRows(); i++) {
-			for (int j = 0; j < Table.numOfCols; j++) {
+			for (int j = 0; j < Table.NUMBER_OF_COLUMNS; j++) {
 				Cell cell = table.getCell(i, j);
 				sb.append(cell.getValue());
-				sb.append(j == Table.numOfCols - 1 ? "\n" : ",");
+				sb.append(j == Table.NUMBER_OF_COLUMNS - 1 ? "\n" : ",");
 			}
 		}
 		String csv = sb.toString();
@@ -83,7 +83,7 @@ public class Parser {
 				String row[] = line.split(",", -1);
 				int colNum = 0;
 				for (String value : row) {
-					if (colNum >= Table.numOfCols)
+					if (colNum >= Table.NUMBER_OF_COLUMNS)
 						throw new Exception();
 					Cell cell = new Cell(value, Cell.TEXT_FORMAT, rowNum, colNum);
 					table.setCell(rowNum, colNum, cell);

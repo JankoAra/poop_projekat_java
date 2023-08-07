@@ -72,7 +72,7 @@ public class GUI {
 	static GridPane grid;
 	static TextArea logArea;
 	static MenuBar menubar;
-	
+
 	static double upperMenuHeight = 0;
 
 	// Components of GUI when the program starts
@@ -331,7 +331,7 @@ public class GUI {
 	}
 
 	static void replaceEditingFieldWithLabel() {
-		if(activeEditingField==null) {
+		if (activeEditingField == null) {
 			GUI.printlnLog("Greska! Ne postoji aktivno tekstualno polje.");
 			return;
 		}
@@ -356,7 +356,7 @@ public class GUI {
 		CellLabel label = Main.table.getLabel(tri, tci);
 		editingField.getMyGrid().getChildren().remove(editingField);
 		editingField.getMyGrid().getChildren().add(label);
-		//Main.table.getClickedLabel().requestFocus();
+		// Main.table.getClickedLabel().requestFocus();
 		GUI.activeEditingField = null;
 	}
 
@@ -372,7 +372,7 @@ public class GUI {
 		GridPane grid = new GridPane();
 
 		// Create column constraints and set them to grow always
-		for (int j = 0; j <= Table.numOfCols; j++) {
+		for (int j = 0; j <= Table.NUMBER_OF_COLUMNS; j++) {
 			ColumnConstraints columnConstraints = new ColumnConstraints();
 			columnConstraints.setHgrow(Priority.ALWAYS);
 			grid.getColumnConstraints().add(columnConstraints);
@@ -388,7 +388,7 @@ public class GUI {
 		// popunjavanje celija sa sadrzajem (bez prvog reda i prve kolone koji su za
 		// indeksiranje)
 		for (int i = 0; i < table.getNumOfRows(); i++) {
-			for (int j = 0; j < Table.numOfCols; j++) {
+			for (int j = 0; j < Table.NUMBER_OF_COLUMNS; j++) {
 				CellLabel label = table.getLabel(i, j);
 				GridPane.setConstraints(label, j + 1, i + 1);
 				grid.getChildren().add(label);
@@ -404,7 +404,7 @@ public class GUI {
 		}
 
 		// popunjavanje prvog reda
-		for (int j = 0; j < Table.numOfCols; j++) {
+		for (int j = 0; j < Table.NUMBER_OF_COLUMNS; j++) {
 			ColumnLabel label = new ColumnLabel(String.format("%c", j + 'A'));
 			GridPane.setConstraints(label, j + 1, 0);
 			grid.getChildren().add(label);
@@ -417,7 +417,7 @@ public class GUI {
 		firstLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		firstLabel.setOnMouseClicked(e -> {
 			Main.table.demarkSelectedCells();
-			Main.table.setSelectedRange(0, 0, Main.table.getNumOfRows() - 1, Table.numOfCols - 1);
+			Main.table.setSelectedRange(0, 0, Main.table.getNumOfRows() - 1, Table.NUMBER_OF_COLUMNS - 1);
 			Main.table.markSelectedCells();
 		});
 		GridPane.setConstraints(firstLabel, 0, 0);

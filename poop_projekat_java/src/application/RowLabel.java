@@ -43,7 +43,7 @@ public class RowLabel extends Label {
 				UndoRedoStack.clearRedoStack();
 				UndoRedoStack.undoStackType.push(ActionType.ROW_DELETED);
 				UndoRedoStack.undoStackNumber.push(ri - 1);
-				for (int i = 0; i < Table.numOfCols; i++) {
+				for (int i = 0; i < Table.NUMBER_OF_COLUMNS; i++) {
 					Cell c = Main.table.getCell(ri - 1, i);
 					UndoRedoStack.undoStackCells.push(c);
 				}
@@ -86,13 +86,13 @@ public class RowLabel extends Label {
 					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
 				} else {
 					GUI.replaceEditingFieldWithLabel();
-					Main.table.setSelectedRange(tri, 0, tri, Table.numOfCols - 1);
+					Main.table.setSelectedRange(tri, 0, tri, Table.NUMBER_OF_COLUMNS - 1);
 				}
 			} else if (e.getButton() == MouseButton.PRIMARY) {
 				if (e.isControlDown()) {
-					Main.table.addToSelectedRange(tri, 0, tri, Table.numOfCols - 1);
+					Main.table.addToSelectedRange(tri, 0, tri, Table.NUMBER_OF_COLUMNS - 1);
 				} else {
-					Main.table.setSelectedRange(tri, 0, tri, Table.numOfCols - 1);
+					Main.table.setSelectedRange(tri, 0, tri, Table.NUMBER_OF_COLUMNS - 1);
 				}
 
 			} else if (e.getButton() == MouseButton.SECONDARY) {
@@ -172,12 +172,12 @@ public class RowLabel extends Label {
 					GUI.activeEditingField.setText(parts[4] + cellRange);
 					GUI.activeEditingField.requestFocus();
 					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
-					Main.table.setSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
+					Main.table.setSelectedRange(minRow, 0, maxRow, Table.NUMBER_OF_COLUMNS - 1);
 				} else {
 					if (parts[1].equals("add")) {
-						Main.table.addToSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
+						Main.table.addToSelectedRange(minRow, 0, maxRow, Table.NUMBER_OF_COLUMNS - 1);
 					} else {
-						Main.table.setSelectedRange(minRow, 0, maxRow, Table.numOfCols - 1);
+						Main.table.setSelectedRange(minRow, 0, maxRow, Table.NUMBER_OF_COLUMNS - 1);
 					}
 				}
 
@@ -193,7 +193,7 @@ public class RowLabel extends Label {
 			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
 			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
 			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
-			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
+			//System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
 			double deltaX = 50;
 			double deltaY = 50;
 			double moveX = 0.05;

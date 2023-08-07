@@ -66,7 +66,7 @@ public class JsonMappedData {
 //    	}
     	cells = new LinkedList<MetaCell>();
     	for(int i=0;i<table.getNumOfRows();i++) {
-    		for(int j=0;j<Table.numOfCols;j++) {
+    		for(int j=0;j<Table.NUMBER_OF_COLUMNS;j++) {
     			Cell tc = table.getCell(i, j);
     			Format f = tc.getFormat();
     			boolean isNumber = f.getDescription().equals("N");

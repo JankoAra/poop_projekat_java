@@ -115,7 +115,7 @@ public class CellLabel extends Label {
 			Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
 			ClipboardContent content = new ClipboardContent();
 			String contentString = "";
-			/*
+			/**
 			 * 0 - startTri 1 - startTci 2 - "primary"/"secondary" (mouse button) 3 -
 			 * "add"/"set" (ctrl held/not held) 4 - editingField start value / ""(if no
 			 * activeEditingField)
@@ -231,47 +231,25 @@ public class CellLabel extends Label {
 			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
 			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
 			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
-			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
+			// System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+"
+			// "+maxY);
 			double deltaX = 50;
 			double deltaY = 50;
 			double moveX = 0.05;
 			double moveY = 0.1;
 			ScrollPane sp = GUI.gridScrollPane;
-			if(mouseX-minX<deltaX) {
-				sp.setHvalue(sp.getHvalue()-moveX);
+			if (mouseX - minX < deltaX) {
+				sp.setHvalue(sp.getHvalue() - moveX);
+			} else if (maxX - mouseX < deltaX) {
+				sp.setHvalue(sp.getHvalue() + moveX);
 			}
-			else if(maxX-mouseX<deltaX) {
-				sp.setHvalue(sp.getHvalue()+moveX);
-			}
-			if(mouseY-minY<deltaY) {
-				sp.setVvalue(sp.getVvalue()-moveY);
-			}
-			else if(maxY-mouseY<deltaY) {
-				sp.setVvalue(sp.getVvalue()+moveY);
+			if (mouseY - minY < deltaY) {
+				sp.setVvalue(sp.getVvalue() - moveY);
+			} else if (maxY - mouseY < deltaY) {
+				sp.setVvalue(sp.getVvalue() + moveY);
 			}
 			e.consume();
 		});
-
-//		label.setOnDragDropped(e -> {
-//			System.out.println("Hej");
-//			// indeksi u gridu, u tabeli su za 1 manji
-//			int ri = GridPane.getRowIndex(label);
-//			int ci = GridPane.getColumnIndex(label);
-//			int tri = ri - 1;
-//			int tci = ci - 1;
-//			Dragboard dragboard = e.getDragboard();
-//			if (dragboard.hasString()) {
-//				String draggedText = dragboard.getString();
-//				String[] parts = draggedText.split(",",-1);
-//				if (parts.length != 5) {
-//					System.out.println("Greska u pravljenju dragboard-a.");
-//					return;
-//				}
-//				System.out.println("KRAJ:"+tri+","+tci);
-//			}
-//			e.setDropCompleted(true);
-//			e.consume();
-//		});
 
 		label.setOnKeyPressed(e -> {
 			String pressedCharacter = e.getText();
@@ -332,7 +310,7 @@ public class CellLabel extends Label {
 					e.consume();
 					break;
 				case RIGHT:
-					if (tci + 1 < Table.numOfCols) {
+					if (tci + 1 < Table.NUMBER_OF_COLUMNS) {
 						Main.table.demarkSelectedCells();
 						Main.table.setSelectedRange(tri, tci + 1, tri, tci + 1);
 						Main.table.setClickedLabelIndices(tri, tci + 1);

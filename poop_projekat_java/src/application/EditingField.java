@@ -39,14 +39,14 @@ public class EditingField extends TextField {
 					Main.table.setSelectedRange(textField.tri + 1, textField.tci, textField.tri + 1, textField.tci);
 					Main.table.setClickedLabelIndices(textField.tri + 1, textField.tci);
 					Main.table.markSelectedCells();
-					textField.myGrid.requestFocus();
+
 				} else {
 					Main.table.demarkSelectedCells();
 					Main.table.setSelectedRange(textField.tri, textField.tci, textField.tri, textField.tci);
 					Main.table.setClickedLabelIndices(textField.tri, textField.tci);
 					Main.table.markSelectedCells();
-					textField.myGrid.requestFocus();
 				}
+				Main.table.getClickedLabel().requestFocus();
 				GUI.replaceEditingFieldWithLabel();
 			} else if (event.getCode() == KeyCode.ESCAPE) {
 				event.consume();

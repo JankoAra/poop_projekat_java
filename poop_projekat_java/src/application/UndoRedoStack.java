@@ -50,7 +50,7 @@ public class UndoRedoStack {
 			redoStackType.push(ActionType.ROW_DELETED);
 			redoStackNumber.push(deletedRowIndex);
 			Main.table.addRow(deletedRowIndex);
-			for (int i = 0; i < Table.numOfCols; i++) {
+			for (int i = 0; i < Table.NUMBER_OF_COLUMNS; i++) {
 				Cell c = undoStackCells.pop();
 				Main.table.setCell(deletedRowIndex, 25 - i, c);
 			}
@@ -99,7 +99,7 @@ public class UndoRedoStack {
 			int toDeleteIndex = redoStackNumber.pop();
 			undoStackType.push(ActionType.ROW_DELETED);
 			undoStackNumber.push(toDeleteIndex);
-			for (int i = 0; i < Table.numOfCols; i++) {
+			for (int i = 0; i < Table.NUMBER_OF_COLUMNS; i++) {
 				Cell c = Main.table.getCell(toDeleteIndex, i);
 				undoStackCells.push(c);
 			}

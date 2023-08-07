@@ -9,19 +9,14 @@ import java.util.LinkedList;
 public class Table {
 	ArrayList<ArrayList<Cell>> data = new ArrayList<ArrayList<Cell>>();
 	ArrayList<ArrayList<CellLabel>> labels = new ArrayList<ArrayList<CellLabel>>();
-	public static final int numOfCols = 26;
-	public static final int DEFAULT_TABLE_SIZE = 5;
+	public static final int NUMBER_OF_COLUMNS = 26;
+	public static final int DEFAULT_TABLE_SIZE = 10;
 
 	LinkedList<Cell> selectedCells = new LinkedList<>();
 	int clickedLabelRowIndex = -1, clickedLabelColumnIndex = -1;
 
 	static ArrayList<ArrayList<String>> calculatedLabels = new ArrayList<ArrayList<String>>();
 
-	class Selector {
-		public int r1, r2, c1, c2;
-	}
-
-	Selector selector = new Selector();
 
 	public ArrayList<ArrayList<Cell>> getData() {
 		return data;
@@ -40,7 +35,7 @@ public class Table {
 	public void addRow() {
 		data.add(new ArrayList<Cell>());
 		labels.add(new ArrayList<CellLabel>());
-		for (int x = 0; x < numOfCols; x++) {
+		for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
 			data.get(data.size() - 1).add(new Cell(this.getNumOfRows() - 1, x));
 			labels.get(data.size() - 1).add(new CellLabel());
 		}
@@ -51,12 +46,12 @@ public class Table {
 			ArrayList<CellLabel> newLabels = new ArrayList<>();
 			data.add(newRowIndex, cells);
 			labels.add(newRowIndex, newLabels);
-			for (int x = 0; x < numOfCols; x++) {
+			for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
 				data.get(newRowIndex).add(new Cell(newRowIndex, x));
 				labels.get(newRowIndex).add(new CellLabel());
 			}
 			for(int i=newRowIndex+1;i<this.getNumOfRows();i++) {
-				for(int j=0;j<numOfCols;j++) {
+				for(int j=0;j<NUMBER_OF_COLUMNS;j++) {
 					Cell oldCell = getCell(i, j);
 					oldCell.setRow(oldCell.getRow()+1);
 				}
@@ -74,7 +69,7 @@ public class Table {
 		data.remove(rowIndex);
 		labels.remove(rowIndex);
 		for (int i = rowIndex; i < this.getNumOfRows(); i++) {
-			for (int j = 0; j < Table.numOfCols; j++) {
+			for (int j = 0; j < Table.NUMBER_OF_COLUMNS; j++) {
 				Cell c = Main.table.getCell(i, j);
 				c.setRow(c.getRow() - 1);
 			}
@@ -82,7 +77,7 @@ public class Table {
 	}
 
 	public void setCell(int row, int col, Cell newCell) {
-		if (row < 0 || row >= getNumOfRows() || col < 0 || col >= Table.numOfCols) {
+		if (row < 0 || row >= getNumOfRows() || col < 0 || col >= Table.NUMBER_OF_COLUMNS) {
 			System.out.println("Nepostojeca celija (" + row + "," + col + ")");
 			return;
 		}
@@ -91,7 +86,7 @@ public class Table {
 	
 	public void colorLabels() {
 		for (int i = 0; i < getNumOfRows(); i++) {
-			for (int j = 0; j < Table.numOfCols; j++) {
+			for (int j = 0; j < Table.NUMBER_OF_COLUMNS; j++) {
 				CellLabel label = labels.get(i).get(j);
 				if(selectedCells.contains(getCell(i, j))) {
 					label.selectLabel();
@@ -123,9 +118,20 @@ public class Table {
 		}
 
 		for (int i = 0; i < getNumOfRows(); i++) {
-			for (int j = 0; j < Table.numOfCols; j++) {
+			for (int j = 0; j < Table.NUMBER_OF_COLUMNS; j++) {
 				CellLabel label = labels.get(i).get(j);
-				label.setText(getCell(i, j).getFormattedValue());
+				String text = getCell(i, j).getFormattedValue();
+				label.setText(text);
+				if(text.equals("ERROR")) {
+					if(!label.getStyleClass().contains("error-label")) {
+						label.getStyleClass().add("error-label");
+					}
+				}
+				else {
+					if(label.getStyleClass().contains("error-label")) {
+						label.getStyleClass().remove("error-label");
+					}
+				}
 			}
 		}
 		//bojenje mora biti zasebno
@@ -145,15 +151,10 @@ public class Table {
 	}
 
 	public void setSelectedRange(int r1, int c1, int r2, int c2) {
-		selector.r1 = r1;
-		selector.r2 = r2;
-		selector.c1 = c1;
-		selector.c2 = c2;
-
 		LinkedList<Cell> newSelectedCells = new LinkedList<>();
 		GUI.printLog("\n");
-		for (int i = selector.r1; i <= selector.r2; i++) {
-			for (int j = selector.c1; j <= selector.c2; j++) {
+		for (int i = r1; i <= r2; i++) {
+			for (int j = c1; j <= c2; j++) {
 				newSelectedCells.add(getCell(i, j));
 				char chr = (char) (j + 65);
 				String s = chr + "" + (i + 1) + ",";
@@ -172,10 +173,6 @@ public class Table {
 				}
 			}
 		}
-	}
-
-	public Selector getSelectedRange() {
-		return selector;
 	}
 
 	public void setClickedLabelIndices(int row, int col) {

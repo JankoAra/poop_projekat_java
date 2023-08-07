@@ -140,7 +140,7 @@ public class ColumnLabel extends Label {
 			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
 			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
 			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
-			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
+			//System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
 			double deltaX = 50;
 			double deltaY = 50;
 			double moveX = 0.05;
