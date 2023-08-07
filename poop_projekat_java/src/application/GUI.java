@@ -35,6 +35,8 @@ public class GUI {
 	// Main stage(window)
 	static Stage stage;
 
+	static EditingField activeEditingField = null;
+
 	public enum UpdateType {
 		TABLE_CHANGE, CELL_CHANGE, CELLS_SELECTION
 	}
@@ -115,7 +117,7 @@ public class GUI {
 						Cell newCell = new Cell("", c.getFormat(), c.getRow(), c.getCol());
 						Main.table.setCell(c.getRow(), c.getCol(), newCell);
 					} catch (FormatChangeUnsuccessful e1) {
-						//nece se desiti
+						// nece se desiti
 						e1.printStackTrace();
 					}
 				}
@@ -204,6 +206,7 @@ public class GUI {
 
 		Button addRowBtn = new Button("Add row");
 		addRowBtn.setOnAction(e -> {
+			UndoRedoStack.clearRedoStack();
 			UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
 			UndoRedoStack.undoStackNumber.push(Main.table.getNumOfRows());
 			Main.table.addRow(Main.table.getNumOfRows());
@@ -307,21 +310,51 @@ public class GUI {
 		Label label = Main.table.getLabel(tri, tci);
 		grid.getChildren().remove(label);
 
-		EditingField textField = null;
+		EditingField editingField = null;
 		if (sValue == null) {
-			textField = new EditingField(Main.table.getCell(tri, tci).getValue(), grid, tri, tci);
+			editingField = new EditingField(Main.table.getCell(tri, tci).getValue(), grid, tri, tci);
 		} else {
-			textField = new EditingField(sValue, grid, tri, tci);
+			editingField = new EditingField(sValue, grid, tri, tci);
 		}
-		GridPane.setConstraints(textField, gci, gri);
-		grid.getChildren().add(textField);
-		textField.requestFocus();
+		GridPane.setConstraints(editingField, gci, gri);
+		grid.getChildren().add(editingField);
+		editingField.requestFocus();
 		if (sValue == null) {
-			textField.selectAll();
+			editingField.selectAll();
 		} else {
-			textField.positionCaret(textField.getText().length());
+			editingField.positionCaret(editingField.getText().length());
 		}
+		GUI.activeEditingField = editingField;
+	}
 
+	static void replaceEditingFieldWithLabel() {
+		if(activeEditingField==null) {
+			GUI.printlnLog("Greska! Ne postoji aktivno tekstualno polje.");
+			return;
+		}
+		EditingField editingField = activeEditingField;
+		int gri = GridPane.getRowIndex(editingField);
+		int gci = GridPane.getColumnIndex(editingField);
+		int tri = gri - 1;
+		int tci = gci - 1;
+		try {
+			Cell oldCell = Main.table.getCell(tri, tci);
+			Format oldFormat = oldCell.getFormat();
+			Cell newCell = new Cell(editingField.getText(), oldFormat, tri, tci);
+			Main.table.setCell(tri, tci, newCell);
+			UndoRedoStack.clearRedoStack();
+			UndoRedoStack.undoStackType.push(ActionType.CELL_CHANGE);
+			UndoRedoStack.undoStackNumber.push(1);
+			UndoRedoStack.undoStackCells.push(oldCell);
+		} catch (FormatChangeUnsuccessful ex) {
+			GUI.printlnLog("Upisana vrednost ne odgovara formatu celije");
+		}
+		Main.table.updateLabels();
+		CellLabel label = Main.table.getLabel(tri, tci);
+		editingField.getMyGrid().getChildren().remove(editingField);
+		editingField.getMyGrid().getChildren().add(label);
+		//Main.table.getClickedLabel().requestFocus();
+		GUI.activeEditingField = null;
 	}
 
 	/**

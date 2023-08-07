@@ -23,6 +23,7 @@ public class RowLabel extends Label {
 
 			addRowAboveItem.setOnAction(e -> {
 				int ri = GridPane.getRowIndex(label);
+				UndoRedoStack.clearRedoStack();
 				UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
 				UndoRedoStack.undoStackNumber.push(ri - 1);
 				Main.table.addRow(ri - 1);
@@ -30,6 +31,7 @@ public class RowLabel extends Label {
 			});
 			addRowBelowItem.setOnAction(e -> {
 				int ri = GridPane.getRowIndex(label);
+				UndoRedoStack.clearRedoStack();
 				UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
 				UndoRedoStack.undoStackNumber.push(ri);
 				Main.table.addRow(ri);
@@ -37,6 +39,7 @@ public class RowLabel extends Label {
 			});
 			deleteRowItem.setOnAction(e -> {
 				int ri = GridPane.getRowIndex(label);
+				UndoRedoStack.clearRedoStack();
 				UndoRedoStack.undoStackType.push(ActionType.ROW_DELETED);
 				UndoRedoStack.undoStackNumber.push(ri - 1);
 				for (int i = 0; i < Table.numOfCols; i++) {

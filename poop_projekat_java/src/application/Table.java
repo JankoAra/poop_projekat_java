@@ -6,8 +6,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import application.UndoRedoStack.ActionType;
-
 public class Table {
 	ArrayList<ArrayList<Cell>> data = new ArrayList<ArrayList<Cell>>();
 	ArrayList<ArrayList<CellLabel>> labels = new ArrayList<ArrayList<CellLabel>>();

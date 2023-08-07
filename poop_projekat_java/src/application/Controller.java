@@ -69,7 +69,10 @@ public class Controller {
 	}
 
 	public static void formatSelectedCells(Format format) {
-		System.out.println("Changing format");
+		// System.out.println("Changing format");
+		if (GUI.activeEditingField != null) {
+			GUI.replaceEditingFieldWithLabel();
+		}
 		UndoRedoStack.clearRedoStack();
 		UndoRedoStack.undoStackType.push(ActionType.CELL_CHANGE);
 		UndoRedoStack.undoStackNumber.push(Main.table.selectedCells.size());

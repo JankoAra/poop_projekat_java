@@ -28,59 +28,99 @@ public class ColumnLabel extends Label {
 		label.setMinWidth(80);
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		label.setOnMouseClicked(e -> {
-			int ci = GridPane.getColumnIndex(label);
-			int tci = ci - 1;
+			int gci = GridPane.getColumnIndex(label);
+			int tci = gci - 1;
 			Main.table.clearClickedLabelIndices();
 			Main.table.demarkSelectedCells();
-			if (e.isControlDown()) {
+			if (GUI.activeEditingField != null) {
+				if (GUI.activeEditingField.getText().startsWith("=")) {
+					GUI.activeEditingField.appendText(Cell.tableIndexToCellName(-1, tci));
+					GUI.activeEditingField.requestFocus();
+					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
+				} else {
+					GUI.replaceEditingFieldWithLabel();
+					Main.table.setSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
+				}
+			} else if (e.isControlDown()) {
 				Main.table.addToSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
 			} else {
 				Main.table.setSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
 			}
 			Main.table.markSelectedCells();
 		});
-		label.setOnDragDetected(e -> {
-			if (e.getButton() == MouseButton.PRIMARY) {
-				int ci = GridPane.getColumnIndex(label);
-				int tci = ci - 1;
-				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
-				ClipboardContent content = new ClipboardContent();
-				String ctrlHeld = e.isControlDown() ? "add" : "set";
-				content.putString("column" + "," + ctrlHeld + "," + tci);
-				dragboard.setContent(content);
-			}
 
+		label.setOnDragDetected(e -> {
+			int gci = GridPane.getColumnIndex(label);
+			int tci = gci - 1;
+			Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
+			ClipboardContent content = new ClipboardContent();
+			String contentString = "";
+			/**
+			 * 0 - "column" 1 - startTci 2 - "primary"/"secondary" (mouse button) 3 -
+			 * "add"/"set" (ctrl held/not held) 4 - editingField start value / ""(if no
+			 * activeEditingField)
+			 */
+			contentString += "column,";
+			contentString += tci + ",";
+			if (e.getButton() == MouseButton.PRIMARY) {
+				contentString += "primary,";
+			} else if (e.getButton() == MouseButton.SECONDARY) {
+				contentString += "secondary,";
+			}
+			if (e.isControlDown()) {
+				contentString += "add,";
+			} else {
+				contentString += "set,";
+			}
+			if (GUI.activeEditingField != null) {
+				if (GUI.activeEditingField.getText().startsWith("=")) {
+					contentString += GUI.activeEditingField.getText();
+				} else {
+					GUI.replaceEditingFieldWithLabel();
+//					Main.table.demarkSelectedCells();
+//					Main.table.clearClickedLabelIndices();
+//					Main.table.setSelectedRange(tri, tci, tri, tci);
+//					Main.table.markSelectedCells();
+				}
+			}
+			content.putString(contentString);
+			dragboard.setContent(content);
 			e.consume();
 		});
 		label.setOnDragEntered(e -> {
-			// indeksi u gridu, u tabeli su za 1 manji
-			int ci = GridPane.getColumnIndex(label);
-			int tci = ci - 1;
+			int gci = GridPane.getColumnIndex(label);
+			int tci = gci - 1;
 			Main.table.clearClickedLabelIndices();
-			if (/* e.getGestureSource() != label && */ e.getDragboard().hasString()) {
+			if (e.getDragboard().hasString()) {
 				e.acceptTransferModes(TransferMode.ANY);
 				Dragboard dragboard = e.getDragboard();
-				if (dragboard.hasString()) {
-					String draggedText = dragboard.getString();
-					String[] parts = draggedText.split(",");
-					if (!parts[0].equals("column")) {
-						return;
-					}
-					try {
-						int startIndex = Integer.parseInt(parts[2]);
-						int minCol = Math.min(startIndex, tci);
-						int maxCol = Math.max(startIndex, tci);
-						Main.table.demarkSelectedCells();
-						if (parts[1].equals("add")) {
-							Main.table.addToSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
-						} else {
-							Main.table.setSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
-						}
-						Main.table.markSelectedCells();
-					} catch (NumberFormatException ex) {
-						return;
+				String draggedText = dragboard.getString();
+				String[] parts = draggedText.split(",", -1);
+				if (parts.length != 5) {
+					System.out.println("Greska u pravljenju dragboard-a.");
+					return;
+				}
+				if (!parts[0].equals("column")) {
+					return;
+				}
+				int startIndex = Integer.parseInt(parts[1]);
+				int minCol = Math.min(startIndex, tci);
+				int maxCol = Math.max(startIndex, tci);
+				Main.table.demarkSelectedCells();
+				if (GUI.activeEditingField != null) {
+					String cellRange = Cell.tableIndicesToCellRange(-1, minCol, -1, maxCol);
+					GUI.activeEditingField.setText(parts[4] + cellRange);
+					GUI.activeEditingField.requestFocus();
+					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
+					Main.table.setSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
+				} else {
+					if (parts[3].equals("add")) {
+						Main.table.addToSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
+					} else {
+						Main.table.setSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
 					}
 				}
+				Main.table.markSelectedCells();
 			}
 			e.consume();
 		});

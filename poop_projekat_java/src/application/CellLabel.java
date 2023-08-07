@@ -66,91 +66,28 @@ public class CellLabel extends Label {
 	}
 
 	private static void initCellLabel(CellLabel label) {
-		label.setOnDragDetected(e -> {
-			if (e.getButton() == MouseButton.PRIMARY) {
-				// indeksi u gridu, u tabeli su za 1 manji
-				int ri = GridPane.getRowIndex(label);
-				int ci = GridPane.getColumnIndex(label);
-				Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
-				ClipboardContent content = new ClipboardContent();
-				String ctrlHeld = e.isControlDown() ? "add" : "set";
-				content.putString(ctrlHeld + "," + ri + "," + ci);
-				dragboard.setContent(content);
-			} else if (e.getButton() == MouseButton.SECONDARY) {
-				System.out.println("desni drag");
-			}
-			e.consume();
-		});
-		label.setOnDragEntered(e -> {
-			// indeksi u gridu, u tabeli su za 1 manji
-			int ri = GridPane.getRowIndex(label);
-			int ci = GridPane.getColumnIndex(label);
-			Main.table.clearClickedLabelIndices();
-			if (/* e.getGestureSource() != label && */ e.getDragboard().hasString()) {
-				e.acceptTransferModes(TransferMode.ANY);
-				Dragboard dragboard = e.getDragboard();
-				if (dragboard.hasString()) {
-					String draggedText = dragboard.getString();
-					String[] parts = draggedText.split(",");
-					if (parts.length == 3) {
-						int intValue1 = Integer.parseInt(parts[1]);
-						int intValue2 = Integer.parseInt(parts[2]);
-						int minRow = Math.min(intValue1 - 1, ri - 1);
-						int maxRow = Math.max(intValue1 - 1, ri - 1);
-						int minCol = Math.min(intValue2 - 1, ci - 1);
-						int maxCol = Math.max(intValue2 - 1, ci - 1);
-//						System.out.println("Pocetna celija (" + parts[0] + "," + parts[1] + "), Krajnja celija (" + ri
-//								+ "," + ci + ")");
-						Main.table.demarkSelectedCells();
-						if(parts[0].equals("set")) {
-							Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
-						}
-						else {
-							Main.table.addToSelectedRange(minRow, minCol, maxRow, maxCol);
-							Main.table.clearClickedLabelIndices();
-						}
-						Main.table.markSelectedCells();
-						// Handle the integers here
-					}
-				}
-			}
-			e.consume();
-		});
-//		label.setOnDragOver(e -> {
-//			// indeksi u gridu, u tabeli su za 1 manji
-//			int ri = GridPane.getRowIndex(label);
-//			int ci = GridPane.getColumnIndex(label);
-//			if (/* e.getGestureSource() != label && */ e.getDragboard().hasString()) {
-//				e.acceptTransferModes(TransferMode.ANY);
-//			}
-//			e.consume();
-//		});
-//		label.setOnDragDropped(e -> {
-//			// indeksi u gridu, u tabeli su za 1 manji
-//			int ri = GridPane.getRowIndex(label);
-//			int ci = GridPane.getColumnIndex(label);
-//			Dragboard dragboard = e.getDragboard();
-//			if (dragboard.hasString()) {
-//				String draggedText = dragboard.getString();
-//				String[] parts = draggedText.split(",");
-//				if (parts.length == 2) {
-//					int intValue1 = Integer.parseInt(parts[0]);
-//					int intValue2 = Integer.parseInt(parts[1]);
-//					System.out.println("KRAJ! Pocetna celija (" + parts[0] + "," + parts[1] + "), Krajnja celija (" + ri
-//							+ "," + ci + ")");
-//					// Handle the integers here
-//				}
-//			}
-//			e.setDropCompleted(true);
-//			e.consume();
-//		});
+		label.setMinWidth(80);
+		label.getStyleClass().add("default-label");
+		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
 		label.setOnMouseClicked(e -> {
-			// indeksi u gridu, u tabeli su za 1 manji
-			int ri = GridPane.getRowIndex(label);
-			int ci = GridPane.getColumnIndex(label);
-			int tri = ri - 1;
-			int tci = ci - 1;
-			if (tri != Main.table.clickedLabelRowIndex || tci != Main.table.clickedLabelColumnIndex) {
+			int gri = GridPane.getRowIndex(label);
+			int gci = GridPane.getColumnIndex(label);
+			int tri = gri - 1;
+			int tci = gci - 1;
+			if (GUI.activeEditingField != null) {
+				if (GUI.activeEditingField.getText().startsWith("=")) {
+					GUI.activeEditingField.appendText(Cell.tableIndexToCellName(tri, tci));
+					GUI.activeEditingField.requestFocus();
+					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
+				} else {
+					Main.table.demarkSelectedCells();
+					GUI.replaceEditingFieldWithLabel();
+					Main.table.setClickedLabelIndices(tri, tci);
+					Main.table.setSelectedRange(tri, tci, tri, tci);
+					Main.table.markSelectedCells();
+				}
+			} else if (tri != Main.table.clickedLabelRowIndex || tci != Main.table.clickedLabelColumnIndex) {
 				// prvi klik na labelu
 				Main.table.demarkSelectedCells();
 				if (e.isControlDown()) {
@@ -165,18 +102,143 @@ public class CellLabel extends Label {
 				label.requestFocus();
 			} else {
 				// drugi klik na labelu
-				GUI.replaceLabelWithEditingField(GUI.grid, ri, ci, null);
+				GUI.replaceLabelWithEditingField(GUI.grid, gri, gci, null);
 			}
-
 			e.consume();
 		});
+		label.setOnDragDetected(e -> {
+			int gri = GridPane.getRowIndex(label);
+			int gci = GridPane.getColumnIndex(label);
+			int tri = gri - 1;
+			int tci = gci - 1;
+			Dragboard dragboard = label.startDragAndDrop(TransferMode.ANY);
+			ClipboardContent content = new ClipboardContent();
+			String contentString = "";
+			/*
+			 * 0 - startTri
+			 * 1 - startTci
+			 * 2 - "primary"/"secondary" (mouse button)
+			 * 3 - "add"/"set" (ctrl held/not held)
+			 * 4 - editingField start value / ""(if no activeEditingField)
+			 */
+			contentString += tri + ",";
+			contentString += tci + ",";
+			if (e.getButton() == MouseButton.PRIMARY) {
+				contentString += "primary,";
+			} else if (e.getButton() == MouseButton.SECONDARY) {
+				contentString += "secondary,";
+			}
+			if (e.isControlDown()) {
+				contentString += "add,";
+			} else {
+				contentString += "set,";
+			}
+			if (GUI.activeEditingField != null) {
+				if (GUI.activeEditingField.getText().startsWith("=")) {
+					contentString += GUI.activeEditingField.getText();
+				} else {
+					GUI.replaceEditingFieldWithLabel();
+					Main.table.demarkSelectedCells();
+					Main.table.setClickedLabelIndices(tri, tci);
+					Main.table.setSelectedRange(tri, tci, tri, tci);
+					Main.table.markSelectedCells();
+				}
+			}
+			content.putString(contentString);
+			dragboard.setContent(content);
+			e.consume();
+		});
+		label.setOnDragEntered(e -> {
+			int gri = GridPane.getRowIndex(label);
+			int gci = GridPane.getColumnIndex(label);
+			int tri = gri - 1;
+			int tci = gci - 1;
+			Main.table.clearClickedLabelIndices();
+			if (e.getDragboard().hasString()) {
+				e.acceptTransferModes(TransferMode.ANY);
+				Dragboard dragboard = e.getDragboard();
+				String draggedText = dragboard.getString();
+				String[] parts = draggedText.split(",", -1);
+				if (parts.length != 5) {
+					System.out.println("Greska u pravljenju dragboard-a.");
+					return;
+				}
+				int startTri;
+				int startTci;
+				try {
+					startTri = Integer.parseInt(parts[0]);
+					startTci = Integer.parseInt(parts[1]);
+				}
+				catch(NumberFormatException ex) {
+					return;
+				}
+				int minRow = Math.min(startTri, tri);
+				int maxRow = Math.max(startTri, tri);
+				int minCol = Math.min(startTci, tci);
+				int maxCol = Math.max(startTci, tci);
+				Main.table.demarkSelectedCells();
+				if (GUI.activeEditingField != null) {
+					String cellRange = Cell.tableIndicesToCellRange(minRow, minCol, maxRow, maxCol);
+					GUI.activeEditingField.setText(parts[4] + cellRange);
+					GUI.activeEditingField.requestFocus();
+					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
+					Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
+					Main.table.clearClickedLabelIndices();
+				} else {
+					if (parts[3].equals("set")) {
+						Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
+						if (startTci == tci && startTri == tri) {
+							Main.table.setClickedLabelIndices(tri, tci);
+							Main.table.getClickedLabel().requestFocus();
+						} else {
+							Main.table.clearClickedLabelIndices();
+						}
+					} else {
+						Main.table.addToSelectedRange(minRow, minCol, maxRow, maxCol);
+						Main.table.clearClickedLabelIndices();
+					}
+				}
+				Main.table.markSelectedCells();
+			}
+			e.consume();
+		});
+//		label.setOnDragOver(e -> {
+//			// indeksi u gridu, u tabeli su za 1 manji
+//			int ri = GridPane.getRowIndex(label);
+//			int ci = GridPane.getColumnIndex(label);
+//			if (/* e.getGestureSource() != label && */ e.getDragboard().hasString()) {
+//				e.acceptTransferModes(TransferMode.ANY);
+//			}
+//			e.consume();
+//		});
+
+//		label.setOnDragDropped(e -> {
+//			System.out.println("Hej");
+//			// indeksi u gridu, u tabeli su za 1 manji
+//			int ri = GridPane.getRowIndex(label);
+//			int ci = GridPane.getColumnIndex(label);
+//			int tri = ri - 1;
+//			int tci = ci - 1;
+//			Dragboard dragboard = e.getDragboard();
+//			if (dragboard.hasString()) {
+//				String draggedText = dragboard.getString();
+//				String[] parts = draggedText.split(",",-1);
+//				if (parts.length != 5) {
+//					System.out.println("Greska u pravljenju dragboard-a.");
+//					return;
+//				}
+//				System.out.println("KRAJ:"+tri+","+tci);
+//			}
+//			e.setDropCompleted(true);
+//			e.consume();
+//		});
+
 		label.setOnKeyPressed(e -> {
 			String pressedCharacter = e.getText();
-
-			int ri = GridPane.getRowIndex(label);
-			int ci = GridPane.getColumnIndex(label);
-			int tri = ri - 1;
-			int tci = ci - 1;
+			int gri = GridPane.getRowIndex(label);
+			int gci = GridPane.getColumnIndex(label);
+			int tri = gri - 1;
+			int tci = gci - 1;
 			if (e.getCode() == KeyCode.ENTER) {
 				if (tri == Main.table.clickedLabelRowIndex && tci == Main.table.clickedLabelColumnIndex) {
 					if (tri + 1 < Main.table.getNumOfRows()) {
@@ -192,7 +254,7 @@ public class CellLabel extends Label {
 				// System.out.println("ima texta");
 				// pritisnut nexi printabilni karakter
 				if (tri == Main.table.clickedLabelRowIndex && tci == Main.table.clickedLabelColumnIndex) {
-					GUI.replaceLabelWithEditingField(GUI.grid, ri, ci, pressedCharacter);
+					GUI.replaceLabelWithEditingField(GUI.grid, gri, gci, pressedCharacter);
 					e.consume();
 				}
 
@@ -262,9 +324,6 @@ public class CellLabel extends Label {
 
 			}
 		});
-		label.setMinWidth(80);
-		label.getStyleClass().add("default-label");
-		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 	}
 
 }
