@@ -31,7 +31,7 @@ public class ColumnLabel extends Label {
 		label.setOnMouseClicked(e -> {
 			int gci = GridPane.getColumnIndex(label);
 			int tci = gci - 1;
-			Main.table.clearClickedLabelIndices();
+			Main.table.clearClickedLabel();
 			Main.table.demarkSelectedCells();
 			if (GUI.activeEditingField != null) {
 				if (GUI.activeEditingField.getText().startsWith("=")) {
@@ -99,7 +99,7 @@ public class ColumnLabel extends Label {
 //			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
 //			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
 //			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
-			Main.table.clearClickedLabelIndices();
+			Main.table.clearClickedLabel();
 			if (e.getDragboard().hasString()) {
 				e.acceptTransferModes(TransferMode.ANY);
 				Dragboard dragboard = e.getDragboard();

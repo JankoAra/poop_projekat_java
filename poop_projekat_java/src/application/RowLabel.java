@@ -77,7 +77,7 @@ public class RowLabel extends Label {
 		label.setOnMouseClicked(e -> {
 			int gri = GridPane.getRowIndex(label);
 			int tri = gri - 1;
-			Main.table.clearClickedLabelIndices();
+			Main.table.clearClickedLabel();
 			Main.table.demarkSelectedCells();
 			if (GUI.activeEditingField != null) {
 				if (GUI.activeEditingField.getText().startsWith("=")) {
@@ -150,7 +150,7 @@ public class RowLabel extends Label {
 //			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
 //			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
 //			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
-			Main.table.clearClickedLabelIndices();
+			Main.table.clearClickedLabel();
 			if (e.getDragboard().hasString()) {
 				e.acceptTransferModes(TransferMode.ANY);
 				Dragboard dragboard = e.getDragboard();

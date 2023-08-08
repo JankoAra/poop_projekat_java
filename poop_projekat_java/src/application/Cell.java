@@ -69,7 +69,7 @@ public class Cell {
 	public String getFormattedValue() {
 		String inputVal = value;
 		if (format.getDescription().equals("N")) {
-			inputVal = Table.calculatedLabels.get(row).get(col);
+			inputVal = Main.table.calculatedLabels.get(row).get(col);
 		}
 		return format.formattedValue(inputVal);
 	}

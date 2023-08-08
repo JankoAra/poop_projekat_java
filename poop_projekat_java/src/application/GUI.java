@@ -127,7 +127,7 @@ public class GUI {
 			} else if (e.getCode() == KeyCode.ESCAPE) {
 				Main.table.demarkSelectedCells();
 				Main.table.setSelectedRange(0, 0, 0, 0);
-				Main.table.clearClickedLabelIndices();
+				Main.table.clearClickedLabel();
 				menubar.requestFocus();
 				e.consume();
 			}
@@ -218,14 +218,14 @@ public class GUI {
 		Button undoBtn = new Button("Undo");
 		undoBtn.setOnAction(e -> {
 			UndoRedoStack.undo();
-			Main.table.clearClickedLabelIndices();
+			Main.table.clearClickedLabel();
 			GUI.updateGUI(UpdateType.CELL_CHANGE);
 		});
 
 		Button redoBtn = new Button("Redo");
 		redoBtn.setOnAction(e -> {
 			UndoRedoStack.redo();
-			Main.table.clearClickedLabelIndices();
+			Main.table.clearClickedLabel();
 			GUI.updateGUI(UpdateType.CELL_CHANGE);
 		});
 

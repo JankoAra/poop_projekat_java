@@ -54,7 +54,7 @@ public class EditingField extends TextField {
 				textField.myGrid.requestFocus();
 
 				Main.table.demarkSelectedCells();
-				Main.table.clearClickedLabelIndices();
+				Main.table.clearClickedLabel();
 			}
 		});
 	}

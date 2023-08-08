@@ -93,7 +93,7 @@ public class CellLabel extends Label {
 				Main.table.demarkSelectedCells();
 				if (e.isControlDown()) {
 					Main.table.addToSelectedRange(tri, tci, tri, tci);
-					Main.table.clearClickedLabelIndices();
+					Main.table.clearClickedLabel();
 				} else {
 					Main.table.setSelectedRange(tri, tci, tri, tci);
 					Main.table.setClickedLabelIndices(tri, tci);
@@ -116,9 +116,11 @@ public class CellLabel extends Label {
 			ClipboardContent content = new ClipboardContent();
 			String contentString = "";
 			/**
-			 * 0 - startTri 1 - startTci 2 - "primary"/"secondary" (mouse button) 3 -
-			 * "add"/"set" (ctrl held/not held) 4 - editingField start value / ""(if no
-			 * activeEditingField)
+			 * 0 - startTri
+			 * 1 - startTci
+			 * 2 - "primary"/"secondary" (mouse button)
+			 * 3 - "add"/"set" (ctrl held/not held)
+			 * 4 - editingField start value / ""(if no activeEditingField)
 			 */
 			contentString += tri + ",";
 			contentString += tci + ",";
@@ -152,31 +154,7 @@ public class CellLabel extends Label {
 			int gci = GridPane.getColumnIndex(label);
 			int tri = gri - 1;
 			int tci = gci - 1;
-//			double mouseX = e.getSceneX();
-//			double mouseY = e.getSceneY();
-//			double minY = GUI.rootBorderPane.getCenter().getLayoutY();
-//			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
-//			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
-//			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
-//			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
-//			double deltaX = 50;
-//			double deltaY = 50;
-//			double moveX = 0.05;
-//			double moveY = 0.1;
-//			ScrollPane sp = GUI.gridScrollPane;
-//			if(mouseX-minX<deltaX) {
-//				sp.setHvalue(sp.getHvalue()-moveX);
-//			}
-//			else if(maxX-mouseX<deltaX) {
-//				sp.setHvalue(sp.getHvalue()+moveX);
-//			}
-//			if(mouseY-minY<deltaY) {
-//				sp.setVvalue(sp.getVvalue()-moveY);
-//			}
-//			else if(maxY-mouseY<deltaY) {
-//				sp.setVvalue(sp.getVvalue()+moveY);
-//			}
-			Main.table.clearClickedLabelIndices();
+			Main.table.clearClickedLabel();
 			if (e.getDragboard().hasString()) {
 				e.acceptTransferModes(TransferMode.ANY);
 				Dragboard dragboard = e.getDragboard();
@@ -205,7 +183,7 @@ public class CellLabel extends Label {
 					GUI.activeEditingField.requestFocus();
 					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
 					Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
-					Main.table.clearClickedLabelIndices();
+					Main.table.clearClickedLabel();
 				} else {
 					if (parts[3].equals("set")) {
 						Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
@@ -213,11 +191,11 @@ public class CellLabel extends Label {
 							Main.table.setClickedLabelIndices(tri, tci);
 							Main.table.getClickedLabel().requestFocus();
 						} else {
-							Main.table.clearClickedLabelIndices();
+							Main.table.clearClickedLabel();
 						}
 					} else {
 						Main.table.addToSelectedRange(minRow, minCol, maxRow, maxCol);
-						Main.table.clearClickedLabelIndices();
+						Main.table.clearClickedLabel();
 					}
 				}
 				Main.table.markSelectedCells();
