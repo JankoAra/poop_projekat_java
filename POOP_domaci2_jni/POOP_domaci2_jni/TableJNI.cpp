@@ -2,49 +2,18 @@
 #include "helper.h"
 #include "TableJNI.h"
 #include <sstream>
-#include <regex>
-#include <cctype>
-#include <stack>
-#include <set>
+#include <iostream>
 #include "CalculationError.h"
 using namespace std;
 
+/*
+U properties C++ -> Precompiled Headers -> Not using precompiled headers
+*/
 
-
-void print(std::string line) {
-	std::cout << line << std::endl;
-}
-string removeBlanks(string s) {
-	regex blanks("\\s+");
-	return regex_replace(s, blanks, "");
-}
-
-JNIEXPORT jstring JNICALL Java_application_Table_resolveTableFormulas
-(JNIEnv* env, jobject, jstring csvTable) {
-	std::string cstring = env->GetStringUTFChars(csvTable, nullptr);
-	//cout << "\nCSV primljen u c++:\n";
-	//cout << cstring;
-
-	TableJNI* table = new TableJNI(cstring,1);
-	//cout << "Tabela prima:\n";
-	//table->printTableCSV();
-	
-	
-	table->resolveFormulas();
-	string res = table->convertTableToCSV();
-	//cout << "Vracam:\n" << res;
-	jstring ret = env->NewStringUTF(res.c_str());
-	//cout << res << endl;
-	delete table;
-	//cout <<"|" << res << "|";
-	return ret;
-}
-
-TableJNI::TableJNI(string csvTable, int k) {
+//Konstruktor, stvara tabelu na osnovu zadatog CSV zapisa primljenog iz Jave
+TableJNI::TableJNI(string csvTable) {
 	istringstream iss(csvTable);
 	string line;
-	int ri = 0;
-	//cout << "kontruktor tabele" << endl;
 	while (getline(iss, line)) {
 		vector<string> row;
 		string cell = "";
@@ -58,40 +27,12 @@ TableJNI::TableJNI(string csvTable, int k) {
 			}
 		}
 		row.push_back(cell);
-		ri++;
-		
+
 		data.push_back(row);
 	}
 }
 
-TableJNI::TableJNI(string csvTable) {
-	istringstream iss(csvTable);
-	string line;
-	int ri = 0;
-	cout << "kontruktor tabele" << endl;
-	while (getline(iss, line)) {
-		vector<string> row;
-		//line += "\n";
-		cout << "Linija " << (ri) << ": |" << line << "|";
-		if (line[line.length() - 1] != '\n') {
-			//cout << "ne zavrsava se sa \\n" << endl;
-		}
-		ri++;
-		stringstream ss(line);
-		string cell;
-		int ci = 0;
-		while (getline(ss, cell, ',')) {
-			//cout << "celija" << (ci) << ":" << cell << endl;
-			ci++;
-			row.push_back(cell);
-		}
-
-		data.push_back(row);
-	}
-	//cout << getNumOfColumns() << endl;
-	//cout << getNumOfRows() << endl;
-}
-
+//Stampa tabelu u CSV formatu u konzoli
 void TableJNI::printTableCSV() {
 	for (auto row : data) {
 		for (auto cell : row) {
@@ -101,64 +42,45 @@ void TableJNI::printTableCSV() {
 	}
 }
 
+//Vraca sadrzaj celije sa indeksima (row, col), ako takva postoji; Ako ne postoji vraca "ERROR"
 string TableJNI::getCellValue(int row, int col) {
-	if (row >= getNumOfRows() || col >= getNumOfColumns())return "ERROR";
+	if (row >= getNumOfRows() || col >= getNumOfColumns()) return "ERROR";
 	return data[row][col];
 }
 
+//Vraca sadrzaj celije zadatog imena, ako takva postoji; Ako ne postoji vraca "ERROR"
 string TableJNI::getCellValue(string name) {
 	pair<int, int> indices = cellNameToIndex(name);
 	return getCellValue(indices.first, indices.second);
 }
 
+//Vraca par indeksa celije na osnovu njenog imena, pretpostavka je da je ime celije ispravno
 pair<int, int> TableJNI::cellNameToIndex(string name) {
 	char col = toupper(name[0]);
 	int row = stoi(name.substr(1, name.length() - 1));
 	return pair<int, int>(row - 1, col - 'A');
 }
 
+//Vraca string koji predstavlja ime celije, na osnovu zadatih indeksa, pretpostavka je da su indeksi ispravni
 string TableJNI::indexToCellName(int row, int col) {
 	stringstream ss;
 	ss << (char)(col + 'A') << row + 1;
 	return ss.str();
 }
 
-bool isCellName(string name) {
-	regex pattern("^[A-Za-z]\\d+$");
-	return regex_match(name, pattern);
-}
-
-bool isFunction(string name) {
-	regex pattern("^[A-Z]+\\(.+\\)$");
-	return regex_match(name, pattern);
-}
-
-bool isNumber(string name) {
-	if (name[0] == '-') {
-		name = name.substr(1, name.length() - 1);
-	}
-	bool dot = false;
-	for (char c : name) {
-		if (c == '.' && dot) return false;
-		if (c == '.') {
-			dot = true;
-			continue;
+//Vraca string koji predstavlja tabelu u CSV formatu
+string TableJNI::convertTableToCSV() {
+	stringstream ss;
+	for (int i = 0; i < getNumOfRows(); i++) {
+		for (int j = 0; j < getNumOfColumns(); j++) {
+			ss << data[i][j];
+			ss << (j == getNumOfColumns() - 1 ? "\n" : ",");
 		}
-		if (!isdigit(c)) return false;
 	}
-	return true;
+	return ss.str();
 }
 
-bool isOperator(string name) {
-	if (name == "+" || name == "-" || name == "*" || name == "/" || name == "(" || name == ")") return true;
-	return false;
-}
-
-bool isIllegalToken(string name) {
-	if (!isNumber(name) && !isFunction(name) && !isCellName(name) && !isOperator(name)) return true;
-	return false;
-}
-
+//Vraca mapu koja preslikava par indeksa u string koji predstavlja izraz formule bez pocetnog znaka '='
 map<pair<int, int>, string> TableJNI::extractFormulas() {
 	map<pair<int, int>, string> mapa;
 	for (int i = 0; i < getNumOfRows(); i++) {
@@ -173,8 +95,8 @@ map<pair<int, int>, string> TableJNI::extractFormulas() {
 	return mapa;
 }
 
+//Deli zadati izraz (bez pocetnog znaka '=') na tokene i vraca vektor stringova koji su ti tokeni
 vector<string> TableJNI::extractTokens(string expression) {
-	//expression je formula bez =
 	vector<string> tokens;
 	string currentToken = "";
 	bool functionStarted = false;
@@ -214,6 +136,10 @@ vector<string> TableJNI::extractTokens(string expression) {
 	return tokens;
 }
 
+/*
+Vraca mapu koja preslikava par indeksa u vektor tokena(stringova),
+na osnovu zadate mape koja preslikava par indeksa u matematicki izraz(string)
+*/
 map<pair<int, int>, vector<string>> TableJNI::extractExpressionTokens(map<pair<int, int>, string> formulaMap) {
 	map<pair<int, int>, vector<string>> tokens;
 
@@ -232,6 +158,7 @@ map<pair<int, int>, vector<string>> TableJNI::extractExpressionTokens(map<pair<i
 	return tokens;
 }
 
+//Proverava da li zadati vektor tokena(stringova) sadrzi sve ispravne tokene; vraca true ako su svi tokeni ispravni
 bool TableJNI::hasValidOps(vector<string> ops) {
 	for (auto o : ops) {
 		if (!isNumber(o) && !isFunction(o) && !isCellName(o) && !isOperator(o)) return false;
@@ -239,8 +166,8 @@ bool TableJNI::hasValidOps(vector<string> ops) {
 	return true;
 }
 
+//Menja sve formule u tabeli stringovima koji predstavljaju njihove izracunate vrednosti, ili "ERROR" ako su izrazi neizracunljivi
 void TableJNI::resolveFormulas() {
-	//cout << "resolve start" << endl;
 	auto formulas = extractFormulas();
 	auto unresolvedTokens = extractExpressionTokens(formulas);
 	while (!unresolvedTokens.empty()) {
@@ -319,7 +246,7 @@ void TableJNI::resolveFormulas() {
 						sval = "ERROR";
 					}
 				}
-				
+
 				data[indices.first][indices.second] = sval;
 
 
@@ -341,156 +268,4 @@ void TableJNI::resolveFormulas() {
 			return;
 		}
 	}
-	//cout << "resolve end" << endl;
 }
-
-string infixToPostfix(string expression) {
-	//definisanje prioriteta operanada
-	// @ je unarni -
-	// # je unarni +
-
-	map<string, int> inputPriority = { {"+",2},{"-",2},{"*",3},{"/",3},{"@",5},{"#",5}, {"(",10},{")",1} };
-	map<string, int> stackPriority = { {"+",2},{"-",2},{"*",3},{"/",3},{"@",4},{"#",4}, {"(",0} };
-	set<string> ops = { "+", "-", "*", "/", "(", ")", "@", "#" };
-	int nextToRead = 0;
-	stack<string> stack;
-	int rank = 0;	//kontrola ispravnosti izraza
-	string postfix;
-	string next = getNextToken(expression, nextToRead);
-	while (next != "") {
-		if (ops.find(next) == ops.end()) {
-			//token je operand, ide direktno u postfix izraz
-			postfix += next + " ";
-			rank++;
-		}
-		else {
-			//token je operator
-			while (!stack.empty() && (inputPriority[next] <= stackPriority[stack.top()])) {
-				//vadimo operatore veceg prioriteta sa steka
-				string op = stack.top();
-				stack.pop();
-				postfix += op + " ";
-				rank = rank + ((op == "@" || op == "#") ? 0 : -1);
-				if (rank < 1) throw CalculationError();
-			}
-			if (next != ")") {
-				stack.push(next);
-			}
-			else {
-				stack.pop();
-			}
-		}
-		next = getNextToken(expression, nextToRead);
-	}
-	//procitan ceo infiks, popujemo ostatak sa steka
-	while (!stack.empty()) {
-		string op = stack.top();
-		stack.pop();
-		postfix += op + " ";
-		rank = rank + ((op == "@" || op == "#") ? 0 : -1);
-	}
-	if (rank != 1) throw CalculationError();
-	return postfix;
-}
-
-double calculatePostfix(string postfix) {
-	stack<string> stack;
-	int index = 0;
-	string next = getNextTokenPostfix(postfix, index);
-	set<string> ops = { "+", "-", "*", "/", "(", ")", "@", "#" };
-	while (next != "") {
-		if (ops.find(next) == ops.end()) {
-			//operandi idu na stek
-			stack.push(next);
-		}
-		else if (next == "@" || next == "#") {
-			//unarni operatori skinu jedan operand sa steka i vrate novu vrednost
-			double op = stod(stack.top());
-			if (next == "@") op = -op;
-			stringstream stream;
-			stream << op;
-			stack.pop();
-			stack.push(stream.str());
-		}
-		else {
-			//binarni operandi uzmu dve vrednosti sa steka i vrate jednu
-			double op2 = stod(stack.top());
-			stack.pop();
-			double op1 = stod(stack.top());
-			stack.pop();
-			stringstream stream;
-			double res = 0;
-			if (next == "+") res = op1 + op2;
-			else if (next == "-") res = op1 - op2;
-			else if (next == "*") res = op1 * op2;
-			else if (next == "/") {
-				if (op2 == 0) {
-					throw CalculationError();
-				}
-				res = op1 / op2;
-			}
-			stream << res;
-			stack.push(stream.str());
-		}
-		next = getNextTokenPostfix(postfix, index);
-	}
-	double result = stod(stack.top());
-	stack.pop();
-	if (stack.empty()) return result;
-	else throw CalculationError();
-}
-
-string getNextToken(string& input, int& index) {
-	stringstream stream;
-	set<char> ops = { '+','-','*','/','(',')' };
-	while (index < input.length()) {
-		char currentChar = input[index];
-		if (ops.find(currentChar) != ops.end()) {
-			//naisli smo na operator
-			if (stream.str() != "") {
-				//ako smo pre toga citali operand, prvo vracamo operand
-				return stream.str();
-			}
-			//da li je operator unarni?
-			if ((index > 0 && (currentChar == '+' || currentChar == '-') && \
-				ops.find(input[index - 1]) != ops.end() && input[index - 1] != ')')\
-				|| (index == 0 && (currentChar == '+' || currentChar == '-'))) {
-				//jeste unarni
-				stream << (currentChar == '+' ? "#" : "@");
-				index++;
-				return stream.str();
-			}
-			//nije unarni operator
-			stream << currentChar;
-			index++;
-			return stream.str();
-		}
-		//nailazimo na operand
-		stream << currentChar;
-		index++;
-	}
-	return stream.str();
-}
-
-string getNextTokenPostfix(string& postfix, int& index) {
-	stringstream stream;
-	while (index < postfix.length()) {
-		char currentChar = postfix[index++];
-		if (currentChar == ' ') break;
-		stream << currentChar;
-	}
-	return stream.str();
-}
-
-string TableJNI::convertTableToCSV() {
-	stringstream ss;
-	//cout << getNumOfColumns();
-	for (int i = 0; i < getNumOfRows(); i++) {
-		for (int j = 0; j < getNumOfColumns(); j++) {
-			ss << data[i][j];
-			ss << (j == getNumOfColumns() - 1 ? "\n" : ",");
-		}
-	}
-	return ss.str();
-}
-

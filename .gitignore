@@ -8,3 +8,5 @@
 *.sln
 *.pdb
 /POOP_domaci2_jni/POOP_domaci2_jni/x64/
+*.vcxproj
+*.filters

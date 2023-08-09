@@ -58,8 +58,6 @@ public class GUI {
 			Main.table.updateLabels();
 			Main.table.colorLabels();
 			break;
-		case CELLS_SELECTION:
-			break;
 		default:
 			break;
 		}
@@ -352,8 +350,16 @@ public class GUI {
 		int tci = gci - 1;
 		try {
 			Cell oldCell = Main.table.getCell(tri, tci);
-			Format oldFormat = oldCell.getFormat();
-			Cell newCell = new Cell(editingField.getText(), oldFormat, tri, tci);
+			Format format = oldCell.getFormat();
+			String newText = editingField.getText();
+			if (newText.contains(",")) {
+				GUI.printlnLog("Sadrzaj celije ne sme sadrzati zareze. Zarezi su uklonjeni.");
+				newText = newText.replaceAll(",", "");
+			}
+			if (newText.charAt(0) == '=' && format.getDescription() != "N") {
+				format = new NumberFormat();
+			}
+			Cell newCell = new Cell(newText, format, tri, tci);
 			Main.table.setCell(tri, tci, newCell);
 			UndoRedoStack.clearRedoStack();
 			UndoRedoStack.undoStackType.push(ActionType.CELL_CHANGE);
@@ -363,7 +369,7 @@ public class GUI {
 		catch (FormatChangeUnsuccessful ex) {
 			GUI.printlnLog("Upisana vrednost ne odgovara formatu celije");
 		}
-		GUI.updateGUI(UpdateType.CELL_CHANGE);
+		Main.table.updateLabels();
 		CellLabel label = Main.table.getLabel(tri, tci);
 		editingField.getMyGrid().getChildren().remove(editingField);
 		editingField.getMyGrid().getChildren().add(label);

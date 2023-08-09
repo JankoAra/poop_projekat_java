@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Objects;
 
 public class Table {
 	// interne liste celija i labela

@@ -1,5 +1,6 @@
 package application;
 
+import application.GUI.UpdateType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
@@ -48,6 +49,7 @@ public class EditingField extends TextField {
 				}
 				Main.table.getClickedLabel().requestFocus();
 				GUI.replaceEditingFieldWithLabel();
+				GUI.updateGUI(UpdateType.CELL_CHANGE);
 			} else if (event.getCode() == KeyCode.ESCAPE) {
 				event.consume();
 				GUI.replaceEditingFieldWithLabel();
@@ -55,6 +57,7 @@ public class EditingField extends TextField {
 
 				Main.table.demarkSelectedCells();
 				Main.table.clearClickedLabel();
+				GUI.updateGUI(UpdateType.CELL_CHANGE);
 			}
 		});
 	}

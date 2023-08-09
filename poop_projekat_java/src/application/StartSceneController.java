@@ -17,6 +17,8 @@ public class StartSceneController {
 	public void setStage(Stage s) {
 		stage = s;
 	}
+	
+	final static boolean maximized = false;
 
 	@FXML
 	void createNewTableFromStartMenu(ActionEvent event) {
@@ -25,7 +27,7 @@ public class StartSceneController {
 		Main.table.updateLabels();
 		stage.setScene(GUI.runningScene);
 		stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
-		//stage.setMaximized(true);
+		stage.setMaximized(maximized);
 //		stage.hide();
 //		stage.show();
 	}
@@ -37,7 +39,7 @@ public class StartSceneController {
 		Main.table.updateLabels();
 		stage.setScene(GUI.runningScene);
 		stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
-		stage.setMaximized(true);
+		stage.setMaximized(maximized);
 //		stage.hide();
 //		stage.show();
 	}

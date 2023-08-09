@@ -76,7 +76,7 @@ public class CellLabel extends Label {
 		label.setMinWidth(80);
 		label.getStyleClass().add("default-label");
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-
+		
 		label.setOnMouseClicked(e -> {
 			int gri = GridPane.getRowIndex(label);
 			int gci = GridPane.getColumnIndex(label);
