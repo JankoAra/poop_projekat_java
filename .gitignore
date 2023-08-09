@@ -1,0 +1,10 @@
+/poop_projekat_java/bin/
+/POOP_domaci2_jni/.vs/
+*.tmp
+*.log
+*.obj
+*.swp
+/logs/
+*.sln
+*.pdb
+/POOP_domaci2_jni/POOP_domaci2_jni/x64/
