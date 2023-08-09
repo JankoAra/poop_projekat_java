@@ -36,6 +36,9 @@ public class CellLabel extends Label {
 		switch (f.getDescription()) {
 		case "N":
 			getStyleClass().add("selected-number");
+			if (getText().equals("ERROR")) {
+				getStyleClass().add("error-label");
+			}
 			break;
 		case "D":
 			getStyleClass().add("selected-date");
@@ -56,6 +59,9 @@ public class CellLabel extends Label {
 		switch (f.getDescription()) {
 		case "N":
 			getStyleClass().add("number-label");
+			if (getText().equals("ERROR")) {
+				getStyleClass().add("error-label");
+			}
 			break;
 		case "D":
 			getStyleClass().add("date-label");
@@ -81,27 +87,31 @@ public class CellLabel extends Label {
 					GUI.activeEditingField.appendText(Cell.tableIndexToCellName(tri, tci));
 					GUI.activeEditingField.requestFocus();
 					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
-				} else {
+				}
+				else {
 					Main.table.demarkSelectedCells();
 					GUI.replaceEditingFieldWithLabel();
 					Main.table.setClickedLabelIndices(tri, tci);
 					Main.table.setSelectedRange(tri, tci, tri, tci);
 					Main.table.markSelectedCells();
 				}
-			} else if (tri != Main.table.clickedLabelRowIndex || tci != Main.table.clickedLabelColumnIndex) {
+			}
+			else if (tri != Main.table.clickedLabelRowIndex || tci != Main.table.clickedLabelColumnIndex) {
 				// prvi klik na labelu
 				Main.table.demarkSelectedCells();
 				if (e.isControlDown()) {
 					Main.table.addToSelectedRange(tri, tci, tri, tci);
 					Main.table.clearClickedLabel();
-				} else {
+				}
+				else {
 					Main.table.setSelectedRange(tri, tci, tri, tci);
 					Main.table.setClickedLabelIndices(tri, tci);
 				}
 
 				Main.table.markSelectedCells();
 				label.requestFocus();
-			} else {
+			}
+			else {
 				// drugi klik na labelu
 				GUI.replaceLabelWithEditingField(GUI.grid, gri, gci, null);
 			}
@@ -126,18 +136,21 @@ public class CellLabel extends Label {
 			contentString += tci + ",";
 			if (e.getButton() == MouseButton.PRIMARY) {
 				contentString += "primary,";
-			} else if (e.getButton() == MouseButton.SECONDARY) {
+			}
+			else if (e.getButton() == MouseButton.SECONDARY) {
 				contentString += "secondary,";
 			}
 			if (e.isControlDown()) {
 				contentString += "add,";
-			} else {
+			}
+			else {
 				contentString += "set,";
 			}
 			if (GUI.activeEditingField != null) {
 				if (GUI.activeEditingField.getText().startsWith("=")) {
 					contentString += GUI.activeEditingField.getText();
-				} else {
+				}
+				else {
 					GUI.replaceEditingFieldWithLabel();
 					Main.table.demarkSelectedCells();
 					Main.table.setClickedLabelIndices(tri, tci);
@@ -169,7 +182,8 @@ public class CellLabel extends Label {
 				try {
 					startTri = Integer.parseInt(parts[0]);
 					startTci = Integer.parseInt(parts[1]);
-				} catch (NumberFormatException ex) {
+				}
+				catch (NumberFormatException ex) {
 					return;
 				}
 				int minRow = Math.min(startTri, tri);
@@ -184,16 +198,19 @@ public class CellLabel extends Label {
 					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
 					Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
 					Main.table.clearClickedLabel();
-				} else {
+				}
+				else {
 					if (parts[3].equals("set")) {
 						Main.table.setSelectedRange(minRow, minCol, maxRow, maxCol);
 						if (startTci == tci && startTri == tri) {
 							Main.table.setClickedLabelIndices(tri, tci);
 							Main.table.getClickedLabel().requestFocus();
-						} else {
+						}
+						else {
 							Main.table.clearClickedLabel();
 						}
-					} else {
+					}
+					else {
 						Main.table.addToSelectedRange(minRow, minCol, maxRow, maxCol);
 						Main.table.clearClickedLabel();
 					}
@@ -218,12 +235,14 @@ public class CellLabel extends Label {
 			ScrollPane sp = GUI.gridScrollPane;
 			if (mouseX - minX < deltaX) {
 				sp.setHvalue(sp.getHvalue() - moveX);
-			} else if (maxX - mouseX < deltaX) {
+			}
+			else if (maxX - mouseX < deltaX) {
 				sp.setHvalue(sp.getHvalue() + moveX);
 			}
 			if (mouseY - minY < deltaY) {
 				sp.setVvalue(sp.getVvalue() - moveY);
-			} else if (maxY - mouseY < deltaY) {
+			}
+			else if (maxY - mouseY < deltaY) {
 				sp.setVvalue(sp.getVvalue() + moveY);
 			}
 			e.consume();
@@ -246,7 +265,8 @@ public class CellLabel extends Label {
 					}
 					e.consume();
 				}
-			} else if (!pressedCharacter.isEmpty()) {
+			}
+			else if (!pressedCharacter.isEmpty()) {
 				// System.out.println("ima texta");
 				// pritisnut nexi printabilni karakter
 				if (tri == Main.table.clickedLabelRowIndex && tci == Main.table.clickedLabelColumnIndex) {
@@ -254,7 +274,8 @@ public class CellLabel extends Label {
 					e.consume();
 				}
 
-			} else {
+			}
+			else {
 				KeyCode keycode = e.getCode();
 				switch (keycode) {
 				case UP:
@@ -297,23 +318,23 @@ public class CellLabel extends Label {
 					}
 					e.consume();
 					break;
-//				case ESCAPE:
-//					Main.table.demarkSelectedCells();
-//					Main.table.setSelectedRange(0, 0, 0, 0);
-//					Main.table.clearClickedLabelIndices();
-//					GUI.grid.requestFocus();
-//					e.consume();
-//					break;
-//				case DELETE:
-//					Cell oldCell = Main.table.getCell(tri, tci);
-//					try {
-//						Cell newCell = new Cell("", oldCell.getFormat(), tri, tci);
-//						Main.table.setCell(tri, tci, newCell);
-//						Main.table.updateLabels();
-//					} catch (Exception ex) {
-//					}
-//					e.consume();
-//					break;
+				//				case ESCAPE:
+				//					Main.table.demarkSelectedCells();
+				//					Main.table.setSelectedRange(0, 0, 0, 0);
+				//					Main.table.clearClickedLabelIndices();
+				//					GUI.grid.requestFocus();
+				//					e.consume();
+				//					break;
+				//				case DELETE:
+				//					Cell oldCell = Main.table.getCell(tri, tci);
+				//					try {
+				//						Cell newCell = new Cell("", oldCell.getFormat(), tri, tci);
+				//						Main.table.setCell(tri, tci, newCell);
+				//						Main.table.updateLabels();
+				//					} catch (Exception ex) {
+				//					}
+				//					e.consume();
+				//					break;
 				default:
 					break;
 				}

@@ -3,6 +3,7 @@ package application;
 import java.io.File;
 
 import application.GUI.UpdateType;
+import application.Table.IndexPair;
 import application.UndoRedoStack.ActionType;
 import javafx.stage.FileChooser;
 
@@ -73,10 +74,15 @@ public class Controller {
 		if (GUI.activeEditingField != null) {
 			GUI.replaceEditingFieldWithLabel();
 		}
+		if(Main.table.selectedCellsIndices.isEmpty()) {
+			GUI.printlnLog("Nijedna celija nije selektovana.");
+			return;
+		}
 		UndoRedoStack.clearRedoStack();
 		UndoRedoStack.undoStackType.push(ActionType.CELL_CHANGE);
-		UndoRedoStack.undoStackNumber.push(Main.table.selectedCells.size());
-		for (Cell c : Main.table.selectedCells) {
+		UndoRedoStack.undoStackNumber.push(Main.table.selectedCellsIndices.size());
+		for (IndexPair pair : Main.table.selectedCellsIndices) {
+			Cell c = Main.table.getCell(pair.row, pair.col);
 			UndoRedoStack.undoStackCells.push(c);
 			Cell.convertCellToFormat(c.getRow(), c.getCol(), format);
 		}

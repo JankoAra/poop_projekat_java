@@ -19,8 +19,7 @@ public class Cell {
 	}
 
 	public Cell(String value, Format format, int r, int c) throws FormatChangeUnsuccessful {
-		if (format.stringFitsFormat(value) == false)
-			throw new FormatChangeUnsuccessful();
+		if (format.stringFitsFormat(value) == false) throw new FormatChangeUnsuccessful();
 		this.value = value;
 		this.format = format;
 		row = r;
@@ -34,37 +33,21 @@ public class Cell {
 		col = c;
 	}
 
-	public int getRow() {
-		return row;
-	}
+	public int getRow() { return row; }
 
-	public void setRow(int row) {
-		this.row = row;
-	}
+	public void setRow(int row) { this.row = row; }
 
-	public int getCol() {
-		return col;
-	}
+	public int getCol() { return col; }
 
-	public void setCol(int col) {
-		this.col = col;
-	}
+	public void setCol(int col) { this.col = col; }
 
-	public void setValue(String val) {
-		value = val;
-	}
+	public void setValue(String val) { value = val; }
 
-	public String getValue() {
-		return value;
-	}
+	public String getValue() { return value; }
 
-	public Format getFormat() {
-		return format;
-	}
+	public Format getFormat() { return format; }
 
-	public void setFormat(Format format) {
-		this.format = format;
-	}
+	public void setFormat(Format format) { this.format = format; }
 
 	public String getFormattedValue() {
 		String inputVal = value;
@@ -83,7 +66,8 @@ public class Cell {
 		Cell newCell = null;
 		try {
 			newCell = new Cell(oldCell.value, newFormat, oldCell.getRow(), oldCell.getCol());
-		} catch (FormatChangeUnsuccessful e) {
+		}
+		catch (FormatChangeUnsuccessful e) {
 			String cellName = tableIndexToCellName(rowIndex, colIndex);
 			GUI.printlnLog(e.getMessage() + " Sadrzaj celije " + cellName + " ne odgovara zeljenom formatu.");
 			return;
@@ -96,7 +80,8 @@ public class Cell {
 		String rowString = "" + (row + 1);
 		if (row < 0) {
 			return colChar + "";
-		} else if (col < 0) {
+		}
+		else if (col < 0) {
 			return rowString;
 		}
 		return colChar + rowString;

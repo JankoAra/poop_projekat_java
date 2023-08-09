@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class Table {
 	// interne liste celija i labela
@@ -19,6 +20,27 @@ public class Table {
 	LinkedList<Cell> selectedCells = new LinkedList<>();
 	int clickedLabelRowIndex = -1, clickedLabelColumnIndex = -1;
 	CellLabel clickedLabel = null;
+
+	public static class IndexPair {
+		public int row;
+		public int col;
+
+		public IndexPair(int r, int c) {
+			row = r;
+			col = c;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			IndexPair other = (IndexPair) obj;
+			return col == other.col && row == other.row;
+		}
+	}
+
+	LinkedList<IndexPair> selectedCellsIndices = new LinkedList<>();
 
 	// vracene vrednosti labela iz JNI metode nakon racunanja formula
 	ArrayList<ArrayList<String>> calculatedLabels = new ArrayList<ArrayList<String>>();
@@ -84,9 +106,6 @@ public class Table {
 				oldCell.setRow(oldCell.getRow() + 1);
 			}
 		}
-//		UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
-//		UndoRedoStack.undoStackNumber.push(newRowIndex);
-
 	}
 
 	/**
@@ -119,6 +138,7 @@ public class Table {
 			return;
 		}
 		data.get(row).set(col, newCell);
+
 	}
 
 	/**
@@ -130,9 +150,10 @@ public class Table {
 		for (int i = 0; i < getNumOfRows(); i++) {
 			for (int j = 0; j < Table.NUMBER_OF_COLUMNS; j++) {
 				CellLabel label = labels.get(i).get(j);
-				if (selectedCells.contains(getCell(i, j))) {
+				if (selectedCellsIndices.contains(new IndexPair(i, j))) {
 					label.selectLabel();
-				} else {
+				}
+				else {
 					label.deselectLabel();
 				}
 			}
@@ -159,7 +180,8 @@ public class Table {
 				calculatedLabels.add(row);
 			}
 			reader.close();
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			System.out.println("Greska u citanju rezultata JNI metode.");
 		}
 
@@ -169,13 +191,14 @@ public class Table {
 				CellLabel label = labels.get(i).get(j);
 				String text = getCell(i, j).getFormattedValue();
 				label.setText(text);
-				if (text.equals("ERROR")) {
-					if (!label.getStyleClass().contains("error-label")) {
-						label.getStyleClass().add("error-label");
-					}
-				} else {
-					label.getStyleClass().remove("error-label");
-				}
+				//				if (text.equals("ERROR")) {
+				//					if (!label.getStyleClass().contains("error-label")) {
+				//						label.getStyleClass().add("error-label");
+				//					}
+				//				}
+				//				else {
+				//					label.getStyleClass().remove("error-label");
+				//				}
 			}
 		}
 	}
@@ -203,9 +226,7 @@ public class Table {
 	/**
 	 * @return Vraca broj redova u tabeli
 	 */
-	public int getNumOfRows() {
-		return data.size();
-	}
+	public int getNumOfRows() { return data.size(); }
 
 	/**
 	 * Selektuje celije kojima je indeks reda i (r1 <= i <= r2)
@@ -217,13 +238,16 @@ public class Table {
 	 */
 	public void setSelectedRange(int r1, int c1, int r2, int c2) {
 		LinkedList<Cell> newSelectedCells = new LinkedList<>();
+		LinkedList<IndexPair> newSelectedIndices = new LinkedList<>();
 		for (int i = r1; i <= r2; i++) {
 			for (int j = c1; j <= c2; j++) {
 				newSelectedCells.add(getCell(i, j));
+				newSelectedIndices.add(new IndexPair(i, j));
 			}
 		}
 		GUI.printlnLog(Cell.tableIndicesToCellRange(r1, c1, r2, c2));
 		selectedCells = newSelectedCells;
+		selectedCellsIndices = newSelectedIndices;
 	}
 
 	/**
@@ -241,8 +265,20 @@ public class Table {
 				if (!selectedCells.contains(cell)) {
 					selectedCells.add(cell);
 				}
+				IndexPair pair = new IndexPair(i, j);
+				if (!selectedCellsIndices.contains(pair)) {
+					selectedCellsIndices.add(pair);
+				}
 			}
 		}
+	}
+
+	/**
+	 * Prazni listu selektovanih celija (deselektuje sve celije).
+	 */
+	public void clearSelectedCells() {
+		selectedCells = new LinkedList<>();
+		selectedCellsIndices = new LinkedList<>();
 	}
 
 	/**
@@ -268,16 +304,17 @@ public class Table {
 	/**
 	 * @return Vraca labelu koja ima fokus, ili null ako nijedna nema fokus
 	 */
-	public CellLabel getClickedLabel() {
-		return clickedLabel;
-	}
+	public CellLabel getClickedLabel() { return clickedLabel; }
 
 	/**
 	 * Primenjuje odgovarajuci stil za oznacavanje labela koje su selektovane
 	 */
 	public void markSelectedCells() {
-		for (Cell c : selectedCells) {
-			getLabel(c.getRow(), c.getCol()).selectLabel();
+		//		for (Cell c : selectedCells) {
+		//			getLabel(c.getRow(), c.getCol()).selectLabel();
+		//		}
+		for (IndexPair pair : selectedCellsIndices) {
+			getLabel(pair.row, pair.col).selectLabel();
 		}
 	}
 
@@ -285,42 +322,45 @@ public class Table {
 	 * Seletovanim labelama primenjuje default stil
 	 */
 	public void demarkSelectedCells() {
-		for (Cell c : selectedCells) {
-			getLabel(c.getRow(), c.getCol()).deselectLabel();
+		//		for (Cell c : selectedCells) {
+		//			getLabel(c.getRow(), c.getCol()).deselectLabel();
+		//		}
+		for (IndexPair pair : selectedCellsIndices) {
+			getLabel(pair.row, pair.col).deselectLabel();
 		}
 	}
 
-//	public String toString() {
-//		StringBuilder sb = new StringBuilder();
-//		for (int i = 0; i < numOfCols; i++) {
-//			if (i == 0) {
-//				sb.append(String.format("%3c ", ' '));
-//			}
-//			sb.append(String.format("%9c ", 'A' + i));
-//		}
-//		sb.append("\n");
-//		int cnt = 0;
-//		for (ArrayList<Cell> l : data) {
-//			sb.append(String.format("%3d ", cnt++));
-//			for (Object o : l) {
-//				Cell c = (Cell) o;
-//				String s = c.getValue();
-//
-//				if (s.equals("")) {
-//					s = "-empty- ";
-//				} else {
-//					s += " ";
-//				}
-//				s = String.format("%10s", s);
-//				sb.append(s);
-//
-//			}
-//
-//			sb.append("\n");
-//
-//		}
-//
-//		return sb.toString();
-//	}
+	//	public String toString() {
+	//		StringBuilder sb = new StringBuilder();
+	//		for (int i = 0; i < numOfCols; i++) {
+	//			if (i == 0) {
+	//				sb.append(String.format("%3c ", ' '));
+	//			}
+	//			sb.append(String.format("%9c ", 'A' + i));
+	//		}
+	//		sb.append("\n");
+	//		int cnt = 0;
+	//		for (ArrayList<Cell> l : data) {
+	//			sb.append(String.format("%3d ", cnt++));
+	//			for (Object o : l) {
+	//				Cell c = (Cell) o;
+	//				String s = c.getValue();
+	//
+	//				if (s.equals("")) {
+	//					s = "-empty- ";
+	//				} else {
+	//					s += " ";
+	//				}
+	//				s = String.format("%10s", s);
+	//				sb.append(s);
+	//
+	//			}
+	//
+	//			sb.append("\n");
+	//
+	//		}
+	//
+	//		return sb.toString();
+	//	}
 
 }

@@ -37,9 +37,7 @@ public class GUI {
 
 	static EditingField activeEditingField = null;
 
-	public enum UpdateType {
-		TABLE_CHANGE, CELL_CHANGE, CELLS_SELECTION
-	}
+	public enum UpdateType { TABLE_CHANGE, CELL_CHANGE, CELLS_SELECTION }
 
 	/**
 	 * Radi update izgleda tabele u GUI-u, na osnovu tipa promene koji se desio
@@ -52,10 +50,13 @@ public class GUI {
 			// dodat novi red
 			Main.table.updateLabels();
 			GUI.rebuildGrid();
+			//colorLabels mora nakon rebuildGrid
+			Main.table.colorLabels();
 			break;
 		case CELL_CHANGE:
 			// promena vrednosti ili formata celija
 			Main.table.updateLabels();
+			Main.table.colorLabels();
 			break;
 		case CELLS_SELECTION:
 			break;
@@ -118,13 +119,15 @@ public class GUI {
 						UndoRedoStack.undoStackCells.push(c);
 						Cell newCell = new Cell("", c.getFormat(), c.getRow(), c.getCol());
 						Main.table.setCell(c.getRow(), c.getCol(), newCell);
-					} catch (FormatChangeUnsuccessful e1) {
+					}
+					catch (FormatChangeUnsuccessful e1) {
 						// nece se desiti
 						e1.printStackTrace();
 					}
 				}
 				updateGUI(UpdateType.CELL_CHANGE);
-			} else if (e.getCode() == KeyCode.ESCAPE) {
+			}
+			else if (e.getCode() == KeyCode.ESCAPE) {
 				Main.table.demarkSelectedCells();
 				Main.table.setSelectedRange(0, 0, 0, 0);
 				Main.table.clearClickedLabel();
@@ -166,7 +169,8 @@ public class GUI {
 			if (result.isPresent() && result.get() == saveButtonType) {
 				// User clicked OK, perform the action
 				Controller.saveTable(Main.table, false);
-			} else if (result.isPresent() && result.get() == cancelButtonType) {
+			}
+			else if (result.isPresent() && result.get() == cancelButtonType) {
 				// User clicked Cancel, handle accordingly
 				return;
 			}
@@ -212,6 +216,7 @@ public class GUI {
 			UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
 			UndoRedoStack.undoStackNumber.push(Main.table.getNumOfRows());
 			Main.table.addRow(Main.table.getNumOfRows());
+			Main.table.clearSelectedCells();
 			GUI.updateGUI(UpdateType.TABLE_CHANGE);
 		});
 
@@ -219,6 +224,7 @@ public class GUI {
 		undoBtn.setOnAction(e -> {
 			UndoRedoStack.undo();
 			Main.table.clearClickedLabel();
+			Main.table.clearSelectedCells();
 			GUI.updateGUI(UpdateType.CELL_CHANGE);
 		});
 
@@ -226,33 +232,28 @@ public class GUI {
 		redoBtn.setOnAction(e -> {
 			UndoRedoStack.redo();
 			Main.table.clearClickedLabel();
+			Main.table.clearSelectedCells();
 			GUI.updateGUI(UpdateType.CELL_CHANGE);
 		});
 
-		// Unused
-		TextField rowIndexField = new TextField();
-		rowIndexField.setPromptText("row");
-		TextField columnIndexField = new TextField();
-		columnIndexField.setPromptText("column");
-		TextField newValueField = new TextField();
-		newValueField.setPromptText("new value");
-		Button changeValueBtn = new Button("Change value");
-
 		VBox vbox1 = new VBox(saveBtn, addRowBtn, undoBtn, redoBtn);
-		VBox vbox2 = new VBox(rowIndexField, columnIndexField, newValueField, changeValueBtn);
 		vbox1.setPadding(new Insets(5));
-		vbox2.setPadding(new Insets(5));
 
 		// Formatting options
+		//Text
 		Button formatTextBtn = new Button("Format to text");
 		formatTextBtn.setOnAction(e -> {
 			Controller.formatSelectedCells(Cell.TEXT_FORMAT);
-			rebuildGrid();
+			if (Main.table.getClickedLabel() != null) {
+				Main.table.getClickedLabel().requestFocus();
+			}
+			GUI.updateGUI(UpdateType.CELL_CHANGE);
 		});
 		VBox vbox4 = new VBox(formatTextBtn);
 		vbox4.setPadding(new Insets(5));
 		vbox4.setAlignment(Pos.CENTER);
 
+		//Number
 		TextField decimalsField = new TextField();
 		decimalsField.setPromptText("number of decimals");
 		Button formatNumberBtn = new Button("Format to number");
@@ -260,26 +261,34 @@ public class GUI {
 			int decimals;
 			try {
 				decimals = Integer.parseInt(decimalsField.getText());
-			} catch (NumberFormatException ex) {
+			}
+			catch (NumberFormatException ex) {
 				decimals = 2;
 			}
 			Controller.formatSelectedCells(new NumberFormat(decimals));
-			rebuildGrid();
+			if (Main.table.getClickedLabel() != null) {
+				Main.table.getClickedLabel().requestFocus();
+			}
+			GUI.updateGUI(UpdateType.CELL_CHANGE);
 		});
 		VBox vbox3 = new VBox(decimalsField, formatNumberBtn);
 		vbox3.setPadding(new Insets(5));
 		vbox3.setAlignment(Pos.CENTER);
 
+		//Date
 		Button formatDateBtn = new Button("Format to date");
 		formatDateBtn.setOnAction(e -> {
 			Controller.formatSelectedCells(Cell.DATE_FORMAT);
-			rebuildGrid();
+			if (Main.table.getClickedLabel() != null) {
+				Main.table.getClickedLabel().requestFocus();
+			}
+			GUI.updateGUI(UpdateType.CELL_CHANGE);
 		});
 		VBox vbox5 = new VBox(formatDateBtn);
 		vbox5.setPadding(new Insets(5));
 		vbox5.setAlignment(Pos.CENTER);
 
-		northMenu.getChildren().addAll(vbox1, vbox2, vbox4, vbox3, vbox5);
+		northMenu.getChildren().addAll(vbox1, vbox4, vbox3, vbox5);
 
 		rootBorderPane.setTop(northPane);
 		upperMenuHeight = rootBorderPane.getCenter().getLayoutBounds().getHeight();
@@ -306,7 +315,6 @@ public class GUI {
 	 *               pocetna vrednost je sadrzaj celije
 	 */
 	static void replaceLabelWithEditingField(GridPane grid, int gri, int gci, String sValue) {
-		// indeksi u tabeli
 		int tri = gri - 1;
 		int tci = gci - 1;
 
@@ -316,7 +324,8 @@ public class GUI {
 		EditingField editingField = null;
 		if (sValue == null) {
 			editingField = new EditingField(Main.table.getCell(tri, tci).getValue(), grid, tri, tci);
-		} else {
+		}
+		else {
 			editingField = new EditingField(sValue, grid, tri, tci);
 		}
 		GridPane.setConstraints(editingField, gci, gri);
@@ -324,7 +333,8 @@ public class GUI {
 		editingField.requestFocus();
 		if (sValue == null) {
 			editingField.selectAll();
-		} else {
+		}
+		else {
 			editingField.positionCaret(editingField.getText().length());
 		}
 		GUI.activeEditingField = editingField;
@@ -349,14 +359,14 @@ public class GUI {
 			UndoRedoStack.undoStackType.push(ActionType.CELL_CHANGE);
 			UndoRedoStack.undoStackNumber.push(1);
 			UndoRedoStack.undoStackCells.push(oldCell);
-		} catch (FormatChangeUnsuccessful ex) {
+		}
+		catch (FormatChangeUnsuccessful ex) {
 			GUI.printlnLog("Upisana vrednost ne odgovara formatu celije");
 		}
-		Main.table.updateLabels();
+		GUI.updateGUI(UpdateType.CELL_CHANGE);
 		CellLabel label = Main.table.getLabel(tri, tci);
 		editingField.getMyGrid().getChildren().remove(editingField);
 		editingField.getMyGrid().getChildren().add(label);
-		// Main.table.getClickedLabel().requestFocus();
 		GUI.activeEditingField = null;
 	}
 

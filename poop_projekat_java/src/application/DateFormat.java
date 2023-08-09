@@ -35,6 +35,7 @@ public class DateFormat implements Format {
 			return isValidDate(day, month, year);
 		} else {
 			System.out.println("Invalid date format.");
+			GUI.printlnLog("Datum nije upisan u pravilnom formatu, ili je nepostojeci.");
 			return false;
 		}
 	}

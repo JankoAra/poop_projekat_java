@@ -28,6 +28,7 @@ public class RowLabel extends Label {
 				UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
 				UndoRedoStack.undoStackNumber.push(ri - 1);
 				Main.table.addRow(ri - 1);
+				Main.table.clearSelectedCells();
 				GUI.updateGUI(UpdateType.TABLE_CHANGE);
 			});
 			addRowBelowItem.setOnAction(e -> {
@@ -36,6 +37,7 @@ public class RowLabel extends Label {
 				UndoRedoStack.undoStackType.push(ActionType.ROW_ADDED);
 				UndoRedoStack.undoStackNumber.push(ri);
 				Main.table.addRow(ri);
+				Main.table.clearSelectedCells();
 				GUI.updateGUI(UpdateType.TABLE_CHANGE);
 			});
 			deleteRowItem.setOnAction(e -> {
@@ -48,6 +50,7 @@ public class RowLabel extends Label {
 					UndoRedoStack.undoStackCells.push(c);
 				}
 				Main.table.deleteRow(ri - 1);
+				Main.table.clearSelectedCells();
 				GUI.updateGUI(UpdateType.TABLE_CHANGE);
 			});
 
