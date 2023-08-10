@@ -160,7 +160,7 @@ double calculatePostfix(string postfix) {
 }
 
 //Pretvara funkciju SUM u vektor sabiraka
-vector<string> sumFunction(string startCell, string endCell){
+vector<string> sumFunction(string startCell, string endCell) {
 	vector<string> tokens;
 	tokens.push_back("(");
 	pair<int, int> startIndices = TableJNI::cellNameToIndex(startCell);
@@ -183,7 +183,7 @@ vector<string> sumFunction(string startCell, string endCell){
 }
 
 //Pretvara funkciju AVG u vektor operanada
-vector<string> avgFunction(string startCell, string endCell){
+vector<string> avgFunction(string startCell, string endCell) {
 	vector<string> tokens;
 	tokens.push_back("(");
 	pair<int, int> startIndices = TableJNI::cellNameToIndex(startCell);
@@ -232,6 +232,7 @@ vector<string> convertFormulaFunctionToTokens(string function) {
 		tokens = avgFunction(startCell, endCell);
 	}
 	else {
+		//Nepostojeca funkcija
 		tokens.push_back(function);
 	}
 	return tokens;

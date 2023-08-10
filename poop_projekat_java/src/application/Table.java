@@ -13,7 +13,7 @@ public class Table {
 
 	// konstante za tabelu
 	public static final int NUMBER_OF_COLUMNS = 26;
-	public static final int DEFAULT_TABLE_SIZE = 10;
+	public static final int DEFAULT_TABLE_SIZE = 50;
 
 	// za selektovanje celija i prebacivanje fokusa labela
 	LinkedList<Cell> selectedCells = new LinkedList<>();
