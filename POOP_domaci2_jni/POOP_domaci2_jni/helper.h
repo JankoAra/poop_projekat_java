@@ -1,6 +1,7 @@
 #ifndef HELPER_JNI
 #define HELPER_JNI
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -31,5 +32,14 @@ string infixToPostfix(string expression);
 
 //Racunanje izraza u postfiksnom obliku
 double calculatePostfix(string postfix);
+
+//Pretvara funkciju SUM u vektor sabiraka
+vector<string> sumFunction(string startCell, string endCell);
+
+//Pretvara funkciju AVG u vektor operanada
+vector<string> avgFunction(string startCell, string endCell);
+
+//Menja token koji predstavlja funkciju vektorom tokena koji odgovaraju toj funkciji
+vector<string> convertFormulaFunctionToTokens(string function);
 
 #endif

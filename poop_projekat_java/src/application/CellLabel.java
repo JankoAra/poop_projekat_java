@@ -94,6 +94,7 @@ public class CellLabel extends Label {
 					Main.table.setClickedLabelIndices(tri, tci);
 					Main.table.setSelectedRange(tri, tci, tri, tci);
 					Main.table.markSelectedCells();
+					Main.table.getClickedLabel().requestFocus();
 				}
 			}
 			else if (tri != Main.table.clickedLabelRowIndex || tci != Main.table.clickedLabelColumnIndex) {

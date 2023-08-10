@@ -108,6 +108,9 @@ vector<string> TableJNI::extractTokens(string expression) {
 			if (c == ')') {
 				functionStarted = false;
 				prevIsChar = false;
+				vector<string> convertedFunction = convertFormulaFunctionToTokens(currentToken);
+				currentToken = "";
+				tokens.insert(tokens.end(), convertedFunction.begin(), convertedFunction.end());
 			}
 		}
 		else if (c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')') {
@@ -182,9 +185,10 @@ void TableJNI::resolveFormulas() {
 				//unutrasnja petlja 2, razresava pojedinacne tokene u celiji
 				if (isCellName(token)) {
 					//pokusaj da razresis celiju
-					string cellValue = getCellValue(token);
-					auto tempInd = cellNameToIndex(token);
+					string cellValue = getCellValue(token);	//sadrzaj celije koja se referencira
+					auto tempInd = cellNameToIndex(token);	//indeksi celije koja se referencira
 					if (tempInd == indices) {
+						//Celija referencira samu sebe
 						token = "ERROR";
 						changed = true;
 						continue;
@@ -194,6 +198,7 @@ void TableJNI::resolveFormulas() {
 						changed = true;
 					}
 					else if (cellValue[0] == '=') {
+						//Ako celija referencira neku formulu koja jos nije razresena, mora da se saceka
 						unableToSolve = true;
 					}
 					else {

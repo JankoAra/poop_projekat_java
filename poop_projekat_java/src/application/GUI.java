@@ -356,7 +356,7 @@ public class GUI {
 				GUI.printlnLog("Sadrzaj celije ne sme sadrzati zareze. Zarezi su uklonjeni.");
 				newText = newText.replaceAll(",", "");
 			}
-			if (newText.charAt(0) == '=' && format.getDescription() != "N") {
+			if (newText.startsWith("=") && format.getDescription() != "N") {
 				format = new NumberFormat();
 			}
 			Cell newCell = new Cell(newText, format, tri, tci);

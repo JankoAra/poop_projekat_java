@@ -5,6 +5,10 @@
 #include <set>
 #include <stack>
 #include "CalculationError.h"
+#include <iostream>
+#include <cctype>
+#include <algorithm>
+#include "TableJNI.h"
 
 /*
 U properties C++ -> Precompiled Headers -> Not using precompiled headers
@@ -153,6 +157,84 @@ double calculatePostfix(string postfix) {
 	stack.pop();
 	if (stack.empty()) return result;
 	else throw CalculationError();
+}
+
+//Pretvara funkciju SUM u vektor sabiraka
+vector<string> sumFunction(string startCell, string endCell){
+	vector<string> tokens;
+	tokens.push_back("(");
+	pair<int, int> startIndices = TableJNI::cellNameToIndex(startCell);
+	pair<int, int> endIndices = TableJNI::cellNameToIndex(endCell);
+	bool first = true;
+	for (int i = startIndices.first; i <= endIndices.first; i++) {
+		for (int j = startIndices.second; j <= endIndices.second; j++) {
+			if (first) {
+				first = false;
+			}
+			else {
+				tokens.push_back("+");
+			}
+			string cellName = TableJNI::indexToCellName(i, j);
+			tokens.push_back(cellName);
+		}
+	}
+	tokens.push_back(")");
+	return tokens;
+}
+
+//Pretvara funkciju AVG u vektor operanada
+vector<string> avgFunction(string startCell, string endCell){
+	vector<string> tokens;
+	tokens.push_back("(");
+	pair<int, int> startIndices = TableJNI::cellNameToIndex(startCell);
+	pair<int, int> endIndices = TableJNI::cellNameToIndex(endCell);
+	int cnt = 0;
+	bool first = true;
+	tokens.push_back("(");
+	for (int i = startIndices.first; i <= endIndices.first; i++) {
+		for (int j = startIndices.second; j <= endIndices.second; j++) {
+			if (first) {
+				first = false;
+			}
+			else {
+				tokens.push_back("+");
+			}
+			string cellName = TableJNI::indexToCellName(i, j);
+			tokens.push_back(cellName);
+			cnt++;
+		}
+	}
+	tokens.push_back(")");
+	tokens.push_back("/");
+	tokens.push_back(to_string(cnt));
+	tokens.push_back(")");
+	return tokens;
+}
+
+//Menja token koji predstavlja funkciju vektorom tokena koji odgovaraju toj funkciji
+vector<string> convertFormulaFunctionToTokens(string function) {
+	vector<string> tokens;
+	regex pattern("^([A-Za-z]+)\\(([A-Za-z]\\d+):([A-Za-z]\\d+)\\)$");
+	smatch matches;
+	if (!regex_match(function, matches, pattern)) {
+		cout << "Greska u pretvaranju funckije" << endl;
+		tokens.push_back(function);
+		return tokens;
+	}
+	string functionName = matches[1];
+	transform(functionName.begin(), functionName.end(), functionName.begin(), [](unsigned char c) {return toupper(c); });
+	string startCell = matches[2];
+	string endCell = matches[3];
+	if (functionName == "SUM") {
+		tokens = sumFunction(startCell, endCell);
+	}
+	else if (functionName == "AVG") {
+		tokens = avgFunction(startCell, endCell);
+	}
+	else {
+		tokens.push_back(function);
+	}
+	return tokens;
 }
 
 string getNextToken(string& input, int& index) {
