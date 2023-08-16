@@ -60,10 +60,6 @@ public class JsonMappedData {
     public JsonMappedData(Table table) {
     	globalColumnFormats = new ArrayList<String>(Collections.nCopies(26, "T"));
     	globalColumnDecimals = new ArrayList<String>(Collections.nCopies(26, "2"));
-//    	for(int i=0;i<Table.numOfCols;i++) {
-//    		globalColumnDecimals.set(i, "2");
-//    		globalColumnFormats.set(i, "T");
-//    	}
     	cells = new LinkedList<MetaCell>();
     	for(int i=0;i<table.getNumOfRows();i++) {
     		for(int j=0;j<Table.NUMBER_OF_COLUMNS;j++) {

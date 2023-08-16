@@ -53,10 +53,9 @@ public class EditingField extends TextField {
 			} else if (event.getCode() == KeyCode.ESCAPE) {
 				event.consume();
 				GUI.replaceEditingFieldWithLabel();
-				textField.myGrid.requestFocus();
-
-				Main.table.demarkSelectedCells();
-				Main.table.clearClickedLabel();
+				Main.table.setSelectedRange(textField.tri, textField.tci, textField.tri, textField.tci);
+				Main.table.setClickedLabelIndices(textField.tri, textField.tci);
+				Main.table.getClickedLabel().requestFocus();
 				GUI.updateGUI(UpdateType.CELL_CHANGE);
 			}
 		});

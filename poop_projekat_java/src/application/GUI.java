@@ -3,6 +3,7 @@ package application;
 import java.io.File;
 import java.util.Optional;
 
+import application.MyExceptions.CellUnchanged;
 import application.MyExceptions.FormatChangeUnsuccessful;
 import application.UndoRedoStack.ActionType;
 import javafx.geometry.Insets;
@@ -352,6 +353,9 @@ public class GUI {
 			Cell oldCell = Main.table.getCell(tri, tci);
 			Format format = oldCell.getFormat();
 			String newText = editingField.getText();
+			if (newText.equals(oldCell.getValue())) {
+				throw new CellUnchanged();
+			}
 			if (newText.contains(",")) {
 				GUI.printlnLog("Sadrzaj celije ne sme sadrzati zareze. Zarezi su uklonjeni.");
 				newText = newText.replaceAll(",", "");
@@ -368,6 +372,9 @@ public class GUI {
 		}
 		catch (FormatChangeUnsuccessful ex) {
 			GUI.printlnLog("Upisana vrednost ne odgovara formatu celije");
+		}
+		catch (CellUnchanged ex) {
+			//GUI.printlnLog(ex.getMessage());
 		}
 		Main.table.updateLabels();
 		CellLabel label = Main.table.getLabel(tri, tci);

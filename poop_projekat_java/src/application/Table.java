@@ -190,14 +190,6 @@ public class Table {
 				CellLabel label = labels.get(i).get(j);
 				String text = getCell(i, j).getFormattedValue();
 				label.setText(text);
-				//				if (text.equals("ERROR")) {
-				//					if (!label.getStyleClass().contains("error-label")) {
-				//						label.getStyleClass().add("error-label");
-				//					}
-				//				}
-				//				else {
-				//					label.getStyleClass().remove("error-label");
-				//				}
 			}
 		}
 	}

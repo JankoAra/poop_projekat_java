@@ -1,7 +1,6 @@
 package application;
 
 import java.io.IOException;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,6 +8,20 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+
+
+/*
+ * Uputstva za podesavanje okruzenja:
+ * 
+ * 1. Mora postojati folder savedTables u projektu (van src, u root folderu projekta)
+ * 2. U Build Path napravi user biblioteke za JavaFX libove i za Jackson libove
+ * 3. Dodaj user biblioteke u build path
+ * 4. JRE system library -> Native library location ukazuje na dll biblioteku
+ * 5. Run -> Run configurations - za Main klasu programa dodaj VM arguments
+ * --module-path "path\to\javafx\lib\folder" --add-modules javafx.controls,javafx.fxml
+ * 6. Napravi application paket u src folderu
+ */
 
 public class Main extends Application {
 
@@ -35,13 +48,11 @@ public class Main extends Application {
 			StartSceneController ctrl = loader.getController();
 			ctrl.setStage(stage);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		addAskToSaveOnExit(stage);
 
 		stage.setScene(scene);
-		//stage.setMaximized(true);
 		stage.show();
 	}
 
@@ -51,8 +62,8 @@ public class Main extends Application {
 				return;
 			}
 
-			event.consume();// Consume the event to prevent the application from closing immediately
-			// Show the custom Alert dialog
+			event.consume();
+			
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 			alert.getDialogPane().getScene().getWindow().setOnCloseRequest(e -> {
 				alert.close();
@@ -67,19 +78,15 @@ public class Main extends Application {
 
 			alert.getButtonTypes().setAll(saveButton, discardButton, cancelButton);
 
-			// Show the dialog and wait for the user's response
 			alert.showAndWait().ifPresent(response -> {
 				if (response == saveButton) {
-					// Save the table here (call a method to handle the save operation)
-					// For example: saveTable();
 					Controller.saveTable(Main.table, false);
 					System.out.println("Table saved!");
-					stage.close(); // Close the application after saving
+					stage.close();
 				} else if (response == discardButton) {
-					// No need to save, just exit the application
 					stage.close();
 				} else {
-					// User clicked Cancel, do nothing (let the application continue running)
+					// response == Cancel, program nastavlja sa radom
 				}
 			});
 

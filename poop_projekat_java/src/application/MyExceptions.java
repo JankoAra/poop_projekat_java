@@ -10,4 +10,13 @@ public class MyExceptions {
 		}
 	}
 
+	public static class CellUnchanged extends Exception {
+
+		private static final long serialVersionUID = 1L;
+
+		public CellUnchanged() {
+			super("Sadrzaj celije nije promenjen.");
+		}
+	}
+
 }

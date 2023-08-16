@@ -70,7 +70,6 @@ public class Controller {
 	}
 
 	public static void formatSelectedCells(Format format) {
-		// System.out.println("Changing format");
 		if (GUI.activeEditingField != null) {
 			GUI.replaceEditingFieldWithLabel();
 		}

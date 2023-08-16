@@ -28,7 +28,8 @@ public class Parser {
 	public static String convertTableToString(Table table, String extension) throws Exception {
 		if (extension.equals(".csv")) {
 			return convertTableToCSVString(table);
-		} else if (extension.equals(".json")) {
+		}
+		else if (extension.equals(".json")) {
 			return convertTableToJSONString(table);
 		}
 		System.out.println("Format nije podrzan");
@@ -42,8 +43,8 @@ public class Parser {
 
 		try {
 			jsonString = objectMapper.writeValueAsString(data);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 
@@ -60,7 +61,6 @@ public class Parser {
 			}
 		}
 		String csv = sb.toString();
-		// System.out.println("CSV tabele iz jave:\n" + csv);
 		return csv;
 	}
 
@@ -78,28 +78,29 @@ public class Parser {
 			String line;
 			int rowNum = 0;
 			while ((line = buffer.readLine()) != null) {
-				if (rowNum != 0)
-					table.addRow();
+				if (rowNum != 0) table.addRow();
 				String row[] = line.split(",", -1);
 				int colNum = 0;
 				for (String value : row) {
-					if (colNum >= Table.NUMBER_OF_COLUMNS)
-						throw new Exception();
+					if (colNum >= Table.NUMBER_OF_COLUMNS) throw new Exception();
 					Cell cell = new Cell(value, Cell.TEXT_FORMAT, rowNum, colNum);
 					table.setCell(rowNum, colNum, cell);
 					colNum++;
 				}
 				rowNum++;
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			table = new Table();
-		} finally {
+		}
+		finally {
 			try {
 				if (buffer != null) {
 					buffer.close();
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -118,15 +119,13 @@ public class Parser {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			JsonMappedData data = objectMapper.readValue(file, JsonMappedData.class);
-			// Process the data...
-			// Now you can work with the Java object representation of the JSON data
 
 			// find numOfRows
 			int rowsNeeded = 1;
 			rowsNeeded = data.getCells().get(data.getCells().size() - 1).getRow() + 1;
 			table = new Table(rowsNeeded);
-			
-			//apply global formats
+
+			//primeni globalne formate
 			for (int i = 0; i < data.getGlobalColumnDecimals().size(); i++) {
 				String decimalsString = data.getGlobalColumnDecimals().get(i);
 				String formatString = data.getGlobalColumnFormats().get(i);
@@ -141,7 +140,7 @@ public class Parser {
 				}
 			}
 
-			// Access individual cells
+			// ubaci pojedinacne celije
 			for (MetaCell metaCell : data.getCells()) {
 				String formatString = metaCell.getFormat();
 				Format f = Format.makeFormat(formatString);
@@ -149,13 +148,13 @@ public class Parser {
 				if (formatString.equals("N")) {
 					((NumberFormat) f).setDecimalsToShow(dec);
 				}
-				Cell newCell = new Cell(metaCell.getValue(), f, metaCell.getRow(),
-						metaCell.getColumn());
-				
+				Cell newCell = new Cell(metaCell.getValue(), f, metaCell.getRow(), metaCell.getColumn());
+
 				table.setCell(metaCell.getRow(), metaCell.getColumn(), newCell);
 
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -169,7 +168,8 @@ public class Parser {
 			System.out.println(path.getAbsolutePath());
 			writer.write(content);
 			writer.close();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			System.out.println("Greska pri cuvanju fajla");
 			e.printStackTrace();
 		}
