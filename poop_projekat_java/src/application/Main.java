@@ -15,17 +15,20 @@ import javafx.stage.Stage;
  * Uputstva za podesavanje okruzenja:
  * 
  * 1. Mora postojati folder savedTables u projektu (van src, u root folderu projekta)
- * 2. U Build Path napravi user biblioteke za JavaFX libove i za Jackson libove
+ * 2. U Build Path napravi user biblioteke za JavaFX libove i za Jackson libove(3 glavna)
  * 3. Dodaj user biblioteke u build path
  * 4. JRE system library -> Native library location ukazuje na dll biblioteku
  * 5. Run -> Run configurations - za Main klasu programa dodaj VM arguments
  * --module-path "path\to\javafx\lib\folder" --add-modules javafx.controls,javafx.fxml
+ * (path/to/java/lib zameniti, u okruzujucem folderu se moraju nalaziti i bin fajlovi za javafx)
+ * (javafx dobijamo tamo, ne saljem svoj)
+ * (postoje i jfxswt u java/jre/lib i jfxrt u java/jre/lib/ext , ali nisu neophodni)
  * 6. Napravi application paket u src folderu
  */
 
 public class Main extends Application {
 
-	static Table table = new Table();
+	static Table table = new Table(Table.DEFAULT_TABLE_SIZE);
 
 	public static Table getTable() {
 		return table;

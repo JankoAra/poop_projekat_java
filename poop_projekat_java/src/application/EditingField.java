@@ -47,8 +47,9 @@ public class EditingField extends TextField {
 					Main.table.setClickedLabelIndices(textField.tri, textField.tci);
 					Main.table.markSelectedCells();
 				}
-				Main.table.getClickedLabel().requestFocus();
+				
 				GUI.replaceEditingFieldWithLabel();
+				Main.table.getClickedLabel().requestFocus();
 				GUI.updateGUI(UpdateType.CELL_CHANGE);
 			} else if (event.getCode() == KeyCode.ESCAPE) {
 				event.consume();

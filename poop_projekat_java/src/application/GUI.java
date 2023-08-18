@@ -48,9 +48,12 @@ public class GUI {
 	public static void updateGUI(UpdateType type) {
 		switch (type) {
 		case TABLE_CHANGE:
-			// dodat novi red
+			// dodat novi red, promenjena cela tabela
+
 			Main.table.updateLabels();
+
 			GUI.rebuildGrid();
+
 			//colorLabels mora nakon rebuildGrid
 			Main.table.colorLabels();
 			break;
@@ -175,17 +178,25 @@ public class GUI {
 			}
 
 			Main.table = new Table(Table.DEFAULT_TABLE_SIZE);
-			rebuildGrid();
-			Main.table.updateLabels();
+			UndoRedoStack.clearUndoRedoStack();
+			//			rebuildGrid();
+			//			Main.table.updateLabels();
 			Parser.currentFile = new File("Untitled");
 			GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
+			Main.table.clearSelectedCells();
+			Main.table.clearClickedLabel();
+			GUI.updateGUI(UpdateType.TABLE_CHANGE);
 		});
 		MenuItem openMenuItem = new MenuItem("Open Table");
 		openMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
 		openMenuItem.setOnAction(e -> {
 			Main.table = Controller.openTable();
-			rebuildGrid();
-			Main.table.updateLabels();
+			UndoRedoStack.clearUndoRedoStack();
+			//			rebuildGrid();
+			//			Main.table.updateLabels();
+			Main.table.clearSelectedCells();
+			Main.table.clearClickedLabel();
+			GUI.updateGUI(UpdateType.TABLE_CHANGE);
 		});
 		MenuItem saveAsMenuItem = new MenuItem("Save As");
 		saveAsMenuItem.setOnAction(e -> Controller.saveTable(Main.table, true));
@@ -216,7 +227,9 @@ public class GUI {
 			UndoRedoStack.undoStackNumber.push(Main.table.getNumOfRows());
 			Main.table.addRow(Main.table.getNumOfRows());
 			Main.table.clearSelectedCells();
+			Main.table.clearClickedLabel();
 			GUI.updateGUI(UpdateType.TABLE_CHANGE);
+			GUI.gridScrollPane.setVvalue(1);
 		});
 
 		Button undoBtn = new Button("Undo");

@@ -5,13 +5,11 @@ import java.util.Stack;
 import application.GUI.UpdateType;
 
 public class UndoRedoStack {
-	public enum ActionType {
-		CELL_CHANGE, ROW_ADDED, ROW_DELETED
-	}
+	public enum ActionType { CELL_CHANGE, ROW_ADDED, ROW_DELETED }
 
-	final static Stack<Cell> undoStackCells = new Stack<>();
-	final static Stack<Integer> undoStackNumber = new Stack<>();
-	final static Stack<ActionType> undoStackType = new Stack<>();
+	static Stack<Cell> undoStackCells = new Stack<>();
+	static Stack<Integer> undoStackNumber = new Stack<>();
+	static Stack<ActionType> undoStackType = new Stack<>();
 	private static Stack<Cell> redoStackCells = new Stack<>();
 	private static Stack<Integer> redoStackNumber = new Stack<>();
 	private static Stack<ActionType> redoStackType = new Stack<>();
@@ -62,10 +60,21 @@ public class UndoRedoStack {
 
 	}
 
+	public static void clearUndoStack() {
+		undoStackCells = new Stack<>();
+		undoStackNumber = new Stack<>();
+		undoStackType = new Stack<>();
+	}
+	
 	public static void clearRedoStack() {
 		redoStackCells = new Stack<>();
 		redoStackNumber = new Stack<>();
 		redoStackType = new Stack<>();
+	}
+	
+	public static void clearUndoRedoStack() {
+		clearUndoStack();
+		clearRedoStack();
 	}
 
 	public static void redo() {

@@ -21,13 +21,13 @@ public class DateFormat implements Format {
 			int month = Integer.parseInt(matcher.group(2));
 			int year = Integer.parseInt(matcher.group(3));
 
-			//			System.out.println("Day: " + day);
-			//			System.out.println("Month: " + month);
-			//			System.out.println("Year: " + year);
+			//System.out.println("Day: " + day);
+			//System.out.println("Month: " + month);
+			//System.out.println("Year: " + year);
 			return isValidDate(day, month, year);
 		}
 		else {
-			System.out.println("Invalid date format.");
+			//System.out.println("Invalid date format.");
 			GUI.printlnLog("Datum nije upisan u pravilnom formatu, ili je nepostojeci.");
 			return false;
 		}

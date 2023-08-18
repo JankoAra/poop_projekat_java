@@ -268,8 +268,10 @@ public class CellLabel extends Label {
 				}
 			}
 			else if (!pressedCharacter.isEmpty()) {
-				// System.out.println("ima texta");
 				// pritisnut nexi printabilni karakter
+				if(e.isControlDown()) {
+					GUI.printlnLog("Ctrl pritisnut");
+				}
 				if (tri == Main.table.clickedLabelRowIndex && tci == Main.table.clickedLabelColumnIndex) {
 					GUI.replaceLabelWithEditingField(GUI.grid, gri, gci, pressedCharacter);
 					e.consume();

@@ -1,5 +1,6 @@
 package application;
 
+import application.GUI.UpdateType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,13 +19,22 @@ public class StartSceneController {
 		stage = s;
 	}
 	
-	final static boolean maximized = false;
-
-	@FXML
-	void createNewTableFromStartMenu(ActionEvent event) {
-		Main.table = new Table(Table.DEFAULT_TABLE_SIZE);
-		GUI.rebuildGrid();
-		Main.table.updateLabels();
+	final static boolean maximized = true;
+	
+	private enum StartType{NEW_TABLE, OPEN_TABLE}
+	private void changeScene(StartType type) {
+		if(type==StartType.NEW_TABLE) {
+			Main.table = new Table(Table.DEFAULT_TABLE_SIZE);
+			UndoRedoStack.clearUndoRedoStack();
+		}
+		else if(type==StartType.OPEN_TABLE) {
+			Main.table = Controller.openTable();
+			UndoRedoStack.clearUndoRedoStack();
+		}
+		else return;
+//		GUI.rebuildGrid();
+//		Main.table.updateLabels();
+		GUI.updateGUI(UpdateType.TABLE_CHANGE);
 		stage.setScene(GUI.runningScene);
 		stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		stage.setMaximized(maximized);
@@ -33,14 +43,12 @@ public class StartSceneController {
 	}
 
 	@FXML
+	void createNewTableFromStartMenu(ActionEvent event) {
+		changeScene(StartType.NEW_TABLE);
+	}
+
+	@FXML
 	void openTableFromStartMenu(ActionEvent event) {
-		Main.table = Controller.openTable();
-		GUI.rebuildGrid();
-		Main.table.updateLabels();
-		stage.setScene(GUI.runningScene);
-		stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
-		stage.setMaximized(maximized);
-//		stage.hide();
-//		stage.show();
+		changeScene(StartType.OPEN_TABLE);
 	}
 }
