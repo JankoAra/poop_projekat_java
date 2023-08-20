@@ -6,6 +6,7 @@ import java.util.Optional;
 import application.MyExceptions.CellUnchanged;
 import application.MyExceptions.FormatChangeUnsuccessful;
 import application.UndoRedoStack.ActionType;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
@@ -470,5 +472,41 @@ public class GUI {
 		GUI.grid = GUI.populateGrid(Main.table);
 		GUI.gridScrollPane.setContent(GUI.grid);
 	}
+	
+	/**
+	 * Osluskivac za drag misa po ivicama tabele, kako bi se menjale vrednosti scroll-a.
+	 * @author janko
+	 *
+	 */
+	public static class AutoScrollOnDrag implements EventHandler<DragEvent> {
+	    @Override
+	    public void handle(DragEvent e) {
+	        double mouseX = e.getSceneX();
+	        double mouseY = e.getSceneY();
+	        double minY = GUI.rootBorderPane.getCenter().getLayoutY();
+	        double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
+	        double minX = GUI.rootBorderPane.getCenter().getLayoutX();
+	        double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
+	        
+	        double deltaX = 50;
+	        double deltaY = 50;
+	        double moveX = 0.05;
+	        double moveY = 0.1;
+	        ScrollPane sp = GUI.gridScrollPane;
 
+	        if (mouseX - minX < deltaX) {
+	            sp.setHvalue(sp.getHvalue() - moveX);
+	        } else if (maxX - mouseX < deltaX) {
+	            sp.setHvalue(sp.getHvalue() + moveX);
+	        }
+
+	        if (mouseY - minY < deltaY) {
+	            sp.setVvalue(sp.getVvalue() - moveY);
+	        } else if (maxY - mouseY < deltaY) {
+	            sp.setVvalue(sp.getVvalue() + moveY);
+	        }
+
+	        e.consume();
+	    }
+	}
 }

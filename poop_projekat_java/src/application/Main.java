@@ -9,8 +9,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-
-
 /*
  * Uputstva za podesavanje okruzenja:
  * 
@@ -30,19 +28,11 @@ public class Main extends Application {
 
 	static Table table = new Table(Table.DEFAULT_TABLE_SIZE);
 
-	public static Table getTable() {
-		return table;
-	}
-
-	public static void setTable(Table table) {
-		Main.table = table;
-	}
-
 	@Override
 	public void start(Stage stage) {
 		stage.setTitle("Excel by JANKO");
 		GUI.stage = stage;
-		// Load startMenu
+		// Ucitaj startMenu
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("startScene.fxml"));
 		Scene scene = null;
 		try {
@@ -50,7 +40,8 @@ public class Main extends Application {
 			scene = new Scene(startRoot);
 			StartSceneController ctrl = loader.getController();
 			ctrl.setStage(stage);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		addAskToSaveOnExit(stage);
@@ -66,7 +57,7 @@ public class Main extends Application {
 			}
 
 			event.consume();
-			
+
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 			alert.getDialogPane().getScene().getWindow().setOnCloseRequest(e -> {
 				alert.close();
@@ -86,9 +77,11 @@ public class Main extends Application {
 					Controller.saveTable(Main.table, false);
 					System.out.println("Table saved!");
 					stage.close();
-				} else if (response == discardButton) {
+				}
+				else if (response == discardButton) {
 					stage.close();
-				} else {
+				}
+				else {
 					// response == Cancel, program nastavlja sa radom
 				}
 			});

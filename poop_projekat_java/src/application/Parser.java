@@ -11,10 +11,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import application.JsonMappedData.MetaCell;
 
+import application.MyExceptions.UnsupportedFileFormat;
+
 public class Parser {
 	static File currentFile = new File("Untitled");
 
-	// extracts file extension (ex. .csv or .json)
+	/**
+	 * Utvrdjuje tip zadatog fajla.
+	 * @param file - Zadati fajl.
+	 * @return Vraca String koji predstavlja ekstenziju tog fajla (npr. .csv ili .json ili .txt)
+	 */
 	public static String getExtensionFromFilePath(File file) {
 		String path = file.getName();
 		int lastIndex = path.lastIndexOf('.');
@@ -25,7 +31,14 @@ public class Parser {
 		return "";
 	}
 
-	public static String convertTableToString(Table table, String extension) throws Exception {
+	/**
+	 * Pretvara zadatu tabelu u String prema zadatom tipu fajla(na osnovu ekstenzije)
+	 * @param table - Tabela koja se konvertuje.
+	 * @param extension - Ekstenzija koja odredjuje tip fajla
+	 * @return Vraca String u zadatom formatu.
+	 * @throws UnsupportedFileFormat Ako tip fajla nije podrzan.
+	 */
+	public static String convertTableToString(Table table, String extension) throws UnsupportedFileFormat {
 		if (extension.equals(".csv")) {
 			return convertTableToCSVString(table);
 		}
@@ -33,9 +46,14 @@ public class Parser {
 			return convertTableToJSONString(table);
 		}
 		System.out.println("Format nije podrzan");
-		throw new Exception();
+		throw new UnsupportedFileFormat();
 	}
 
+	/**
+	 * Konvertuje sadrzaj tabele u String u JSON formatu
+	 * @param table - Tabela koja se konvertuje
+	 * @return String u JSON formatu.
+	 */
 	private static String convertTableToJSONString(Table table) {
 		String jsonString = "";
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -51,6 +69,11 @@ public class Parser {
 		return jsonString;
 	}
 
+	/**
+	 * Konvertuje sadrzaj tabele u String u CSV formatu
+	 * @param table - Tabela koja se konvertuje
+	 * @return String u CSV formatu.
+	 */
 	public static String convertTableToCSVString(Table table) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < table.getNumOfRows(); i++) {
@@ -64,6 +87,11 @@ public class Parser {
 		return csv;
 	}
 
+	/**
+	 * Pravi tabelu na osnovu fajla u CSV formatu
+	 * @param file - Fajl
+	 * @return Vraca napravljenu tabelu.
+	 */
 	public static Table convertCSVToTable(File file) {
 		if (file == null) {
 			System.out.println("Greska pri ucitavanju fajla");
@@ -107,6 +135,11 @@ public class Parser {
 		return table;
 	}
 
+	/**
+	 * Pravi tabelu na osnovu fajla u JSON formatu
+	 * @param file - Fajl
+	 * @return Vraca napravljenu tabelu.
+	 */
 	public static Table convertJSONToTable(File file) {
 		if (file == null) {
 			System.out.println("Greska pri ucitavanju fajla");
@@ -161,11 +194,16 @@ public class Parser {
 		return table;
 	}
 
+	/**
+	 * Snima zadati sadrzaj u fajl sa zadatom putanjom.
+	 * @param path - Putanja fajla.
+	 * @param content - Novi sadrzaj fajla.
+	 */
 	public static void createNewSaveFile(File path, String content) {
 		try {
 			FileWriter writer = new FileWriter(path);
-			System.out.println(path.getName());
-			System.out.println(path.getAbsolutePath());
+			//			System.out.println(path.getName());
+			//			System.out.println(path.getAbsolutePath());
 			writer.write(content);
 			writer.close();
 		}

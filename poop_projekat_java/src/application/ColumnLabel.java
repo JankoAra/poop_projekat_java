@@ -2,7 +2,6 @@ package application;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
@@ -35,16 +34,19 @@ public class ColumnLabel extends Label {
 			Main.table.demarkSelectedCells();
 			if (GUI.activeEditingField != null) {
 				if (GUI.activeEditingField.getText().startsWith("=")) {
-					GUI.activeEditingField.appendText(Cell.tableIndicesToCellRange(-1, tci,-1,tci));
+					GUI.activeEditingField.appendText(Cell.tableIndicesToCellRange(-1, tci, -1, tci));
 					GUI.activeEditingField.requestFocus();
 					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
-				} else {
+				}
+				else {
 					GUI.replaceEditingFieldWithLabel();
 					Main.table.setSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
 				}
-			} else if (e.isControlDown()) {
+			}
+			else if (e.isControlDown()) {
 				Main.table.addToSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
-			} else {
+			}
+			else {
 				Main.table.setSelectedRange(0, tci, Main.table.getNumOfRows() - 1, tci);
 			}
 			Main.table.markSelectedCells();
@@ -58,31 +60,36 @@ public class ColumnLabel extends Label {
 			ClipboardContent content = new ClipboardContent();
 			String contentString = "";
 			/**
-			 * 0 - "column" 1 - startTci 2 - "primary"/"secondary" (mouse button) 3 -
-			 * "add"/"set" (ctrl held/not held) 4 - editingField start value / ""(if no
-			 * activeEditingField)
+			 * 0 - "column"
+			 * 1 - startTci
+			 * 2 - "primary"/"secondary" (mouse button)
+			 * 3 - "add"/"set" (ctrl held/not held)
+			 * 4 - editingField start value / ""(if no activeEditingField)
 			 */
 			contentString += "column,";
 			contentString += tci + ",";
 			if (e.getButton() == MouseButton.PRIMARY) {
 				contentString += "primary,";
-			} else if (e.getButton() == MouseButton.SECONDARY) {
+			}
+			else if (e.getButton() == MouseButton.SECONDARY) {
 				contentString += "secondary,";
 			}
 			if (e.isControlDown()) {
 				contentString += "add,";
-			} else {
+			}
+			else {
 				contentString += "set,";
 			}
 			if (GUI.activeEditingField != null) {
 				if (GUI.activeEditingField.getText().startsWith("=")) {
 					contentString += GUI.activeEditingField.getText();
-				} else {
+				}
+				else {
 					GUI.replaceEditingFieldWithLabel();
-//					Main.table.demarkSelectedCells();
-//					Main.table.clearClickedLabelIndices();
-//					Main.table.setSelectedRange(tri, tci, tri, tci);
-//					Main.table.markSelectedCells();
+					//	Main.table.demarkSelectedCells();
+					//	Main.table.clearClickedLabelIndices();
+					//	Main.table.setSelectedRange(tri, tci, tri, tci);
+					//	Main.table.markSelectedCells();
 				}
 			}
 			content.putString(contentString);
@@ -92,13 +99,6 @@ public class ColumnLabel extends Label {
 		label.setOnDragEntered(e -> {
 			int gci = GridPane.getColumnIndex(label);
 			int tci = gci - 1;
-//			double mouseX = e.getSceneX();
-//			double mouseY = e.getSceneY();
-//			double minY = GUI.rootBorderPane.getCenter().getLayoutY();
-//			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
-//			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
-//			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
-//			System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
 			Main.table.clearClickedLabel();
 			if (e.getDragboard().hasString()) {
 				e.acceptTransferModes(TransferMode.ANY);
@@ -122,10 +122,12 @@ public class ColumnLabel extends Label {
 					GUI.activeEditingField.requestFocus();
 					GUI.activeEditingField.positionCaret(GUI.activeEditingField.getText().length());
 					Main.table.setSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
-				} else {
+				}
+				else {
 					if (parts[3].equals("add")) {
 						Main.table.addToSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
-					} else {
+					}
+					else {
 						Main.table.setSelectedRange(0, minCol, Main.table.getNumOfRows() - 1, maxCol);
 					}
 				}
@@ -133,33 +135,7 @@ public class ColumnLabel extends Label {
 			}
 			e.consume();
 		});
-		label.setOnDragOver(e -> {
-			double mouseX = e.getSceneX();
-			double mouseY = e.getSceneY();
-			double minY = GUI.rootBorderPane.getCenter().getLayoutY();
-			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
-			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
-			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
-			//System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+" "+maxY);
-			double deltaX = 50;
-			double deltaY = 50;
-			double moveX = 0.05;
-			double moveY = 0.1;
-			ScrollPane sp = GUI.gridScrollPane;
-			if(mouseX-minX<deltaX) {
-				sp.setHvalue(sp.getHvalue()-moveX);
-			}
-			else if(maxX-mouseX<deltaX) {
-				sp.setHvalue(sp.getHvalue()+moveX);
-			}
-			if(mouseY-minY<deltaY) {
-				sp.setVvalue(sp.getVvalue()-moveY);
-			}
-			else if(maxY-mouseY<deltaY) {
-				sp.setVvalue(sp.getVvalue()+moveY);
-			}
-			e.consume();
-		});
+		label.setOnDragOver(new GUI.AutoScrollOnDrag());
 	}
 
 }

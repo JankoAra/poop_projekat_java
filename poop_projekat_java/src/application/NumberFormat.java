@@ -14,23 +14,16 @@ public class NumberFormat implements Format {
 		decimalsToShow = 2;
 	}
 
-	public int getDecimalsToShow() {
-		return decimalsToShow;
-	}
+	public int getDecimalsToShow() { return decimalsToShow; }
 
-	public void setDecimalsToShow(int decimalsToShow) {
-		this.decimalsToShow = decimalsToShow;
-	}
+	public void setDecimalsToShow(int decimalsToShow) { this.decimalsToShow = decimalsToShow; }
 
 	@Override
-	public String getDescription() {
-		return "N";
-	}
+	public String getDescription() { return "N"; }
 
 	@Override
 	public boolean stringFitsFormat(String string) {
-		if (string.equals("") || string.charAt(0) == '=')
-			return true;
+		if (string.equals("") || string.charAt(0) == '=') return true;
 		String numberPattern = "[-+]?(\\d+\\.?\\d*|\\.\\d+)";
 		Pattern pattern = Pattern.compile(numberPattern);
 		return pattern.matcher(string).matches();
@@ -41,16 +34,16 @@ public class NumberFormat implements Format {
 		if (value.equals("")) {
 			return "";
 		}
-		if(value.equals("ERROR")) {
+		if (value.equals("ERROR")) {
 			return value;
 		}
 		double doubleValue = 0;
 		try {
 			doubleValue = Double.parseDouble(value);
 		}
-		catch(NumberFormatException ex) {
+		catch (NumberFormatException ex) {
 			System.out.println("greska u konverziji");
-			System.out.println("|"+value+"|");
+			System.out.println("|" + value + "|");
 		}
 		String pattern = "%." + decimalsToShow + "f";
 		return String.format(Locale.US, pattern, doubleValue);
@@ -58,12 +51,9 @@ public class NumberFormat implements Format {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
 		NumberFormat other = (NumberFormat) obj;
 		return decimalsToShow == other.decimalsToShow;
 	}

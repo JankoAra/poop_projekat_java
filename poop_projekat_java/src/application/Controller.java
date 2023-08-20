@@ -8,6 +8,11 @@ import application.UndoRedoStack.ActionType;
 import javafx.stage.FileChooser;
 
 public class Controller {
+	/**
+	 * Otvara dijalog za biranje putanje fajla prilikom snimanja ili ucitavanja tabele.
+	 * @param saving - true ako se snima tabela; false ako se ucitava tabela
+	 * @return Vraca fajl koji je izabran ako je uspesno, null ako nije ili ako je kliknuto Cancel u dijalogu.
+	 */
 	public static File getFilePath(boolean saving) {
 		FileChooser fc = new FileChooser();
 		fc.setInitialDirectory(new File("savedTables"));
@@ -20,34 +25,45 @@ public class Controller {
 		if (saving) {
 			// save file
 			file = fc.showSaveDialog(GUI.runningScene.getWindow());
-		} else {
+		}
+		else {
 			// open file
 			file = fc.showOpenDialog(GUI.runningScene.getWindow());
 		}
 		return file;
 	}
 
+	/**
+	 * Snima tabelu.
+	 * @param table - Tabela koja se snima.
+	 * @param saveAs - true ako se bira putanja do fajla, false ako se koristi poslednje koriscena putanja
+	 */
 	public static void saveTable(Table table, boolean saveAs) {
 		try {
 			File path;
 			if (Parser.currentFile.getName().equals("Untitled") || saveAs == true) {
 				path = Controller.getFilePath(true);
-			} else {
+			}
+			else {
 				path = Parser.currentFile;
 			}
-			if (path == null)
-				throw new Exception();
+			if (path == null) throw new Exception();
 			String extension = Parser.getExtensionFromFilePath(path);
 			String fileContent = Parser.convertTableToString(table, extension);
 			Parser.createNewSaveFile(path, fileContent);
 			Parser.currentFile = path;
 			GUI.stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			System.out.println("Fatalna greska pri cuvanju tabele");
 			System.out.println(e.getMessage());
 		}
 	}
 
+	/**
+	 * Ucitava tabelu iz CSV ili JSON fajla.
+	 * @return Vraca ucitanu tabelu.
+	 */
 	public static Table openTable() {
 		File path = getFilePath(false);
 		if (path == null) {
@@ -58,9 +74,11 @@ public class Controller {
 		Table loadedTable = null;
 		if (extension.equals(".csv")) {
 			loadedTable = Parser.convertCSVToTable(path);
-		} else if (extension.equals(".json")) {
+		}
+		else if (extension.equals(".json")) {
 			loadedTable = Parser.convertJSONToTable(path);
-		} else {
+		}
+		else {
 			System.out.println("Ekstenzija nije podrzana.");
 			return Main.table;
 		}
@@ -69,11 +87,15 @@ public class Controller {
 		return loadedTable;
 	}
 
+	/**
+	 * Formatira sve selektovane celije prema zadatom formatu, ukoliko je to moguce.
+	 * @param format - Zeljeni format.
+	 */
 	public static void formatSelectedCells(Format format) {
 		if (GUI.activeEditingField != null) {
 			GUI.replaceEditingFieldWithLabel();
 		}
-		if(Main.table.selectedCellsIndices.isEmpty()) {
+		if (Main.table.selectedCellsIndices.isEmpty()) {
 			GUI.printlnLog("Nijedna celija nije selektovana.");
 			return;
 		}

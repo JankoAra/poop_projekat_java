@@ -65,13 +65,13 @@ public class UndoRedoStack {
 		undoStackNumber = new Stack<>();
 		undoStackType = new Stack<>();
 	}
-	
+
 	public static void clearRedoStack() {
 		redoStackCells = new Stack<>();
 		redoStackNumber = new Stack<>();
 		redoStackType = new Stack<>();
 	}
-	
+
 	public static void clearUndoRedoStack() {
 		clearUndoStack();
 		clearRedoStack();

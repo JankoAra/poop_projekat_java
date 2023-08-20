@@ -2,7 +2,6 @@ package application;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -10,22 +9,37 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 
+/**
+ * Labela koja prikazuje sadrzaj neke od celija tabele.
+ * @author janko
+ *
+ */
 public class CellLabel extends Label {
 
+	/**
+	 * Podrazumevani konstruktor. Stvara labelu sa praznim tekstom i postavljenim osluskivacima.
+	 */
 	public CellLabel() {
 		initCellLabel(this);
 	}
 
-	public CellLabel(String arg0) {
-		super(arg0);
+	/**
+	 * Konstruktor koji stvara labelu sa zadatim tekstom i postavljenim osluskivacima.
+	 * @param text - Tekst labele.
+	 */
+	public CellLabel(String text) {
+		super(text);
 		initCellLabel(this);
 	}
 
-	public CellLabel(String arg0, Node arg1) {
-		super(arg0, arg1);
+	public CellLabel(String text, Node arg1) {
+		super(text, arg1);
 		initCellLabel(this);
 	}
 
+	/**
+	 * Primenjuje stilove labeli kada je selektovana.
+	 */
 	public void selectLabel() {
 		int ri = GridPane.getRowIndex(this);
 		int ci = GridPane.getColumnIndex(this);
@@ -49,6 +63,9 @@ public class CellLabel extends Label {
 		}
 	}
 
+	/**
+	 * Primenjuje stilove labeli kada nije selektovana.
+	 */
 	public void deselectLabel() {
 		int ri = GridPane.getRowIndex(this);
 		int ci = GridPane.getColumnIndex(this);
@@ -72,11 +89,15 @@ public class CellLabel extends Label {
 		}
 	}
 
+	/**
+	 * Postavlja osluskivace labeli.
+	 * @param label - Labela kojoj se postavljaju osluskivaci.
+	 */
 	private static void initCellLabel(CellLabel label) {
 		label.setMinWidth(80);
 		label.getStyleClass().add("default-label");
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		
+
 		label.setOnMouseClicked(e -> {
 			int gri = GridPane.getRowIndex(label);
 			int gci = GridPane.getColumnIndex(label);
@@ -220,34 +241,7 @@ public class CellLabel extends Label {
 			}
 			e.consume();
 		});
-		label.setOnDragOver(e -> {
-			double mouseX = e.getSceneX();
-			double mouseY = e.getSceneY();
-			double minY = GUI.rootBorderPane.getCenter().getLayoutY();
-			double maxY = minY + GUI.rootBorderPane.getCenter().getLayoutBounds().getHeight();
-			double minX = GUI.rootBorderPane.getCenter().getLayoutX();
-			double maxX = minX + GUI.rootBorderPane.getCenter().getLayoutBounds().getWidth();
-			// System.out.println(mouseX + " " + mouseY + " " + minX + " " + maxX+" "+minY+"
-			// "+maxY);
-			double deltaX = 50;
-			double deltaY = 50;
-			double moveX = 0.05;
-			double moveY = 0.1;
-			ScrollPane sp = GUI.gridScrollPane;
-			if (mouseX - minX < deltaX) {
-				sp.setHvalue(sp.getHvalue() - moveX);
-			}
-			else if (maxX - mouseX < deltaX) {
-				sp.setHvalue(sp.getHvalue() + moveX);
-			}
-			if (mouseY - minY < deltaY) {
-				sp.setVvalue(sp.getVvalue() - moveY);
-			}
-			else if (maxY - mouseY < deltaY) {
-				sp.setVvalue(sp.getVvalue() + moveY);
-			}
-			e.consume();
-		});
+		label.setOnDragOver(new GUI.AutoScrollOnDrag());
 
 		label.setOnKeyPressed(e -> {
 			String pressedCharacter = e.getText();
@@ -269,7 +263,7 @@ public class CellLabel extends Label {
 			}
 			else if (!pressedCharacter.isEmpty()) {
 				// pritisnut nexi printabilni karakter
-				if(e.isControlDown()) {
+				if (e.isControlDown()) {
 					GUI.printlnLog("Ctrl pritisnut");
 				}
 				if (tri == Main.table.clickedLabelRowIndex && tci == Main.table.clickedLabelColumnIndex) {
@@ -321,23 +315,6 @@ public class CellLabel extends Label {
 					}
 					e.consume();
 					break;
-				//				case ESCAPE:
-				//					Main.table.demarkSelectedCells();
-				//					Main.table.setSelectedRange(0, 0, 0, 0);
-				//					Main.table.clearClickedLabelIndices();
-				//					GUI.grid.requestFocus();
-				//					e.consume();
-				//					break;
-				//				case DELETE:
-				//					Cell oldCell = Main.table.getCell(tri, tci);
-				//					try {
-				//						Cell newCell = new Cell("", oldCell.getFormat(), tri, tci);
-				//						Main.table.setCell(tri, tci, newCell);
-				//						Main.table.updateLabels();
-				//					} catch (Exception ex) {
-				//					}
-				//					e.consume();
-				//					break;
 				default:
 					break;
 				}

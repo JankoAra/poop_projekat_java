@@ -15,31 +15,28 @@ public class StartSceneController {
 
 	private static Stage stage = null;
 
-	public void setStage(Stage s) {
-		stage = s;
-	}
-	
+	public void setStage(Stage s) { stage = s; }
+
 	final static boolean maximized = true;
-	
-	private enum StartType{NEW_TABLE, OPEN_TABLE}
+
+	private enum StartType { NEW_TABLE, OPEN_TABLE }
+
 	private void changeScene(StartType type) {
-		if(type==StartType.NEW_TABLE) {
+		if (type == StartType.NEW_TABLE) {
 			Main.table = new Table(Table.DEFAULT_TABLE_SIZE);
 			UndoRedoStack.clearUndoRedoStack();
 		}
-		else if(type==StartType.OPEN_TABLE) {
+		else if (type == StartType.OPEN_TABLE) {
 			Main.table = Controller.openTable();
 			UndoRedoStack.clearUndoRedoStack();
 		}
 		else return;
-//		GUI.rebuildGrid();
-//		Main.table.updateLabels();
 		GUI.updateGUI(UpdateType.TABLE_CHANGE);
 		stage.setScene(GUI.runningScene);
 		stage.setTitle("Excel by JANKO - " + Parser.currentFile.getAbsolutePath());
 		stage.setMaximized(maximized);
-//		stage.hide();
-//		stage.show();
+		//		stage.hide();
+		//		stage.show();
 	}
 
 	@FXML

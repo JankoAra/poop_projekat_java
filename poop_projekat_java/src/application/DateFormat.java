@@ -14,20 +14,15 @@ public class DateFormat implements Format {
 
 		Pattern pattern = Pattern.compile(dateFormatPattern);
 
-		// Match the string against the regex pattern
 		Matcher matcher = pattern.matcher(string);
 		if (matcher.matches()) {
 			int day = Integer.parseInt(matcher.group(1));
 			int month = Integer.parseInt(matcher.group(2));
 			int year = Integer.parseInt(matcher.group(3));
 
-			//System.out.println("Day: " + day);
-			//System.out.println("Month: " + month);
-			//System.out.println("Year: " + year);
 			return isValidDate(day, month, year);
 		}
 		else {
-			//System.out.println("Invalid date format.");
 			GUI.printlnLog("Datum nije upisan u pravilnom formatu, ili je nepostojeci.");
 			return false;
 		}
@@ -52,6 +47,13 @@ public class DateFormat implements Format {
 		}
 	}
 
+	/**
+	 * Proverava da li je zadati datum postojeci.
+	 * @param day
+	 * @param month
+	 * @param year
+	 * @return true ako je datum ispravan, false ako nije
+	 */
 	private static boolean isValidDate(int day, int month, int year) {
 		if (year < 1 || month < 1 || month > 12 || day < 1) {
 			return false;
@@ -65,6 +67,12 @@ public class DateFormat implements Format {
 		return true;
 	}
 
+	/**
+	 * 
+	 * @param year - godina
+	 * @param month - mesec
+	 * @return Vraca broj dana u zadatom mesecu i godini.
+	 */
 	private static int getMaxDaysInMonth(int year, int month) {
 		if (month == 2) {
 			if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
